@@ -1,0 +1,113 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-ring: var(--ring);
+  --color-input: var(--input);
+  --color-border: var(--border);
+  --color-destructive: var(--destructive);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-accent: var(--accent);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-muted: var(--muted);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-secondary: var(--secondary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary: var(--primary);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-popover: var(--popover);
+  --color-card-foreground: var(--card-foreground);
+  --color-card: var(--card);
+  --color-baas-neutral-400: var(--baas-neutral-400);
+  --color-baas-neutral-500: var(--baas-neutral-500);
+  --color-baas-warning-500: var(--baas-warning-500);
+  --color-baas-black: var(--baas-black);
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+}
+
+:root {
+  --background: oklch(0.98 0.0048 183.05);
+  --foreground: oklch(0.36 0.0131 285.72);
+  --card: var(--background);
+  --card-foreground: var(--foreground);
+  --popover: oklch(1 0 0);
+  --popover-foreground: oklch(0.145 0 0);
+  --primary: oklch(0.8 0.140647 186.3213);
+  --primary-foreground: oklch(0.98 0 0);
+  --secondary: oklch(0.97 0.0013 286.38);
+  --secondary-foreground: oklch(0.21 0.0059 285.88);
+  --muted: var(--secondary);
+  --muted-foreground: var(--secondary-foreground);
+  --accent: var(--secondary);
+  --accent-foreground: var(--secondary-foreground);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.92 0.004 286.32);
+  --input: var(--border);
+  --ring: var(--border);
+  /* Radius */
+  --radius: 0.5rem;
+  /* Meeting BaaS brand colors */
+  --baas-neutral-400: oklch(0.46 0 0);
+  --baas-neutral-500: oklch(0.35 0.0121 188.07);
+  --baas-warning-500: oklch(0.98 0.1298 108.58);
+  --baas-black: oklch(0.26 0 0);
+}
+
+.dark {
+  --background: oklch(0.29 0 0);
+  --foreground: oklch(1 0 0);
+  --popover: var(--background);
+  --popover-foreground: var(--foreground);
+  --primary-foreground: oklch(0.38 0.0245 253.58);
+  --secondary-foreground: var(--foreground);
+  --muted: var(--baas-neutral-500);
+  --muted-foreground: oklch(0.72 0 0);
+  --accent: var(--baas-neutral-500);
+  --accent-foreground: var(--foreground);
+  --destructive: var(--baas-warning-500);
+  --border: var(--baas-neutral-500);
+  --input: var(--baas-neutral-500);
+  --ring: oklch(0.67 0.143484 235.7191);
+}
+
+@layer base {
+  /* Universal base styles */
+  * {
+    @apply border-border outline-ring/50;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+
+  /* Selection styling */
+  ::selection {
+    background-color: hsl(var(--accent));
+    color: hsl(var(--foreground));
+  }
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  @supports (view-transition-name: none) {
+    ::view-transition-new(theme-transition) {
+      clip-path: inset(0 0 100% 0);
+      animation: slide-in-from-top 0.65s forwards cubic-bezier(0.65, 0, 0.35, 1);
+    }
+
+    ::view-transition-old(theme-transition) {
+      animation: none;
+    }
+
+    @keyframes slide-in-from-top {
+      to {
+        clip-path: inset(0 0 0 0);
+      }
+    }
+  }
+}
