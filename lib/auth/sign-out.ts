@@ -1,12 +1,11 @@
+import { getAuthAppUrl } from "@/lib/auth/auth-app-url"
+
 /**
  * Function to sign out from auth app. Called from Client
  */
 export async function signOut(): Promise<boolean> {
   try {
-    const authAppUrl = process.env.NEXT_PUBLIC_AUTH_APP_URL
-    if (!authAppUrl) {
-      throw new Error("NEXT_PUBLIC_AUTH_APP_URL environment variable is not defined")
-    }
+    const authAppUrl = getAuthAppUrl()
 
     const response = await fetch(`${authAppUrl}/api/auth/sign-out`, {
       method: "POST",

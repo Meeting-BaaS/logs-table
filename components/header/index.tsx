@@ -6,6 +6,7 @@ import Link from "next/link"
 import { GitHubLogo } from "@/components/icons/github"
 import { menuOptions } from "@/components/header/menu-options"
 import type { User } from "@/lib/auth/types"
+import { GITHUB_REPO_URL } from "@/lib/external-urls"
 
 export default function Header({ user }: { user: User }) {
   return (
@@ -31,11 +32,7 @@ export default function Header({ user }: { user: User }) {
               asChild
               aria-label="Github repository"
             >
-              <Link
-                href="https://github.com/Yusuf023/meeting-baas-logs"
-                target="_blank"
-                rel="noopener noreferrer"
-              >
+              <Link href={GITHUB_REPO_URL} target="_blank" rel="noopener noreferrer">
                 <GitHubLogo />
               </Link>
             </Button>

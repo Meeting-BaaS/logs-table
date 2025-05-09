@@ -37,8 +37,8 @@
   --foreground: oklch(0.36 0.0131 285.72);
   --card: var(--background);
   --card-foreground: var(--foreground);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
+  --popover: var(--background);
+  --popover-foreground:  var(--foreground);
   --primary: oklch(0.8 0.140647 186.3213);
   --primary-foreground: oklch(0.98 0 0);
   --secondary: oklch(0.97 0.0013 286.38);
@@ -63,15 +63,14 @@
 .dark {
   --background: oklch(0.29 0 0);
   --foreground: oklch(1 0 0);
-  --popover: var(--background);
-  --popover-foreground: var(--foreground);
   --primary-foreground: oklch(0.38 0.0245 253.58);
+  --secondary: var(--baas-neutral-500);
   --secondary-foreground: var(--foreground);
   --muted: var(--baas-neutral-500);
   --muted-foreground: oklch(0.72 0 0);
   --accent: var(--baas-neutral-500);
   --accent-foreground: var(--foreground);
-  --destructive: var(--baas-warning-500);
+  --destructive: oklch(0.64 0.2465 18.31);
   --border: var(--baas-neutral-500);
   --input: var(--baas-neutral-500);
   --ring: oklch(0.67 0.143484 235.7191);
@@ -88,8 +87,8 @@
 
   /* Selection styling */
   ::selection {
-    background-color: hsl(var(--accent));
-    color: hsl(var(--foreground));
+    background-color: var(--accent);
+    color: var(--foreground);
   }
 }
 

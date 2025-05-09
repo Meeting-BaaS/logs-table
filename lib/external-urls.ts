@@ -19,3 +19,6 @@ export const SETTINGS_URL = `https://${environment}meetingbaas.com`
 export const CREDENTIALS_URL = `${SETTINGS_URL}/credentials`
 export const CONSUMPTION_URL = `${SETTINGS_URL}/usage`
 export const BILLING_URL = `${SETTINGS_URL}/billing`
+
+// Github
+export const GITHUB_REPO_URL = "https://github.com/Meeting-Baas/logs-table"
