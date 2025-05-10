@@ -1,7 +1,14 @@
-import type { NextConfig } from "next";
+import type { NextConfig } from "next"
 
 const nextConfig: NextConfig = {
-  /* config options here */
-};
+  images: {
+    remotePatterns: [
+      {
+        hostname: "s3.eu-west-3.amazonaws.com",
+        protocol: "https"
+      }
+    ]
+  }
+}
 
-export default nextConfig;
+export default nextConfig

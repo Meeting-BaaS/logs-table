@@ -21,8 +21,8 @@ export default function LogsTable() {
 
   const { data, isLoading, isError, error, isRefetching } = useLogs({
     offset: pageIndex * PAGE_SIZE,
-    startDate: dateRange?.startDate,
-    endDate: dateRange?.endDate
+    startDate: dateRange?.startDate ?? null,
+    endDate: dateRange?.endDate ?? null
   })
 
   return (

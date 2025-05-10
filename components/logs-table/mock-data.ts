@@ -1,3 +1,131 @@
+import dayjs from "dayjs"
+import type { BotPaginated, BotQueryParams, Screenshot } from "./types"
+
+export const mockScreenshots: Screenshot[] = [
+  {
+    url: "https://s3.eu-west-3.amazonaws.com/meeting-baas-logs/e0b4ef9b-39ef-43b3-85b6-d68462a29af3-d0cc0237-2cc5-46d5-883c-e518239fb2b9/1746892132256_before_click_Use%20without%20an%20account_attempt.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIARHQBNK4AXVQ77Y37%2F20250510%2Feu-west-3%2Fs3%2Faws4_request&X-Amz-Date=20250510T155356Z&X-Amz-Expires=3600&X-Amz-Signature=6845b777e794919c92a8d17dcd2091bf5f0d959ea0137c73d4bf661ebfa91c62&X-Amz-SignedHeaders=host",
+    date: "2025-05-10T15:48:52.000Z"
+  },
+  {
+    url: "https://s3.eu-west-3.amazonaws.com/meeting-baas-logs/e0b4ef9b-39ef-43b3-85b6-d68462a29af3-e83f5aa8-ab26-450c-a6e7-9e77f78976b4/1746903463965_findShowEveryone.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIARHQBNK4AXVQ77Y37%2F20250510%2Feu-west-3%2Fs3%2Faws4_request&X-Amz-Date=20250510T185948Z&X-Amz-Expires=3600&X-Amz-Signature=7950e747d9b6fdd411f69960b3b854726c1692074f22eebaa9e72d4e82d4ef4c&X-Amz-SignedHeaders=host",
+    date: "2025-05-10T18:57:43.000Z"
+  },
+  {
+    url: "https://s3.eu-west-3.amazonaws.com/meeting-baas-logs/e0b4ef9b-39ef-43b3-85b6-d68462a29af3-e83f5aa8-ab26-450c-a6e7-9e77f78976b4/1746903452139_after_click_Ask_to_join.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIARHQBNK4AXVQ77Y37%2F20250510%2Feu-west-3%2Fs3%2Faws4_request&X-Amz-Date=20250510T185948Z&X-Amz-Expires=3600&X-Amz-Signature=82bc5c3a8197d0d675a899e0d4212c5b245d0af879603fa6deee6f9e935d772a&X-Amz-SignedHeaders=host",
+    date: "2025-05-10T18:57:32.000Z"
+  },
+  {
+    url: "https://s3.eu-west-3.amazonaws.com/meeting-baas-logs/e0b4ef9b-39ef-43b3-85b6-d68462a29af3-e83f5aa8-ab26-450c-a6e7-9e77f78976b4/1746903450110_before_click_Ask_to_join.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIARHQBNK4AXVQ77Y37%2F20250510%2Feu-west-3%2Fs3%2Faws4_request&X-Amz-Date=20250510T185948Z&X-Amz-Expires=3600&X-Amz-Signature=18de0db0c6273f3a84b96e21d8542fddcfdee06d90ec38939ec0c2e8b9cb9f31&X-Amz-SignedHeaders=host",
+    date: "2025-05-10T18:57:30.000Z"
+  },
+  {
+    url: "https://s3.eu-west-3.amazonaws.com/meeting-baas-logs/e0b4ef9b-39ef-43b3-85b6-d68462a29af3-e83f5aa8-ab26-450c-a6e7-9e77f78976b4/1746903448280_before_click_Ask%20to%20join_Join%20now_Join%20meeting_Join_Enter%20meeting_attempt.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIARHQBNK4AXVQ77Y37%2F20250510%2Feu-west-3%2Fs3%2Faws4_request&X-Amz-Date=20250510T185948Z&X-Amz-Expires=3600&X-Amz-Signature=7fc541181bb675e15dbc4e91acfae64cc50cb0ebada7098e67b11da20755517a&X-Amz-SignedHeaders=host",
+    date: "2025-05-10T18:57:28.000Z"
+  },
+  {
+    url: "https://s3.eu-west-3.amazonaws.com/meeting-baas-logs/e0b4ef9b-39ef-43b3-85b6-d68462a29af3-e83f5aa8-ab26-450c-a6e7-9e77f78976b4/1746903446494_failed_click_Ask%20to%20join_Join%20now_final.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIARHQBNK4AXVQ77Y37%2F20250510%2Feu-west-3%2Fs3%2Faws4_request&X-Amz-Date=20250510T185948Z&X-Amz-Expires=3600&X-Amz-Signature=dc0a596c09d9cb02af859f5ccfb37bd38cf31b96152303f31371e0c67ae5debe&X-Amz-SignedHeaders=host",
+    date: "2025-05-10T18:57:26.000Z"
+  },
+  {
+    url: "https://s3.eu-west-3.amazonaws.com/meeting-baas-logs/e0b4ef9b-39ef-43b3-85b6-d68462a29af3-e83f5aa8-ab26-450c-a6e7-9e77f78976b4/1746903444189_before_click_Ask_to_join.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIARHQBNK4AXVQ77Y37%2F20250510%2Feu-west-3%2Fs3%2Faws4_request&X-Amz-Date=20250510T185948Z&X-Amz-Expires=3600&X-Amz-Signature=e45772ff8824ad77d6731a31141ea3622923a42cab50df4eb3fb57e06bba8fef&X-Amz-SignedHeaders=host",
+    date: "2025-05-10T18:57:24.000Z"
+  },
+  {
+    url: "https://s3.eu-west-3.amazonaws.com/meeting-baas-logs/e0b4ef9b-39ef-43b3-85b6-d68462a29af3-e83f5aa8-ab26-450c-a6e7-9e77f78976b4/1746903442027_before_click_Ask_to_join.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIARHQBNK4AXVQ77Y37%2F20250510%2Feu-west-3%2Fs3%2Faws4_request&X-Amz-Date=20250510T185948Z&X-Amz-Expires=3600&X-Amz-Signature=62889456e4efbdedeb6adf448a226c045affac113fe55f19acd68eeb2dc82ce5&X-Amz-SignedHeaders=host",
+    date: "2025-05-10T18:57:22.000Z"
+  },
+  {
+    url: "https://s3.eu-west-3.amazonaws.com/meeting-baas-logs/e0b4ef9b-39ef-43b3-85b6-d68462a29af3-e83f5aa8-ab26-450c-a6e7-9e77f78976b4/1746903439899_before_click_Ask_to_join.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIARHQBNK4AXVQ77Y37%2F20250510%2Feu-west-3%2Fs3%2Faws4_request&X-Amz-Date=20250510T185948Z&X-Amz-Expires=3600&X-Amz-Signature=26456878c5a31be13daddd781c6848121b12df718c5d6d01b22737ef4a9375a7&X-Amz-SignedHeaders=host",
+    date: "2025-05-10T18:57:19.000Z"
+  },
+  {
+    url: "https://s3.eu-west-3.amazonaws.com/meeting-baas-logs/e0b4ef9b-39ef-43b3-85b6-d68462a29af3-e83f5aa8-ab26-450c-a6e7-9e77f78976b4/1746903437883_before_click_Ask_to_join.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIARHQBNK4AXVQ77Y37%2F20250510%2Feu-west-3%2Fs3%2Faws4_request&X-Amz-Date=20250510T185948Z&X-Amz-Expires=3600&X-Amz-Signature=883b19886685d954176d6e25e40ac694986d6db23e0123e458c02e4241c2f5b9&X-Amz-SignedHeaders=host",
+    date: "2025-05-10T18:57:17.000Z"
+  },
+  {
+    url: "https://s3.eu-west-3.amazonaws.com/meeting-baas-logs/e0b4ef9b-39ef-43b3-85b6-d68462a29af3-e83f5aa8-ab26-450c-a6e7-9e77f78976b4/1746903435788_before_click_Ask_to_join.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIARHQBNK4AXVQ77Y37%2F20250510%2Feu-west-3%2Fs3%2Faws4_request&X-Amz-Date=20250510T185948Z&X-Amz-Expires=3600&X-Amz-Signature=72facb62c98fc8decc389554c552cb274b64dba2f8d8f9b7e8ee0b69b9a3e02e&X-Amz-SignedHeaders=host",
+    date: "2025-05-10T18:57:15.000Z"
+  },
+  {
+    url: "https://s3.eu-west-3.amazonaws.com/meeting-baas-logs/e0b4ef9b-39ef-43b3-85b6-d68462a29af3-e83f5aa8-ab26-450c-a6e7-9e77f78976b4/1746903433902_before_click_Ask%20to%20join_Join%20now_attempt.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIARHQBNK4AXVQ77Y37%2F20250510%2Feu-west-3%2Fs3%2Faws4_request&X-Amz-Date=20250510T185948Z&X-Amz-Expires=3600&X-Amz-Signature=4bf60a95c15e1ab32446f4a0cfd4b1bc2cd6123edad918d2b4ff2763dda08cca&X-Amz-SignedHeaders=host",
+    date: "2025-05-10T18:57:13.000Z"
+  },
+  {
+    url: "https://s3.eu-west-3.amazonaws.com/meeting-baas-logs/e0b4ef9b-39ef-43b3-85b6-d68462a29af3-e83f5aa8-ab26-450c-a6e7-9e77f78976b4/1746903432153_before_join_button_attempts.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIARHQBNK4AXVQ77Y37%2F20250510%2Feu-west-3%2Fs3%2Faws4_request&X-Amz-Date=20250510T185948Z&X-Amz-Expires=3600&X-Amz-Signature=96b9578137896dd1512521630479f7067686c206958d9ea8596f671eb1af37e4&X-Amz-SignedHeaders=host",
+    date: "2025-05-10T18:57:12.000Z"
+  },
+  {
+    url: "https://s3.eu-west-3.amazonaws.com/meeting-baas-logs/e0b4ef9b-39ef-43b3-85b6-d68462a29af3-e83f5aa8-ab26-450c-a6e7-9e77f78976b4/1746903430249_after_typing_bot_name.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIARHQBNK4AXVQ77Y37%2F20250510%2Feu-west-3%2Fs3%2Faws4_request&X-Amz-Date=20250510T185948Z&X-Amz-Expires=3600&X-Amz-Signature=0c0f2b79b6ecb83878ad04384c052f7e817fb0b4cfb4e82ea2714552cbea3fd4&X-Amz-SignedHeaders=host",
+    date: "2025-05-10T18:57:10.000Z"
+  },
+  {
+    url: "https://s3.eu-west-3.amazonaws.com/meeting-baas-logs/e0b4ef9b-39ef-43b3-85b6-d68462a29af3-e83f5aa8-ab26-450c-a6e7-9e77f78976b4/1746903428372_before_typing_bot_name.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIARHQBNK4AXVQ77Y37%2F20250510%2Feu-west-3%2Fs3%2Faws4_request&X-Amz-Date=20250510T185948Z&X-Amz-Expires=3600&X-Amz-Signature=f09a35e48e119033c096f904ee897701e8abcbad3d567d64d10efd09610b36e4&X-Amz-SignedHeaders=host",
+    date: "2025-05-10T18:57:08.000Z"
+  },
+  {
+    url: "https://s3.eu-west-3.amazonaws.com/meeting-baas-logs/e0b4ef9b-39ef-43b3-85b6-d68462a29af3-e83f5aa8-ab26-450c-a6e7-9e77f78976b4/1746903426530_failed_click_Use%20without%20an%20account_final.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIARHQBNK4AXVQ77Y37%2F20250510%2Feu-west-3%2Fs3%2Faws4_request&X-Amz-Date=20250510T185948Z&X-Amz-Expires=3600&X-Amz-Signature=b6258886e81b636aaeec0ce4158447e63c1020762f53fa73930592942bdb4f03&X-Amz-SignedHeaders=host",
+    date: "2025-05-10T18:57:06.000Z"
+  },
+  {
+    url: "https://s3.eu-west-3.amazonaws.com/meeting-baas-logs/e0b4ef9b-39ef-43b3-85b6-d68462a29af3-e83f5aa8-ab26-450c-a6e7-9e77f78976b4/1746903420747_before_click_Use%20without%20an%20account_attempt.png?X-Amz-Algorithm=AWS4-HMAC-SHA256&X-Amz-Credential=AKIARHQBNK4AXVQ77Y37%2F20250510%2Feu-west-3%2Fs3%2Faws4_request&X-Amz-Date=20250510T185948Z&X-Amz-Expires=3600&X-Amz-Signature=72ff9a207934d86915f3030bd8eb8efb953983a185892d3fa8445a125ab0f1b1&X-Amz-SignedHeaders=host",
+    date: "2025-05-10T18:57:00.000Z"
+  }
+]
+
+export function filterAndPaginateMockData(params: BotQueryParams): BotPaginated {
+  if (mockData.bots.length === 0) {
+    return {
+      bots: [],
+      has_more: false
+    }
+  }
+
+  // Filter bots based on date range if provided
+  let filteredBots = mockData.bots
+
+  if (params.start_date || params.end_date) {
+    filteredBots = mockData.bots.filter((bot) => {
+      const botDate = dayjs(bot.bot.created_at)
+
+      if (params.start_date && params.end_date) {
+        const startDate = dayjs(params.start_date)
+        const endDate = dayjs(params.end_date).endOf("day")
+        return botDate.isAfter(startDate) && botDate.isBefore(endDate)
+      }
+
+      if (params.start_date) {
+        const startDate = dayjs(params.start_date)
+        return botDate.isAfter(startDate)
+      }
+
+      if (params.end_date) {
+        const endDate = dayjs(params.end_date).endOf("day")
+        return botDate.isBefore(endDate)
+      }
+
+      return true
+    })
+  }
+
+  // Get the total number of filtered bots
+  const totalBots = filteredBots.length
+
+  // Calculate pagination
+  const startIndex = params.offset
+  const endIndex = Math.min(startIndex + params.limit, totalBots)
+
+  // Get paginated bots
+  const paginatedBots = filteredBots.slice(startIndex, endIndex)
+
+  // Determine if there are more results
+  const hasMore = endIndex < totalBots
+
+  return {
+    bots: paginatedBots,
+    has_more: hasMore
+  }
+}
+
 export const mockData = {
   bots: [
     {

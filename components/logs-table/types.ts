@@ -32,10 +32,8 @@ export type BotPaginated = {
 export type BotQueryParams = {
   offset: number
   limit: number
-  start_date?: string
-  end_date?: string
-  bot_id?: string
-  jwt?: string
+  start_date: string
+  end_date: string
 }
 
 export type BotStatus = {
@@ -52,4 +50,9 @@ export type FormattedBotData = BotData & {
 export type FormattedBotPaginated = {
   has_more: boolean
   bots: FormattedBotData[]
+}
+
+export type Screenshot = {
+  url: string
+  date: string
 }
