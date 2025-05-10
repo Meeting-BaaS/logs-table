@@ -1,7 +1,7 @@
 "use client"
 
 import type { ColumnDef } from "@tanstack/react-table"
-import type { FormattedBotData } from "@/components/logs-table/types"
+import type { FormattedBotData, StatusType, PlatformName } from "@/components/logs-table/types"
 import {
   formatCreatedAt,
   dateSort,
@@ -20,6 +20,7 @@ export const columns: ColumnDef<FormattedBotData>[] = [
   {
     id: "created_at",
     accessorKey: "bot.created_at",
+    meta: { displayName: "Created At" },
     header: ({ column }) => <SortableHeader column={column} title="Created At" isNumber />,
     cell: ({ row }) => (
       <CopyTooltip text={row.original.bot.created_at} copyText="Copy timestamp">
@@ -31,12 +32,14 @@ export const columns: ColumnDef<FormattedBotData>[] = [
   {
     id: "duration",
     accessorKey: "duration",
+    meta: { displayName: "Duration" },
     header: ({ column }) => <SortableHeader column={column} title="Duration" isNumber />,
     cell: ({ row }) => formatDuration(row.original.duration)
   },
   {
     id: "uuid",
     accessorKey: "bot.uuid",
+    meta: { displayName: "Bot UUID" },
     header: ({ column }) => <SortableHeader column={column} title="Bot UUID" />,
     cell: ({ row }) => (
       <CopyTooltip text={row.original.bot.uuid} copyText="Copy bot ID">
@@ -47,6 +50,7 @@ export const columns: ColumnDef<FormattedBotData>[] = [
   {
     id: "platform",
     accessorKey: "platform",
+    meta: { displayName: "Platform" },
     header: ({ column }) => <SortableHeader column={column} title="Platform" />,
     cell: ({ row }) => (
       <div className="flex w-full justify-center">
@@ -54,17 +58,23 @@ export const columns: ColumnDef<FormattedBotData>[] = [
           {formatPlatform(row.original.platform)}
         </CopyTooltip>
       </div>
-    )
+    ),
+    filterFn: (row, columnId, filterValue: PlatformName[]) => {
+      if (!filterValue?.length) return false
+      return filterValue.includes(row.getValue(columnId))
+    }
   },
   {
     id: "bot_name",
     accessorKey: "params.bot_name",
+    meta: { displayName: "Bot Name" },
     header: ({ column }) => <SortableHeader column={column} title="Bot Name" />,
     sortingFn: "alphanumeric"
   },
   {
     id: "reserved",
     accessorKey: "bot.reserved",
+    meta: { displayName: "Reserved" },
     header: ({ column }) => <SortableHeader column={column} title="Reserved" />,
     cell: ({ row }) => (
       <div className="flex w-full justify-center text-red">
@@ -80,20 +90,32 @@ export const columns: ColumnDef<FormattedBotData>[] = [
   {
     id: "extra",
     accessorKey: "params.extra",
+    meta: { displayName: "Extra" },
     header: ({ column }) => <SortableHeader column={column} title="Extra" />,
     cell: ({ row }) => <JsonPreview data={row.original.params.extra} />
   },
   {
     id: "status",
-    accessorKey: "formattedStatus.text",
+    accessorKey: "formattedStatus.type",
+    meta: { displayName: "Status" },
     header: ({ column }) => <SortableHeader column={column} title="Status" />,
     cell: ({ row }) => {
       const { text, type, details } = row.original.formattedStatus
       return <StatusBadge text={text} type={type} details={details} />
+    },
+    filterFn: (row, columnId, filterValue: StatusType[]) => {
+      if (!filterValue?.length) return false
+      return filterValue.includes(row.getValue(columnId))
+    },
+    sortingFn: (rowA, rowB) => {
+      const textA = rowA.original.formattedStatus.text.toLowerCase()
+      const textB = rowB.original.formattedStatus.text.toLowerCase()
+      return textA.localeCompare(textB)
     }
   },
   {
     id: "actions",
+    meta: { displayName: "Actions" },
     header: "",
     cell: ({ row }) => <TableActions row={row.original} />
   }

@@ -8,7 +8,6 @@ import {
   flexRender,
   getCoreRowModel,
   getFilteredRowModel,
-  getPaginationRowModel,
   getSortedRowModel,
   useReactTable
 } from "@tanstack/react-table"
@@ -23,76 +22,84 @@ import {
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
 import { useState } from "react"
-import { Input } from "@/components/ui/input"
-import {
-  DropdownMenu,
-  DropdownMenuCheckboxItem,
-  DropdownMenuContent,
-  DropdownMenuTrigger
-} from "@/components/ui/dropdown-menu"
+import { ColumnVisibilityDropdown } from "@/components/logs-table/column-visibility-dropdown"
+import { DataTableFilter } from "@/components/logs-table/data-table-filter"
+import { allPlatforms, allStatuses } from "@/components/logs-table/column-helpers"
+import { CheckboxFilter } from "@/components/logs-table/checkbox-filter"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
+  pageCount: number
+  pageIndex: number
+  pageSize: number
+  onPageChange: (pageIndex: number) => void
 }
 
-export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData, TValue>) {
+export function DataTable<TData, TValue>({
+  columns,
+  data,
+  pageCount,
+  pageIndex,
+  pageSize,
+  onPageChange
+}: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
+    {
+      id: "platform",
+      value: allPlatforms
+    },
+    {
+      id: "status",
+      value: allStatuses
+    }
+  ])
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
+  const [globalFilter, setGlobalFilter] = useState("")
 
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
-    getPaginationRowModel: getPaginationRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
     onColumnFiltersChange: setColumnFilters,
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
+    onGlobalFilterChange: setGlobalFilter,
+    manualPagination: true,
+    pageCount,
     state: {
       sorting,
       columnFilters,
-      columnVisibility
+      columnVisibility,
+      globalFilter,
+      pagination: {
+        pageIndex,
+        pageSize
+      }
     }
   })
 
   return (
     <div>
-      <div className="flex items-center py-4">
-        <Input
-          placeholder="Filter emails..."
-          value={(table.getColumn("uuid")?.getFilterValue() as string) ?? ""}
-          onChange={(event) => table.getColumn("uuid")?.setFilterValue(event.target.value)}
-          className="max-w-sm"
-          aria-label="filter emails"
-          name="email-filter"
-        />
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline" className="ml-auto">
-              Columns
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end">
-            {table
-              .getAllColumns()
-              .filter((column) => column.getCanHide())
-              .map((column) => {
-                return (
-                  <DropdownMenuCheckboxItem
-                    key={column.id}
-                    className="capitalize"
-                    checked={column.getIsVisible()}
-                    onCheckedChange={(value) => column.toggleVisibility(!!value)}
-                  >
-                    {column.id}
-                  </DropdownMenuCheckboxItem>
-                )
-              })}
-          </DropdownMenuContent>
-        </DropdownMenu>
+      <div className="flex items-center justify-between py-4">
+        <div className="flex items-center gap-4">
+          <DataTableFilter
+            table={table}
+            globalFilter={globalFilter}
+            onGlobalFilterChange={setGlobalFilter}
+          />
+          <CheckboxFilter
+            table={table}
+            columnId="platform"
+            options={allPlatforms}
+            label="Platform"
+          />
+          <CheckboxFilter table={table} columnId="status" options={allStatuses} label="Status" />
+        </div>
+        <ColumnVisibilityDropdown table={table} />
       </div>
       <div className="rounded-md border">
         <Table>
@@ -112,7 +119,18 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
             ))}
           </TableHeader>
           <TableBody>
-            {table.getRowModel().rows?.length ? (
+            {!table.getAllColumns().some((column) => column.getIsVisible()) ? (
+              <TableRow>
+                <TableCell colSpan={columns.length} className="h-24 text-center">
+                  <div className="flex flex-col items-center gap-2">
+                    <p>All columns are hidden.</p>
+                    <p className="text-muted-foreground text-sm">
+                      Please make some columns visible to see the logs.
+                    </p>
+                  </div>
+                </TableCell>
+              </TableRow>
+            ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
                   {row.getVisibleCells().map((cell) => (
@@ -136,16 +154,16 @@ export function DataTable<TData, TValue>({ columns, data }: DataTableProps<TData
         <Button
           variant="outline"
           size="sm"
-          onClick={() => table.previousPage()}
-          disabled={!table.getCanPreviousPage()}
+          onClick={() => onPageChange(pageIndex - 1)}
+          disabled={pageIndex === 0}
         >
           Previous
         </Button>
         <Button
           variant="outline"
           size="sm"
-          onClick={() => table.nextPage()}
-          disabled={!table.getCanNextPage()}
+          onClick={() => onPageChange(pageIndex + 1)}
+          disabled={pageIndex >= pageCount - 1}
         >
           Next
         </Button>

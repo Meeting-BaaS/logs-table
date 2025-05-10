@@ -4,19 +4,28 @@ import { fetchLogs } from "@/lib/fetch-logs"
 import type { FormattedBotData } from "@/components/logs-table/types"
 import { formatBotStatus } from "@/lib/format-logs"
 import { getPlatformFromUrl } from "@/lib/format-logs"
+import dayjs from "dayjs"
 
-const PAGE_SIZE = 20
+export const PAGE_SIZE = 10
 
-export function useLogs(offset: number) {
+interface UseLogsParams {
+  offset: number
+  startDate?: Date | null
+  endDate?: Date | null
+}
+
+export function useLogs({ offset, startDate, endDate }: UseLogsParams) {
   const jwt = useJwt()
 
   const { data, isLoading, isError, error, isRefetching } = useQuery({
-    queryKey: ["logs", { offset, limit: PAGE_SIZE }],
+    queryKey: ["logs", { offset, limit: PAGE_SIZE, startDate, endDate }],
     queryFn: () =>
       fetchLogs({
         offset,
         limit: PAGE_SIZE,
-        jwt
+        jwt,
+        start_date: startDate ? `${dayjs(startDate).format("YYYY-MM-DD")}T00:00:00` : undefined,
+        end_date: endDate ? `${dayjs(endDate).format("YYYY-MM-DD")}T23:59:59` : undefined
       }),
     select: (data) => {
       const formattedBots: FormattedBotData[] = data.bots.map((bot) => ({
@@ -31,7 +40,8 @@ export function useLogs(offset: number) {
       }
     },
     refetchOnWindowFocus: true,
-    refetchOnMount: true
+    refetchOnMount: true,
+    placeholderData: (previousData) => previousData
   })
 
   return {

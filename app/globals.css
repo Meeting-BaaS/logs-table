@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @import "tw-animate-css";
+@config "../tailwind.config.ts";
 
 @custom-variant dark (&:is(.dark *));
 
@@ -25,11 +26,18 @@
   --color-baas-neutral-400: var(--baas-neutral-400);
   --color-baas-neutral-500: var(--baas-neutral-500);
   --color-baas-warning-500: var(--baas-warning-500);
+  --color-baas-primary-700: var(--baas-primary-700);
   --color-baas-black: var(--baas-black);
   --radius-sm: calc(var(--radius) - 4px);
   --radius-md: calc(var(--radius) - 2px);
   --radius-lg: var(--radius);
   --radius-xl: calc(var(--radius) + 4px);
+
+  /* Overriding the primary color used in the datepicker component */
+  --color-blue-400: var(--primary);
+  --color-blue-500: var(--primary);
+  --color-blue-600: var(--primary);
+  --color-blue-700: var(--primary);
 }
 
 :root {
@@ -57,12 +65,14 @@
   --baas-neutral-400: oklch(0.46 0 0);
   --baas-neutral-500: oklch(0.35 0.0121 188.07);
   --baas-warning-500: oklch(0.98 0.1298 108.58);
+  --baas-primary-700: oklch(0.53 0.0548 187.47);
   --baas-black: oklch(0.26 0 0);
 }
 
 .dark {
   --background: oklch(0.29 0 0);
   --foreground: oklch(1 0 0);
+  --popover: var(--baas-black);
   --primary-foreground: oklch(0.38 0.0245 253.58);
   --secondary: var(--baas-neutral-500);
   --secondary-foreground: var(--foreground);
@@ -108,5 +118,55 @@
         clip-path: inset(0 0 0 0);
       }
     }
+  }
+}
+
+@layer utilities {
+  /* Override specific tailwind utility classes.
+  They are used at various places in the datepicker component. */
+  .border-gray-300 {
+    @apply !border-border;
+  }
+  .border-slate-600 {
+    @apply !border-border;
+  }
+  .bg-white {
+    @apply !bg-background;
+  }
+  .bg-blue-100 {
+    @apply !bg-baas-primary-700/10;
+  }
+  .hover\:bg-blue-100:hover {
+    @apply !bg-accent;
+  }
+  .dark\:border-gray-700:is(.dark *) {
+    @apply !border-border;
+  }
+  .dark\:bg-slate-800:is(.dark *) {
+    @apply !bg-baas-black;
+  }
+  .dark\:text-white:is(.dark *) {
+    @apply !text-foreground;
+  }
+  .dark\:border-slate-600:is(.dark *) {
+    @apply !border-border;
+  }
+  .dark\:bg-white\/10:is(.dark *) {
+    @apply !bg-accent;
+  }
+  .dark\:hover\:bg-white\/10:is(.dark *):hover {
+    @apply !bg-accent;
+  }
+  .dark\:focus\:bg-white\/10:is(.dark *):focus {
+    @apply !bg-accent;
+  }
+  .dark\:bg-white\/5:is(.dark *) {
+    @apply !bg-accent;
+  }
+  .text-gray-400 {
+    @apply !text-muted-foreground/40;
+  }
+  .text-gray-500 {
+    @apply !text-muted-foreground;
   }
 }

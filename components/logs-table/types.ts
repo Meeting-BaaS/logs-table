@@ -1,4 +1,5 @@
-export type PlatformName = "zoom" | "teams" | "google-meet" | "unknown"
+export type PlatformName = "zoom" | "teams" | "google meet" | "unknown"
+export type StatusType = "success" | "error" | "pending" | "warning"
 
 export type Bot = {
   id: number
@@ -39,7 +40,7 @@ export type BotQueryParams = {
 
 export type BotStatus = {
   text: string
-  type: "success" | "error" | "pending" | "warning"
+  type: StatusType
   details?: string | null
 }
 

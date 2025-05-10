@@ -2,7 +2,7 @@ import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
 import duration from "dayjs/plugin/duration"
 import type { SortingFn } from "@tanstack/react-table"
-import type { FormattedBotData, PlatformName } from "@/components/logs-table/types"
+import type { FormattedBotData, PlatformName, StatusType } from "@/components/logs-table/types"
 import { ZoomLogo } from "@/components/icons/zoom"
 import { MicrosoftTeamsLogo } from "@/components/icons/microsoft-teams"
 import { GoogleMeetLogo } from "@/components/icons/google-meet"
@@ -14,6 +14,8 @@ dayjs.extend(relativeTime)
 dayjs.extend(duration)
 
 const iconClasses = "size-5"
+export const allPlatforms: PlatformName[] = ["zoom", "teams", "google meet", "unknown"]
+export const allStatuses: StatusType[] = ["success", "error", "pending", "warning"]
 
 export const formatCreatedAt = (dateStr: string) => {
   const date = dayjs(dateStr)
@@ -49,7 +51,7 @@ export const formatPlatform = (platform: PlatformName) => {
       return <ZoomLogo className={iconClasses} />
     case "teams":
       return <MicrosoftTeamsLogo className={iconClasses} />
-    case "google-meet":
+    case "google meet":
       return <GoogleMeetLogo className={iconClasses} />
     default:
       return <AlertTriangle className={cn(iconClasses, "text-destructive")} />

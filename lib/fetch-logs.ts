@@ -1,5 +1,6 @@
 import type { BotPaginated, BotQueryParams } from "@/components/logs-table/types"
 import { mockData } from "@/components/logs-table/mock-data"
+import dayjs from "dayjs"
 
 const apiServerBaseUrl = process.env.NEXT_PUBLIC_API_SERVER_BASEURL
 
@@ -17,7 +18,58 @@ export const fetchLogs = async (params: BotQueryParams): Promise<BotPaginated> =
     throw new Error("Access token is required")
   }
 
-  return mockData as BotPaginated
+  if (mockData.bots.length === 0) {
+    return {
+      bots: [],
+      has_more: false
+    }
+  }
+
+  // Filter bots based on date range if provided
+  let filteredBots = mockData.bots
+
+  if (params.start_date || params.end_date) {
+    filteredBots = mockData.bots.filter((bot) => {
+      const botDate = dayjs(bot.bot.created_at)
+
+      if (params.start_date && params.end_date) {
+        const startDate = dayjs(params.start_date)
+        const endDate = dayjs(params.end_date).endOf("day")
+        return botDate.isAfter(startDate) && botDate.isBefore(endDate)
+      }
+
+      if (params.start_date) {
+        const startDate = dayjs(params.start_date)
+        return botDate.isAfter(startDate)
+      }
+
+      if (params.end_date) {
+        const endDate = dayjs(params.end_date).endOf("day")
+        return botDate.isBefore(endDate)
+      }
+
+      return true
+    })
+  }
+
+  // Get the total number of filtered bots
+  const totalBots = filteredBots.length
+
+  // Calculate pagination
+  const startIndex = params.offset
+  const endIndex = Math.min(startIndex + params.limit, totalBots)
+
+  // Get paginated bots
+  const paginatedBots = filteredBots.slice(startIndex, endIndex)
+
+  // Determine if there are more results
+  const hasMore = endIndex < totalBots
+
+  return {
+    bots: paginatedBots,
+    has_more: hasMore
+  }
+
   // const response = await fetch(
   //   `${apiServerBaseUrl}/bots/all?${new URLSearchParams({
   //     offset: params.offset.toString(),

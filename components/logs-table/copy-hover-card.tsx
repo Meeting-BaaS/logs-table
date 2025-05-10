@@ -34,7 +34,7 @@ export function CopyHoverCard({ trigger, title, content, className }: CopyHoverC
       <HoverCardContent className={cn("w-80", className)}>
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0 flex-1 space-y-1">
-            <h4 className="font-semibold text-sm first-letter:uppercase">{title}</h4>
+            <h4 className="font-semibold text-sm capitalize">{title}</h4>
             <div className="max-h-[200px] overflow-y-auto pr-2">
               <p className="whitespace-pre-wrap break-words text-muted-foreground text-sm">
                 {content}
