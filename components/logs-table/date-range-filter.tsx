@@ -25,6 +25,7 @@ export function DateRangeFilter({ value, onChange }: DateRangeFilterProps) {
     <div className="relative w-full md:max-w-xs">
       <Datepicker
         value={value}
+        displayFormat="DD MMM YYYY"
         separator=" - "
         onChange={handleDateChange}
         showShortcuts

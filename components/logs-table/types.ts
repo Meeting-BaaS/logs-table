@@ -16,6 +16,7 @@ export type Bot = {
 export type BotParams = {
   webhook_url: string | null
   extra: string | null
+  bot_name: string | null
 }
 
 export type BotData = {

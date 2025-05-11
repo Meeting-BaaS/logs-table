@@ -30,6 +30,7 @@ import { AdditionalFilters } from "@/components/logs-table/additional-filters"
 import { Loader2 } from "lucide-react"
 import type { DateValueType } from "react-tailwindcss-datepicker"
 import { DateRangeFilter } from "./date-range-filter"
+import { ExportCsvDialog } from "./export-csv-dialog"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -101,12 +102,13 @@ export function DataTable<TData, TValue>({
             <Loader2 className="size-4 animate-spin text-primary" aria-label="Refreshing logs" />
           )}
         </div>
-        <div className="flex w-full items-center gap-2 md:w-1/4">
+        <div className="flex w-full items-center gap-2 md:w-1/2 lg:w-1/3 xl:w-1/4">
           <DataTableFilter
             table={table}
             globalFilter={globalFilter}
             onGlobalFilterChange={setGlobalFilter}
           />
+          <ExportCsvDialog table={table} dateRange={dateRange} pageIndex={pageIndex} />
           <ColumnVisibilityDropdown table={table} />
         </div>
       </div>
