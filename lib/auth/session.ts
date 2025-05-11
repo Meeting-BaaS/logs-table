@@ -1,22 +1,21 @@
 import type { Session } from "@/lib/auth/types"
+import { getAuthAppUrl } from "@/lib/auth/auth-app-url"
 
 /**
- * Function to get session from auth app. Called from RSC/APIs
+ * Function to get session from auth app.
+ * When called from RSC/APIs, cookies need to be passed.
+ * @param cookies - Cookies to pass to the auth app
  * @returns User's session
  */
-export async function getAuthSession(requestHeaders: Headers): Promise<Session | null> {
+export async function getAuthSession(cookies?: string): Promise<Session | null> {
   try {
-    const authAppUrl = process.env.NEXT_PUBLIC_AUTH_APP_URL
-    if (!authAppUrl) {
-      throw new Error("NEXT_PUBLIC_AUTH_APP_URL environment variable is not defined")
-    }
-    const cookie = requestHeaders.get("cookie") || ""
+    const authAppUrl = getAuthAppUrl()
 
     const response = await fetch(`${authAppUrl}/api/auth/get-session`, {
       credentials: "include",
       headers: {
         "Content-Type": "application/json",
-        Cookie: cookie
+        ...(cookies ? { Cookie: cookies } : {})
       }
     })
 
@@ -43,8 +42,7 @@ export async function getAuthSession(requestHeaders: Headers): Promise<Session |
     }
   } catch (error) {
     console.error("Error fetching auth session:", error, {
-      authAppUrl: process.env.NEXT_PUBLIC_AUTH_APP_URL,
-      hasCookie: !!requestHeaders.get("cookie")
+      authAppUrl: process.env.NEXT_PUBLIC_AUTH_APP_URL
     })
     return null
   }
