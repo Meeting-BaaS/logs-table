@@ -51,7 +51,7 @@ export const columns: ColumnDef<FormattedBotData>[] = [
     id: "platform",
     accessorKey: "platform",
     meta: { displayName: "Platform" },
-    header: ({ column }) => <SortableHeader column={column} title="Platform" />,
+    header: ({ column }) => <SortableHeader column={column} title="Platform" centered />,
     cell: ({ row }) => (
       <div className="flex w-full justify-center">
         <CopyTooltip text={row.original.bot.meeting_url} copyText="Copy meeting URL">
@@ -75,7 +75,7 @@ export const columns: ColumnDef<FormattedBotData>[] = [
     id: "reserved",
     accessorKey: "bot.reserved",
     meta: { displayName: "Reserved" },
-    header: ({ column }) => <SortableHeader column={column} title="Reserved" />,
+    header: ({ column }) => <SortableHeader column={column} title="Reserved" centered />,
     cell: ({ row }) => (
       <div className="flex w-full justify-center text-red">
         <Zap
