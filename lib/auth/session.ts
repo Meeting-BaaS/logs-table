@@ -12,7 +12,6 @@ export async function getAuthSession(cookies?: string): Promise<Session | null> 
     const authAppUrl = getAuthAppUrl()
 
     const response = await fetch(`${authAppUrl}/api/auth/get-session`, {
-      credentials: "include",
       headers: {
         "Content-Type": "application/json",
         ...(cookies ? { Cookie: cookies } : {})
