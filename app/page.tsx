@@ -3,7 +3,7 @@ import { ScreenshotViewer } from "@/components/screenshot-viewer"
 
 export default async function Home() {
   return (
-    <div className="container mx-auto">
+    <div className="m-4 md:m-8">
       <LogsTable />
       <ScreenshotViewer />
     </div>

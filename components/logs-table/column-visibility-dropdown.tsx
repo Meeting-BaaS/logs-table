@@ -76,7 +76,7 @@ export function ColumnVisibilityDropdown<TData>({ table }: ColumnVisibilityDropd
           Columns
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
+      <DropdownMenuContent align="end" className="w-48">
         <DropdownMenuCheckboxItem
           key="toggle-all"
           className="capitalize"

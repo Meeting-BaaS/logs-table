@@ -25,7 +25,11 @@ import { useState } from "react"
 import { ColumnVisibilityDropdown } from "@/components/logs-table/column-visibility-dropdown"
 import { DataTableFilter } from "@/components/logs-table/data-table-filter"
 import { allPlatforms, allStatuses } from "@/components/logs-table/column-helpers"
-import { CheckboxFilter } from "@/components/logs-table/checkbox-filter"
+import { cn } from "@/lib/utils"
+import { AdditionalFilters } from "@/components/logs-table/additional-filters"
+import { Loader2 } from "lucide-react"
+import type { DateValueType } from "react-tailwindcss-datepicker"
+import { DateRangeFilter } from "./date-range-filter"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -34,6 +38,9 @@ interface DataTableProps<TData, TValue> {
   pageIndex: number
   pageSize: number
   onPageChange: (pageIndex: number) => void
+  isRefetching: boolean
+  dateRange: DateValueType
+  setDateRange: (dateRange: DateValueType) => void
 }
 
 export function DataTable<TData, TValue>({
@@ -42,7 +49,10 @@ export function DataTable<TData, TValue>({
   pageCount,
   pageIndex,
   pageSize,
-  onPageChange
+  onPageChange,
+  isRefetching,
+  dateRange,
+  setDateRange
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
@@ -83,32 +93,38 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div>
-      <div className="flex items-center justify-between py-4">
-        <div className="flex items-center gap-4">
+    <div className="flex flex-col gap-4">
+      <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+        <div className="flex w-full items-center gap-2 md:w-1/2">
+          <DateRangeFilter value={dateRange} onChange={setDateRange} />
+          {isRefetching && (
+            <Loader2 className="size-4 animate-spin text-primary" aria-label="Refreshing logs" />
+          )}
+        </div>
+        <div className="flex w-full items-center gap-2 md:w-1/4">
           <DataTableFilter
             table={table}
             globalFilter={globalFilter}
             onGlobalFilterChange={setGlobalFilter}
           />
-          <CheckboxFilter
-            table={table}
-            columnId="platform"
-            options={allPlatforms}
-            label="Platform"
-          />
-          <CheckboxFilter table={table} columnId="status" options={allStatuses} label="Status" />
+          <ColumnVisibilityDropdown table={table} />
         </div>
-        <ColumnVisibilityDropdown table={table} />
       </div>
-      <div className="rounded-md border">
+      <AdditionalFilters table={table} />
+      <div>
         <Table>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
-              <TableRow key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
+              <TableRow key={headerGroup.id} className="bg-accent dark:bg-baas-primary-700">
+                {headerGroup.headers.map((header, index) => {
                   return (
-                    <TableHead key={header.id}>
+                    <TableHead
+                      key={header.id}
+                      className={cn(
+                        index === 0 && "rounded-tl-md",
+                        index === headerGroup.headers.length - 1 && "rounded-tr-md"
+                      )}
+                    >
                       {header.isPlaceholder
                         ? null
                         : flexRender(header.column.columnDef.header, header.getContext())}
@@ -150,11 +166,12 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="flex items-center justify-end space-x-2 py-4">
+      <div className="mb-4 flex w-full items-center justify-end space-x-2 md:w-auto">
         <Button
           variant="outline"
           size="sm"
           onClick={() => onPageChange(pageIndex - 1)}
+          className="w-1/2 md:w-auto"
           disabled={pageIndex === 0}
         >
           Previous
@@ -164,6 +181,7 @@ export function DataTable<TData, TValue>({
           size="sm"
           onClick={() => onPageChange(pageIndex + 1)}
           disabled={pageIndex >= pageCount - 1}
+          className="w-1/2 md:w-auto"
         >
           Next
         </Button>

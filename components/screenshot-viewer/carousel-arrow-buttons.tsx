@@ -77,7 +77,7 @@ export const PrevButton: React.FC<ButtonProps> = (props) => {
       disabled={disabled}
       {...restProps}
     >
-      <ChevronLeft className="h-8 w-8" />
+      <ChevronLeft />
     </Button>
   )
 }
@@ -96,7 +96,7 @@ export const NextButton: React.FC<ButtonProps> = (props) => {
       disabled={disabled}
       {...restProps}
     >
-      <ChevronRight className="h-8 w-8" />
+      <ChevronRight />
     </Button>
   )
 }

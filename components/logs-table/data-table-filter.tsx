@@ -17,7 +17,7 @@ export function DataTableFilter<TData>({
   onGlobalFilterChange
 }: DataTableFilterProps<TData>) {
   return (
-    <div className="relative max-w-sm">
+    <div className="relative w-full">
       <Input
         placeholder="Search"
         value={globalFilter ?? ""}

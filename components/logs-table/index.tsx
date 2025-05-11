@@ -6,7 +6,6 @@ import { columns } from "@/components/logs-table/columns"
 import { Loader2 } from "lucide-react"
 import { PAGE_SIZE, useLogs } from "@/hooks/use-logs"
 import { genericError } from "@/lib/errors"
-import { DateRangeFilter } from "./date-range-filter"
 import type { DateValueType } from "react-tailwindcss-datepicker/dist/types"
 import dayjs from "dayjs"
 
@@ -27,13 +26,6 @@ export default function LogsTable() {
 
   return (
     <div className="relative">
-      {/* Refetch indicator */}
-      {isRefetching && (
-        <div>
-          <Loader2 className="size-4 animate-spin text-primary" />
-        </div>
-      )}
-
       {/* Loading state - only show full screen loader on initial load */}
       {isLoading && !data ? (
         <div className="flex h-96 items-center justify-center">
@@ -44,17 +36,17 @@ export default function LogsTable() {
           Error: {error instanceof Error ? error.message : genericError}
         </div>
       ) : (
-        <>
-          <DateRangeFilter value={dateRange} onChange={setDateRange} />
-          <DataTable
-            columns={columns}
-            data={data?.bots || []}
-            pageCount={data?.has_more ? pageIndex + 2 : pageIndex + 1}
-            pageIndex={pageIndex}
-            pageSize={PAGE_SIZE}
-            onPageChange={setPageIndex}
-          />
-        </>
+        <DataTable
+          columns={columns}
+          data={data?.bots || []}
+          pageCount={data?.has_more ? pageIndex + 2 : pageIndex + 1}
+          pageIndex={pageIndex}
+          pageSize={PAGE_SIZE}
+          onPageChange={setPageIndex}
+          isRefetching={isRefetching}
+          dateRange={dateRange}
+          setDateRange={setDateRange}
+        />
       )}
     </div>
   )

@@ -10,7 +10,7 @@ import { GITHUB_REPO_URL } from "@/lib/external-urls"
 
 export default function Header({ user }: { user: User }) {
   return (
-    <header className="sticky top-2 z-40 mx-auto box-content w-full max-w-container border-b bg-background/15 backdrop-blur-md lg:mt-2 lg:w-[calc(100%-4rem)] lg:rounded-2xl lg:border">
+    <header className="sticky top-0 z-40 mx-auto box-content w-full max-w-container border-b bg-background/15 backdrop-blur-md lg:top-2 lg:mt-2 lg:w-[calc(100%-4rem)] lg:rounded-2xl lg:border">
       <nav className="flex h-12 w-full flex-row items-center justify-between px-4">
         <div className="flex items-center gap-2">
           <Image

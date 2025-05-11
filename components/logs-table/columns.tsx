@@ -116,7 +116,7 @@ export const columns: ColumnDef<FormattedBotData>[] = [
   {
     id: "actions",
     meta: { displayName: "Actions" },
-    header: "",
+    header: "Actions",
     cell: ({ row }) => <TableActions row={row.original} />
   }
 ]

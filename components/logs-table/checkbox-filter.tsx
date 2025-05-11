@@ -29,29 +29,32 @@ export function CheckboxFilter<TData, TValue extends string>({
   }
 
   return (
-    <div className="flex flex-col gap-2">
-      <div className="flex items-center space-x-2">
-        <Checkbox
-          id={`all-${columnId}`}
-          checked={filter.length === options.length}
-          onCheckedChange={handleAllChange}
-        />
-        <Label htmlFor={`all-${columnId}`} className="font-medium text-sm">
-          All
-        </Label>
-      </div>
-      {options.map((option) => (
-        <div key={option} className="flex items-center space-x-2">
+    <>
+      <div className="text-muted-foreground text-sm">{label}</div>
+      <div className="flex flex-wrap gap-10">
+        <div className="flex items-center space-x-2">
           <Checkbox
-            id={option}
-            checked={filter.includes(option)}
-            onCheckedChange={(checked) => handleOptionChange(option, checked as boolean)}
+            id={`all-${columnId}`}
+            checked={filter.length === options.length}
+            onCheckedChange={handleAllChange}
           />
-          <Label htmlFor={option} className="font-medium text-sm capitalize">
-            {option}
+          <Label htmlFor={`all-${columnId}`} className="font-medium text-sm">
+            All
           </Label>
         </div>
-      ))}
-    </div>
+        {options.map((option) => (
+          <div key={option} className="flex items-center space-x-2">
+            <Checkbox
+              id={option}
+              checked={filter.includes(option)}
+              onCheckedChange={(checked) => handleOptionChange(option, checked as boolean)}
+            />
+            <Label htmlFor={option} className="font-medium text-sm capitalize">
+              {option}
+            </Label>
+          </div>
+        ))}
+      </div>
+    </>
   )
 }

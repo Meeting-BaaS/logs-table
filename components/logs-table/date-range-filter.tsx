@@ -2,6 +2,7 @@
 
 import Datepicker, { type DateValueType } from "react-tailwindcss-datepicker"
 import dayjs from "dayjs"
+import { CalendarIcon } from "lucide-react"
 
 interface DateRangeFilterProps {
   value: DateValueType
@@ -21,19 +22,19 @@ export function DateRangeFilter({ value, onChange }: DateRangeFilterProps) {
   }
 
   return (
-    <div className="relative my-4">
+    <div className="relative w-full md:max-w-xs">
       <Datepicker
         value={value}
         separator=" - "
         onChange={handleDateChange}
-        showShortcuts={true}
-        useRange={true}
-        asSingle={false}
-        readOnly={true}
+        showShortcuts
+        useRange
+        readOnly
         toggleClassName="hidden" // Date shouldn't be cleared out
         inputName="date-range-filter"
-        inputClassName="relative border border-input text-foreground h-9 rounded-md py2.5 pl-3 pr-14 w-full text-base shadow-xs transition-[color,box-shadow] outline-none cursor-pointer md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] dark:bg-input/30 placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground"
+        inputClassName="relative border border-input text-foreground h-9 rounded-md py2.5 pl-3 pr-8 w-full text-base shadow-xs transition-[color,box-shadow] outline-none cursor-pointer md:text-sm focus-visible:border-ring focus-visible:ring-ring/50 focus-visible:ring-[3px] dark:bg-input/30 placeholder:text-muted-foreground selection:bg-primary selection:text-primary-foreground"
       />
+      <CalendarIcon className="-translate-y-1/2 -z-10 pointer-events-none absolute top-1/2 right-3 h-4 w-4 text-muted-foreground" />
     </div>
   )
 }
