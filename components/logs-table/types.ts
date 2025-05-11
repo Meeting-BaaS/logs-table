@@ -35,6 +35,7 @@ export type BotQueryParams = {
   limit: number
   start_date: string
   end_date: string
+  jwt: string
 }
 
 export type BotStatus = {

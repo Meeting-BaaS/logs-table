@@ -10,6 +10,7 @@ import { toast } from "sonner"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { useScreenshotViewer } from "@/hooks/use-screenshot-viewer"
+import { useJwt } from "@/hooks/use-jwt"
 
 const iconClasses = "size-4"
 
@@ -48,6 +49,7 @@ interface TableActionsProps {
 }
 
 export function TableActions({ row }: TableActionsProps) {
+  const jwt = useJwt()
   const [resendLoading, setResendLoading] = useState(false)
   const [reportLoading, setReportLoading] = useState(false)
   const [screenshotsLoading, setScreenshotsLoading] = useState(false)
@@ -70,7 +72,7 @@ export function TableActions({ row }: TableActionsProps) {
 
     try {
       setResendLoading(true)
-      await retryWebhook(row.bot.uuid)
+      await retryWebhook(row.bot.uuid, jwt)
       toast.success("Retry successful")
     } catch {
       toast.error("Retry webhook failed")
@@ -86,7 +88,7 @@ export function TableActions({ row }: TableActionsProps) {
 
     try {
       setReportLoading(true)
-      await reportError(row.bot.id)
+      await reportError(row.bot.id, jwt)
       toast.success("Error reported successfully")
     } catch {
       toast.error("Failed to report error")
@@ -102,7 +104,7 @@ export function TableActions({ row }: TableActionsProps) {
 
     setScreenshotsLoading(true)
     try {
-      const fetchedScreenshots = await fetchScreenshots(row.bot.uuid)
+      const fetchedScreenshots = await fetchScreenshots(row.bot.uuid, jwt)
       if (fetchedScreenshots.length === 0) {
         toast.warning("No screenshots found")
         return

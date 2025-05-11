@@ -15,7 +15,9 @@ export async function fetchLogs(params: BotQueryParams): Promise<BotPaginated> {
   })
 
   const response = await fetch(`${apiServerBaseUrl}/bots?${queryParams.toString()}`, {
-    credentials: "include"
+    headers: {
+      Cookie: `jwt=${params.jwt}`
+    }
   })
 
   if (!response.ok) {
@@ -25,10 +27,12 @@ export async function fetchLogs(params: BotQueryParams): Promise<BotPaginated> {
   return response.json()
 }
 
-export async function retryWebhook(bot_id: string): Promise<void> {
+export async function retryWebhook(bot_id: string, jwt: string): Promise<void> {
   const response = await fetch(`${apiServerBaseUrl}/bots/retry_webhook?bot_uuid=${bot_id}`, {
     method: "POST",
-    credentials: "include"
+    headers: {
+      Cookie: `jwt=${jwt}`
+    }
   })
 
   if (!response.ok) {
@@ -36,10 +40,12 @@ export async function retryWebhook(bot_id: string): Promise<void> {
   }
 }
 
-export async function reportError(bot_id: number): Promise<void> {
+export async function reportError(bot_id: number, jwt: string): Promise<void> {
   const response = await fetch(`${apiServerBaseUrl}/report_error/${bot_id}`, {
     method: "POST",
-    credentials: "include"
+    headers: {
+      Cookie: `jwt=${jwt}`
+    }
   })
 
   if (!response.ok) {
@@ -47,9 +53,11 @@ export async function reportError(bot_id: number): Promise<void> {
   }
 }
 
-export async function fetchScreenshots(bot_id: string): Promise<Screenshot[]> {
+export async function fetchScreenshots(bot_id: string, jwt: string): Promise<Screenshot[]> {
   const response = await fetch(`${apiServerBaseUrl}/bots/${bot_id}/screenshots`, {
-    credentials: "include"
+    headers: {
+      Cookie: `jwt=${jwt}`
+    }
   })
 
   if (!response.ok) {
