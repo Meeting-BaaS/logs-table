@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query"
-import { fetchLogs } from "@/lib/mock-api"
+import { fetchLogs } from "@/lib/api"
 import type { FormattedBotData } from "@/components/logs-table/types"
 import { formatBotStatus } from "@/lib/format-logs"
 import { getPlatformFromUrl } from "@/lib/format-logs"

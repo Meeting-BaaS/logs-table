@@ -5,7 +5,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { RotateCcw, ExternalLink, AlertCircle, Loader2, Image } from "lucide-react"
 import type { FormattedBotData } from "@/components/logs-table/types"
 import { RECORDING_VIEWER_URL } from "@/lib/external-urls"
-import { retryWebhook, reportError, fetchScreenshots } from "@/lib/mock-api"
+import { retryWebhook, reportError, fetchScreenshots } from "@/lib/api"
 import { toast } from "sonner"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
