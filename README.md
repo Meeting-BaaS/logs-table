@@ -1,16 +1,38 @@
 <p align="center"><a href="https://discord.com/invite/dsvFgDTr6c"><img height="60px" src="https://user-images.githubusercontent.com/31022056/158916278-4504b838-7ecb-4ab9-a900-7dc002aade78.png" alt="Join our Discord!"></a></p>
 
-# Meeting BaaS Settings
+# Logs Table
 
-A simple logs interface built with Next.js to display user logs.
+A modern, feature-rich logs interface built with Next.js for displaying and managing user logs with advanced filtering, sorting, and export capabilities.
+
+## Features
+
+- 📊 Interactive data table with sorting and filtering
+- 🔍 Advanced filtering capabilities:
+  - Date range filtering
+  - Checkbox-based filtering
+  - Additional custom filters
+- 📋 Column visibility management
+- 📥 CSV export functionality
+- 📋 JSON preview for detailed log inspection
+- 📱 Responsive design
+- 🌓 Dark/Light mode support
+- 🔄 Real-time data updates
+- 📋 Copy functionality with tooltips
+- 🏷️ Status badges for log states
 
 ## Tech Stack
 
 - **Framework**: Next.js 15.3.2
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS 4
-- **UI Components**: Shadcn
-- **Authentication**: Centralised Auth app integration
+- **UI Components**: 
+  - Radix UI primitives
+  - Shadcn components
+  - Custom components
+- **Data Management**: 
+  - TanStack Table (React Table v8)
+  - TanStack Query
+- **Date Handling**: Day.js
 - **Package Manager**: pnpm
 
 ## Getting Started
@@ -18,42 +40,58 @@ A simple logs interface built with Next.js to display user logs.
 ### Prerequisites
 
 - Node.js (LTS version)
-- pnpm 10.6.5 or later
+- pnpm 10.8.1 or later
 
 ### Installation
 
 1. Clone the repository:
-
    ```bash
-   git clone https://github.com/Meeting-Baas/settings
-   cd meeting-baas-auth
+   git clone https://github.com/Meeting-Baas/logs-table
+   cd logs-table
    ```
 
 2. Install dependencies:
-
    ```bash
    pnpm install
    ```
 
 3. Set up environment variables:
-
    ```bash
    cp .env.example .env
    ```
-
    Fill in the required environment variables in `.env`. Details about the expected values for each key is documented in .env.example
 
 ### Development
 
 Start the development server:
-
 ```bash
 pnpm dev
 ```
 
 The application will be available at `http://localhost:3000`
 
-### Authentication Integration
+## Project Structure
 
-This project is pre-configured to integrate with the authentication app. Ensure the authentication service is running and properly configured. Update the `.env` file with the required environment variables for authentication.
+```
+├── app/               # Next.js app directory
+├── components/        # React components
+│   ├── logs-table/    # Main logs table components
+│   ├── ui/            # Reusable UI components
+│   └── ...
+├── contexts/          # React contexts
+├── lib/               # Utility functions and helpers
+└── public/            # Static assets
+```
+
+## Contributing
+
+1. Fork the repository
+2. Create your feature branch (`git checkout -b feature/amazing-feature`)
+3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+4. Push to the branch (`git push origin feature/amazing-feature`)
+5. Open a Pull Request
+
+## License
+
+This project is licensed under the MIT License.
 
