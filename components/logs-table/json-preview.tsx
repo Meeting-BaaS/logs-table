@@ -11,7 +11,14 @@ export function JsonPreview({ data }: JsonPreviewProps) {
     return <span className="text-muted-foreground text-xs">N/A</span>
   }
 
-  const parsedData = JSON.parse(data)
+  let parsedData = null
+
+  try {
+    parsedData = JSON.parse(data)
+  } catch (error) {
+    console.error("JSON parse error", error)
+    parsedData = data
+  }
 
   // Get the first entry for preview
   const [firstKey, firstValue] = Object.entries(parsedData)[0] ?? []
