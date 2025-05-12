@@ -4,7 +4,6 @@ import type { FormattedBotData } from "@/components/logs-table/types"
 import { formatBotStatus } from "@/lib/format-logs"
 import { getPlatformFromUrl } from "@/lib/format-logs"
 import dayjs from "dayjs"
-import { useJwt } from "@/hooks/use-jwt"
 
 export const PAGE_SIZE = 10
 
@@ -15,7 +14,6 @@ interface UseLogsParams {
 }
 
 export function useLogs({ offset, startDate, endDate }: UseLogsParams) {
-  const jwt = useJwt()
   const { data, isLoading, isError, error, isRefetching } = useQuery({
     queryKey: ["logs", { offset, limit: PAGE_SIZE, startDate, endDate }],
     queryFn: () =>
@@ -23,8 +21,7 @@ export function useLogs({ offset, startDate, endDate }: UseLogsParams) {
         offset,
         limit: PAGE_SIZE,
         start_date: startDate ? `${dayjs(startDate).format("YYYY-MM-DD")}T00:00:00` : "",
-        end_date: endDate ? `${dayjs(endDate).format("YYYY-MM-DD")}T23:59:59` : "",
-        jwt
+        end_date: endDate ? `${dayjs(endDate).format("YYYY-MM-DD")}T23:59:59` : ""
       }),
     select: (data) => {
       const formattedBots: FormattedBotData[] = data.bots.map((bot) => ({

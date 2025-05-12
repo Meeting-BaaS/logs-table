@@ -15,7 +15,7 @@ export type Bot = {
 
 export type BotParams = {
   webhook_url: string | null
-  extra: string | null
+  extra: object | null
   bot_name: string | null
 }
 
@@ -35,7 +35,6 @@ export type BotQueryParams = {
   limit: number
   start_date: string
   end_date: string
-  jwt: string
 }
 
 export type BotStatus = {

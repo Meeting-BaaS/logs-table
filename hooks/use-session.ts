@@ -7,7 +7,7 @@ import { useEffect, useState } from "react"
 import { getSignInUrl } from "@/lib/auth/auth-app-url"
 
 export function useSession(initialSession?: Session) {
-  const { data: session, error } = useQuery({
+  const { data: session, error } = useQuery<Session | null>({
     queryKey: ["session"],
     queryFn: () => getAuthSession(),
     initialData: initialSession,

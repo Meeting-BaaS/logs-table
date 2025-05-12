@@ -1,11 +1,5 @@
 import type { BotPaginated, BotQueryParams, Screenshot } from "@/components/logs-table/types"
 
-const apiServerBaseUrl = process.env.NEXT_PUBLIC_API_SERVER_BASEURL
-
-if (!apiServerBaseUrl) {
-  throw new Error("NEXT_PUBLIC_API_SERVER_BASEURL is not defined")
-}
-
 export async function fetchLogs(params: BotQueryParams): Promise<BotPaginated> {
   const queryParams = new URLSearchParams({
     offset: params.offset.toString(),
@@ -14,12 +8,7 @@ export async function fetchLogs(params: BotQueryParams): Promise<BotPaginated> {
     end_date: params.end_date
   })
 
-  const response = await fetch(`${apiServerBaseUrl}/bots/all?${queryParams.toString()}`, {
-    credentials: "include",
-    headers: {
-      Cookie: `jwt=${params.jwt}`
-    }
-  })
+  const response = await fetch(`/api/logs?${queryParams.toString()}`)
 
   if (!response.ok) {
     throw new Error(`Failed to fetch logs: ${response.status} ${response.statusText}`)
@@ -28,13 +17,9 @@ export async function fetchLogs(params: BotQueryParams): Promise<BotPaginated> {
   return response.json()
 }
 
-export async function retryWebhook(bot_uuid: string, jwt: string): Promise<void> {
-  const response = await fetch(`${apiServerBaseUrl}/bots/retry_webhook?bot_uuid=${bot_uuid}`, {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      Cookie: `jwt=${jwt}`
-    }
+export async function retryWebhook(bot_uuid: string): Promise<void> {
+  const response = await fetch(`/api/retry-webhook?bot_uuid=${bot_uuid}`, {
+    method: "POST"
   })
 
   if (!response.ok) {
@@ -42,13 +27,9 @@ export async function retryWebhook(bot_uuid: string, jwt: string): Promise<void>
   }
 }
 
-export async function reportError(bot_uuid: number, jwt: string): Promise<void> {
-  const response = await fetch(`${apiServerBaseUrl}/report_error/${bot_uuid}`, {
-    method: "POST",
-    credentials: "include",
-    headers: {
-      Cookie: `jwt=${jwt}`
-    }
+export async function reportError(bot_uuid: number): Promise<void> {
+  const response = await fetch(`/api/report-error?bot_uuid=${bot_uuid}`, {
+    method: "POST"
   })
 
   if (!response.ok) {
@@ -56,13 +37,8 @@ export async function reportError(bot_uuid: number, jwt: string): Promise<void> 
   }
 }
 
-export async function fetchScreenshots(bot_uuid: string, jwt: string): Promise<Screenshot[]> {
-  const response = await fetch(`${apiServerBaseUrl}/bots/${bot_uuid}/screenshots`, {
-    credentials: "include",
-    headers: {
-      Cookie: `jwt=${jwt}`
-    }
-  })
+export async function fetchScreenshots(bot_uuid: string): Promise<Screenshot[]> {
+  const response = await fetch(`/api/screenshots?bot_uuid=${bot_uuid}`)
 
   if (!response.ok) {
     throw new Error(`Failed to fetch screenshots: ${response.status} ${response.statusText}`)
