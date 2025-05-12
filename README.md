@@ -72,7 +72,7 @@ The application will be available at `http://localhost:3000`
 
 ## Project Structure
 
-```
+```text
 ├── app/               # Next.js app directory
 ├── components/        # React components
 │   ├── logs-table/    # Main logs table components

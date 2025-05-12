@@ -161,7 +161,7 @@ export function DataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No logs found.
+                  No logs found. Please try a different date range or filter.
                 </TableCell>
               </TableRow>
             )}

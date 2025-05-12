@@ -24,7 +24,7 @@ export const UserAvatar = ({
   menuOptions
 }: {
   user: User
-  menuOptions: MenuOption[]
+  menuOptions: readonly MenuOption[]
 }) => {
   const [loading, setLoading] = useState(false)
 

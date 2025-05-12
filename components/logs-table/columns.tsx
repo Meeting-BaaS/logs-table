@@ -23,7 +23,11 @@ export const columns: ColumnDef<FormattedBotData>[] = [
     meta: { displayName: "Created At" },
     header: ({ column }) => <SortableHeader column={column} title="Created At" isNumber />,
     cell: ({ row }) => (
-      <CopyTooltip text={row.original.bot.created_at} copyText="Copy timestamp">
+      <CopyTooltip
+        text={row.original.bot.created_at}
+        copyText="Copy timestamp"
+        className="first-letter:capitalize"
+      >
         <span>{formatCreatedAt(row.original.bot.created_at)}</span>
       </CopyTooltip>
     ),

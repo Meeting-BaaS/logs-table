@@ -32,8 +32,13 @@ interface ExportCsvDialogProps<TData> {
 // Escape quotes in JSON string to avoid CSV parsing issues
 function escapeExtraForCsv(extra: object | null): string {
   if (!extra) return ""
-  const jsonString = JSON.stringify(extra)
-  return jsonString.replace(/"/g, '""')
+  try {
+    const jsonString = JSON.stringify(extra)
+    return jsonString.replace(/"/g, '""')
+  } catch (error) {
+    console.error("Failed to stringify extra data for CSV export", error)
+    return "[Complex object - unable to export]"
+  }
 }
 
 export function ExportCsvDialog<TData>({

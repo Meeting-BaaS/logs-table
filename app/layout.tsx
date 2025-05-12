@@ -8,6 +8,7 @@ import { redirect } from "next/navigation"
 import LayoutRoot from "@/app/layout-root"
 import Providers from "@/components/providers"
 import { getAuthAppUrl } from "@/lib/auth/auth-app-url"
+import { menuOptions } from "@/components/header/menu-options"
 
 const sofiaSans = Sofia_Sans({
   subsets: ["latin"],
@@ -49,7 +50,9 @@ export default async function RootLayout({
     <html lang="en" suppressHydrationWarning>
       <body className={`${sofiaSans.className} flex min-h-screen flex-col antialiased`}>
         <Providers jwt={jwt}>
-          <LayoutRoot session={session}>{children}</LayoutRoot>
+          <LayoutRoot session={session} avatarMenuOptions={menuOptions}>
+            {children}
+          </LayoutRoot>
           <Toaster />
         </Providers>
       </body>

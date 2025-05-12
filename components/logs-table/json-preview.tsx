@@ -7,7 +7,7 @@ interface JsonPreviewProps {
 }
 
 export function JsonPreview({ data }: JsonPreviewProps) {
-  if (!data) {
+  if (!data || Object.keys(data).length === 0) {
     return <span className="text-muted-foreground text-xs">N/A</span>
   }
 

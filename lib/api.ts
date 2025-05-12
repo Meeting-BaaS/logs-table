@@ -27,9 +27,10 @@ export async function retryWebhook(bot_uuid: string): Promise<void> {
   }
 }
 
-export async function reportError(bot_uuid: number): Promise<void> {
-  const response = await fetch(`/api/report-error?bot_uuid=${bot_uuid}`, {
-    method: "POST"
+export async function reportError(bot_uuid: string, note?: string): Promise<void> {
+  const response = await fetch("/api/report-error", {
+    method: "POST",
+    body: JSON.stringify({ note, bot_uuid })
   })
 
   if (!response.ok) {

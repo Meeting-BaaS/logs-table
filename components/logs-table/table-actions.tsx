@@ -5,11 +5,12 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { RotateCcw, ExternalLink, AlertCircle, Loader2, Image } from "lucide-react"
 import type { FormattedBotData } from "@/components/logs-table/types"
 import { RECORDING_VIEWER_URL } from "@/lib/external-urls"
-import { retryWebhook, reportError, fetchScreenshots } from "@/lib/api"
+import { retryWebhook, fetchScreenshots } from "@/lib/api"
 import { toast } from "sonner"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { useScreenshotViewer } from "@/hooks/use-screenshot-viewer"
+import { ReportErrorDialog } from "./report-error-dialog"
 
 const iconClasses = "size-4"
 
@@ -49,8 +50,8 @@ interface TableActionsProps {
 
 export function TableActions({ row }: TableActionsProps) {
   const [resendLoading, setResendLoading] = useState(false)
-  const [reportLoading, setReportLoading] = useState(false)
   const [screenshotsLoading, setScreenshotsLoading] = useState(false)
+  const [isReportDialogOpen, setIsReportDialogOpen] = useState(false)
   const { openViewer } = useScreenshotViewer()
 
   const handleViewRecording = () => {
@@ -79,20 +80,8 @@ export function TableActions({ row }: TableActionsProps) {
     }
   }
 
-  const handleReportError = async () => {
-    if (reportLoading) {
-      return
-    }
-
-    try {
-      setReportLoading(true)
-      await reportError(row.bot.id)
-      toast.success("Error reported successfully")
-    } catch {
-      toast.error("Failed to report error")
-    } finally {
-      setReportLoading(false)
-    }
+  const handleReportError = () => {
+    setIsReportDialogOpen(true)
   }
 
   const handleViewScreenshots = async () => {
@@ -117,30 +106,37 @@ export function TableActions({ row }: TableActionsProps) {
   }
 
   return (
-    <div className="flex w-full justify-between gap-2">
-      <IconButton
-        icon={<RotateCcw className={iconClasses} />}
-        tooltip="Resend Final Webhook"
-        onClick={handleRetry}
-        loading={resendLoading}
+    <>
+      <div className="flex w-full justify-between gap-2">
+        <IconButton
+          icon={<RotateCcw className={iconClasses} />}
+          tooltip="Resend Final Webhook"
+          onClick={handleRetry}
+          loading={resendLoading}
+        />
+        <IconButton
+          icon={<ExternalLink className={iconClasses} />}
+          tooltip="View recording"
+          onClick={handleViewRecording}
+        />
+        <IconButton
+          icon={<AlertCircle className={iconClasses} />}
+          tooltip="Report error"
+          onClick={handleReportError}
+        />
+        <IconButton
+          icon={<Image className={iconClasses} />}
+          tooltip="View screenshots"
+          onClick={handleViewScreenshots}
+          loading={screenshotsLoading}
+        />
+      </div>
+
+      <ReportErrorDialog
+        bot_uuid={row.bot.uuid}
+        open={isReportDialogOpen}
+        onOpenChange={setIsReportDialogOpen}
       />
-      <IconButton
-        icon={<ExternalLink className={iconClasses} />}
-        tooltip="View recording"
-        onClick={handleViewRecording}
-      />
-      <IconButton
-        icon={<AlertCircle className={iconClasses} />}
-        tooltip="Report error"
-        onClick={handleReportError}
-        loading={reportLoading}
-      />
-      <IconButton
-        icon={<Image className={iconClasses} />}
-        tooltip="View screenshots"
-        onClick={handleViewScreenshots}
-        loading={screenshotsLoading}
-      />
-    </div>
+    </>
   )
 }
