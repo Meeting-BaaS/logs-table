@@ -14,7 +14,7 @@ export async function fetchLogs(params: BotQueryParams): Promise<BotPaginated> {
     end_date: params.end_date
   })
 
-  const response = await fetch(`${apiServerBaseUrl}/bots?${queryParams.toString()}`, {
+  const response = await fetch(`${apiServerBaseUrl}/bots/all?${queryParams.toString()}`, {
     headers: {
       Cookie: `jwt=${params.jwt}`
     }
@@ -27,8 +27,8 @@ export async function fetchLogs(params: BotQueryParams): Promise<BotPaginated> {
   return response.json()
 }
 
-export async function retryWebhook(bot_id: string, jwt: string): Promise<void> {
-  const response = await fetch(`${apiServerBaseUrl}/bots/retry_webhook?bot_uuid=${bot_id}`, {
+export async function retryWebhook(bot_uuid: string, jwt: string): Promise<void> {
+  const response = await fetch(`${apiServerBaseUrl}/bots/retry_webhook?bot_uuid=${bot_uuid}`, {
     method: "POST",
     headers: {
       Cookie: `jwt=${jwt}`
@@ -40,8 +40,8 @@ export async function retryWebhook(bot_id: string, jwt: string): Promise<void> {
   }
 }
 
-export async function reportError(bot_id: number, jwt: string): Promise<void> {
-  const response = await fetch(`${apiServerBaseUrl}/report_error/${bot_id}`, {
+export async function reportError(bot_uuid: number, jwt: string): Promise<void> {
+  const response = await fetch(`${apiServerBaseUrl}/report_error/${bot_uuid}`, {
     method: "POST",
     headers: {
       Cookie: `jwt=${jwt}`
@@ -53,8 +53,8 @@ export async function reportError(bot_id: number, jwt: string): Promise<void> {
   }
 }
 
-export async function fetchScreenshots(bot_id: string, jwt: string): Promise<Screenshot[]> {
-  const response = await fetch(`${apiServerBaseUrl}/bots/${bot_id}/screenshots`, {
+export async function fetchScreenshots(bot_uuid: string, jwt: string): Promise<Screenshot[]> {
+  const response = await fetch(`${apiServerBaseUrl}/bots/${bot_uuid}/screenshots`, {
     headers: {
       Cookie: `jwt=${jwt}`
     }
