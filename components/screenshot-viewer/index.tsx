@@ -15,7 +15,7 @@ export function ScreenshotViewer() {
     <Dialog open={isOpen} onOpenChange={closeViewer}>
       <DialogTitle className="sr-only">Screenshot Viewer</DialogTitle>
       <DialogContent
-        className="!max-w-none h-screen w-screen border-none bg-background p-0 dark:bg-black"
+        className="!max-w-none h-svh w-svw border-none bg-background p-0 dark:bg-black"
         aria-describedby="screenshot-viewer"
       >
         <div className="h-full w-full">

@@ -3,23 +3,17 @@
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { X } from "lucide-react"
-import type { Table } from "@tanstack/react-table"
 
-interface DataTableFilterProps<TData> {
-  table: Table<TData>
+interface DataTableFilterProps {
   globalFilter: string
   onGlobalFilterChange: (value: string) => void
 }
 
-export function DataTableFilter<TData>({
-  table,
-  globalFilter,
-  onGlobalFilterChange
-}: DataTableFilterProps<TData>) {
+export function DataTableFilter({ globalFilter, onGlobalFilterChange }: DataTableFilterProps) {
   return (
     <div className="relative w-full">
       <Input
-        placeholder="Search"
+        placeholder="Search within this page"
         value={globalFilter ?? ""}
         onChange={(event) => onGlobalFilterChange(event.target.value)}
         className="pr-8"
@@ -28,13 +22,13 @@ export function DataTableFilter<TData>({
       />
       <Button
         variant="ghost"
-        size="sm"
-        className="absolute top-0 right-0 h-full px-2 py-0.5"
+        size="icon"
+        className="absolute top-0 right-0 py-0.5"
         onClick={() => onGlobalFilterChange("")}
         disabled={!globalFilter}
+        aria-label="clear search"
       >
-        <X className="size-5" />
-        <span className="sr-only">Clear search</span>
+        <X />
       </Button>
     </div>
   )

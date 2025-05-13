@@ -1,12 +1,22 @@
-import type { BotPaginated, BotQueryParams, Screenshot } from "@/components/logs-table/types"
+import type { BotPaginated, Screenshot } from "@/components/logs-table/types"
+import type { BotQueryParams, BotSearchServerFormData } from "@/lib/schemas/bot-search"
 
-export async function fetchLogs(params: BotQueryParams): Promise<BotPaginated> {
-  const queryParams = new URLSearchParams({
-    offset: params.offset.toString(),
-    limit: params.limit.toString(),
-    start_date: params.start_date,
-    end_date: params.end_date
-  })
+export async function fetchLogs(
+  params: BotQueryParams | BotSearchServerFormData
+): Promise<BotPaginated> {
+  const queryParams =
+    "bot_uuid" in params
+      ? new URLSearchParams({
+          bot_uuid: params.bot_uuid ?? "",
+          offset: params.offset.toString(),
+          limit: params.limit.toString()
+        })
+      : new URLSearchParams({
+          offset: params.offset.toString(),
+          limit: params.limit.toString(),
+          start_date: params.start_date,
+          end_date: params.end_date
+        })
 
   const response = await fetch(`/api/logs?${queryParams.toString()}`)
 

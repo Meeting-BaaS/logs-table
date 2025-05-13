@@ -1,33 +1,44 @@
 import type { BotPaginated } from "@/components/logs-table/types"
 import { getApiBaseUrl } from "@/lib/external-urls"
+import { botQueryParamsSchema } from "@/lib/schemas/bot-search"
+import { botSearchServerSchema } from "@/lib/schemas/bot-search"
 import { type NextRequest, NextResponse } from "next/server"
 
 const apiServerBaseUrl = getApiBaseUrl()
 
 export async function GET(request: NextRequest) {
   const searchParams = request.nextUrl.searchParams
-  const offset = searchParams.get("offset")
-  const limit = searchParams.get("limit")
+  const offset = Number(searchParams.get("offset"))
+  const limit = Number(searchParams.get("limit"))
   const start_date = searchParams.get("start_date")
   const end_date = searchParams.get("end_date")
+  const bot_uuid = searchParams.get("bot_uuid")
   const jwt = request.cookies.get("jwt")?.value
 
   if (!jwt) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
   }
 
-  if (!offset || !limit || !start_date || !end_date) {
-    return NextResponse.json({ error: "Missing required parameters" }, { status: 400 })
-  }
-
-  const queryParams = new URLSearchParams({
-    offset: offset,
-    limit: limit,
-    start_date: start_date,
-    end_date: end_date
-  })
-
   try {
+    const requestObject = {
+      offset,
+      limit,
+      start_date,
+      end_date,
+      bot_uuid
+    }
+
+    // Validate the request object based on whether we are searching by bot UUID or not
+    const validatedRequestObject = bot_uuid
+      ? botSearchServerSchema.parse(requestObject)
+      : botQueryParamsSchema.parse(requestObject)
+
+    const queryParams = new URLSearchParams({
+      ...validatedRequestObject,
+      offset: validatedRequestObject.offset.toString(),
+      limit: validatedRequestObject.limit.toString()
+    })
+
     const response = await fetch(`${apiServerBaseUrl}/bots/all?${queryParams.toString()}`, {
       headers: {
         Cookie: `jwt=${jwt}`

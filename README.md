@@ -25,7 +25,7 @@ A modern, feature-rich logs interface built with Next.js for displaying and mana
 - **Framework**: Next.js 15.3.2
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS 4
-- **UI Components**: 
+- **UI Components**:
   - Radix UI primitives
   - Shadcn components
   - Custom components
@@ -73,21 +73,29 @@ The application will be available at `http://localhost:3000`
 ## Project Structure
 
 ```text
-├── app/               # Next.js app directory
-├── components/        # React components
-│   ├── logs-table/    # Main logs table components
-│   ├── ui/            # Reusable UI components
+├── app/                    # Next.js app directory
+│   ├── api/                # Backend API routes  
+│   │   ├── logs/           # Logs retrieval endpoints  
+│   │   ├── report-error/   # Error reporting endpoints  
+│   │   ├── retry-webhook/  # Webhook retry functionality  
+│   │   └── screenshot/     # Screenshot retrieval endpoints 
+├── components/             # React components
+│   ├── logs-table/         # Main logs table components
+│   ├── ui/                 # Reusable UI components
 │   └── ...
-├── contexts/          # React contexts
-├── lib/               # Utility functions and helpers
-└── public/            # Static assets
+├── contexts/               # React contexts
+├── lib/                    # Utility functions and helpers
+│   ├── api.ts              # API client functions
+│   ├── utils.ts            # Utility functions
+│   └── ...
+└── public/                 # Static assets
 ```
 
 ## Contributing
 
 1. Fork the repository
 2. Create your feature branch (`git checkout -b feature/amazing-feature`)
-3. Commit your changes (`git commit -m 'Add some amazing feature'`)
+3. Commit your changes (`git commit -m 'Add error reporting dialog'`)
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 

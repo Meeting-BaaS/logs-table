@@ -15,7 +15,7 @@ export type Bot = {
 
 export type BotParams = {
   webhook_url: string | null
-  extra: object | null
+  extra: Record<string, unknown> | null
   bot_name: string | null
 }
 
@@ -28,13 +28,6 @@ export type BotData = {
 export type BotPaginated = {
   has_more: boolean
   bots: BotData[]
-}
-
-export type BotQueryParams = {
-  offset: number
-  limit: number
-  start_date: string
-  end_date: string
 }
 
 export type BotStatus = {

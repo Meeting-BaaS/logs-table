@@ -22,7 +22,7 @@ export function DateRangeFilter({ value, onChange }: DateRangeFilterProps) {
   }
 
   return (
-    <div className="relative w-full md:max-w-xs">
+    <div className="relative w-full md:max-w-sm">
       <Datepicker
         value={value}
         displayFormat="DD MMM YYYY"

@@ -32,6 +32,7 @@ import type { DateValueType } from "react-tailwindcss-datepicker"
 import { DateRangeFilter } from "./date-range-filter"
 import { ExportCsvDialog } from "./export-csv-dialog"
 import { PageSizeSelector } from "@/components/logs-table/page-size-selector"
+import Link from "next/link"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -97,7 +98,7 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col">
       <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
         <div className="flex w-full items-center gap-2 md:w-1/2">
           <DateRangeFilter value={dateRange} onChange={setDateRange} />
@@ -106,14 +107,15 @@ export function DataTable<TData, TValue>({
           )}
         </div>
         <div className="flex w-full items-center gap-2 md:w-1/2 lg:w-1/3 xl:w-1/4">
-          <DataTableFilter
-            table={table}
-            globalFilter={globalFilter}
-            onGlobalFilterChange={setGlobalFilter}
-          />
+          <DataTableFilter globalFilter={globalFilter} onGlobalFilterChange={setGlobalFilter} />
           <ExportCsvDialog table={table} dateRange={dateRange} pageIndex={pageIndex} />
           <ColumnVisibilityDropdown table={table} />
         </div>
+      </div>
+      <div className="mt-2 mb-4 flex">
+        <Button variant="link" asChild className="h-auto p-0 text-muted-foreground text-sm">
+          <Link href="/search">Can't find what you're looking for? Search by bot UUID</Link>
+        </Button>
       </div>
       <AdditionalFilters table={table} />
       <div>
@@ -171,7 +173,7 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="mb-4 flex w-full flex-col items-center justify-between gap-2 md:w-auto md:flex-row">
+      <div className="my-4 flex w-full flex-col items-center justify-between gap-2 md:w-auto md:flex-row">
         <PageSizeSelector value={pageSize} onChange={onPageSizeChange} />
         <div className="flex w-full items-center gap-2 md:w-auto">
           <Button

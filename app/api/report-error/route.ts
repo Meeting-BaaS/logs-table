@@ -17,10 +17,6 @@ export async function POST(request: NextRequest) {
   try {
     const { bot_uuid, note } = reportErrorServerSchema.parse(body)
 
-    if (!bot_uuid) {
-      return NextResponse.json({ error: "Missing bot_uuid" }, { status: 400 })
-    }
-
     // 1. Create a chat with the error details
     const chatId = generateUUID()
     const messageId = generateUUID()

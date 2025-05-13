@@ -3,7 +3,7 @@
 import { CopyHoverCard } from "@/components/logs-table/copy-hover-card"
 
 interface JsonPreviewProps {
-  data: object | null
+  data: Record<string, unknown> | null
 }
 
 export function JsonPreview({ data }: JsonPreviewProps) {
