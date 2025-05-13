@@ -5,6 +5,7 @@ import { formatCreatedAt, formatDuration } from "@/components/logs-table/column-
 import { StatusBadge } from "@/components/logs-table/status-badge"
 import { JsonPreview } from "@/components/logs-table/json-preview"
 import { cn } from "@/lib/utils"
+import { useMemo } from "react"
 
 interface ColumnMeta {
   displayName: string
@@ -32,55 +33,59 @@ export const SearchResult = ({
     )
   }
 
-  const transformedData: TransformedData = {
-    created_at: {
-      value: formatCreatedAt(data.bot.created_at),
-      className: "first-letter:capitalize"
-    },
-    duration: {
-      value: formatDuration(data.duration)
-    },
-    uuid: {
-      value: data.bot.uuid
-    },
-    platform: {
-      value: data.platform,
-      className: "capitalize"
-    },
-    bot_name: {
-      value: data.params.bot_name
-    },
-    reserved: {
-      value: data.bot.reserved ? "Yes" : "No"
-    },
-    extra: {
-      value: <JsonPreview data={data.params.extra} />
-    },
-    status: {
-      value: (
-        <StatusBadge
-          text={data.formattedStatus.text}
-          type={data.formattedStatus.type}
-          details={data.formattedStatus.details}
-        />
-      )
-    },
-    actions: {
-      value: <TableActions row={data} className="justify-start" />
-    }
-  }
+  const transformedData = useMemo<TransformedData>(
+    () => ({
+      created_at: {
+        value: formatCreatedAt(data.bot.created_at),
+        className: "first-letter:capitalize"
+      },
+      duration: {
+        value: formatDuration(data.duration)
+      },
+      uuid: {
+        value: data.bot.uuid
+      },
+      platform: {
+        value: data.platform,
+        className: "capitalize"
+      },
+      bot_name: {
+        value: data.params.bot_name
+      },
+      reserved: {
+        value: data.bot.reserved ? "Yes" : "No"
+      },
+      extra: {
+        value: <JsonPreview data={data.params.extra} />
+      },
+      status: {
+        value: (
+          <StatusBadge
+            text={data.formattedStatus.text}
+            type={data.formattedStatus.type}
+            details={data.formattedStatus.details}
+          />
+        )
+      },
+      actions: {
+        value: <TableActions row={data} className="justify-start" />
+      }
+    }),
+    [data]
+  )
 
   return (
     <div className="mt-6 grid grid-cols-1 gap-4 text-sm md:grid-cols-2">
       {columns.map((column) => {
-        if (!column.id) return null
+        if (!column.id || !(column.id in transformedData)) return null
         return (
           <div key={column.id} className="flex flex-col">
-            <h3 className="font-medium text-muted-foreground">
+            <h3 className="font-medium text-muted-foreground" id={`label-${column.id}`}>
               {(column.meta as ColumnMeta)?.displayName ?? column.id}
             </h3>
             <div
               className={cn(transformedData[column.id as keyof typeof transformedData].className)}
+              aria-labelledby={`label-${column.id}`}
             >
               {transformedData[column.id as keyof typeof transformedData].value}
             </div>

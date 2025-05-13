@@ -29,7 +29,7 @@ A modern, feature-rich logs interface built with Next.js for displaying and mana
   - Radix UI primitives
   - Shadcn components
   - Custom components
-- **Data Management**: 
+- **Data Management**:
   - TanStack Table (React Table v8)
   - TanStack Query
 - **Date Handling**: Day.js
@@ -73,6 +73,22 @@ pnpm dev
 ```
 
 The application will be available at `http://localhost:3000`
+
+ ### Building for Production  
+  
+To build the application for production:  
+  
+```bash  
+pnpm build  
+```  
+  
+You can then start the production server:  
+  
+```bash  
+pnpm start  
+```  
+  
+For deployment to hosting platforms like Vercel or Netlify, refer to their respective documentation for Next.js deployments.  
 
 ## Project Structure
 

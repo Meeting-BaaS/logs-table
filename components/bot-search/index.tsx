@@ -82,7 +82,7 @@ export function BotSearch() {
     <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogTrigger asChild>
         <Button variant="link" className="h-auto p-0 text-muted-foreground text-sm">
-          Can&apos;t find the bot you&apos;re looking for? Search by it&apos;s UUID
+          Can&apos;t find the bot you&apos;re looking for? Search by its UUID
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-3xl">
@@ -110,11 +110,7 @@ export function BotSearch() {
                 render={({ field }) => (
                   <FormItem className="relative grow">
                     <FormControl>
-                      <Input
-                        placeholder="Enter bot UUID"
-                        {...field}
-                        className="rounded-r-none pr-8"
-                      />
+                      <Input placeholder="Search" {...field} className="rounded-r-none pr-8" />
                     </FormControl>
                     <Button
                       type="button"
