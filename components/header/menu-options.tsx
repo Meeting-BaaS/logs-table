@@ -12,7 +12,7 @@ export type MenuOption = {
   separator?: boolean
 }
 
-export const menuOptions: MenuOption[] = [
+export const menuOptions: readonly MenuOption[] = [
   {
     title: "Settings",
     href: SETTINGS_URL

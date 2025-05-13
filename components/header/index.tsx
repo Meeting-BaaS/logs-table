@@ -4,14 +4,10 @@ import { ThemeToggle } from "@/components/header/theme-toggle"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { GitHubLogo } from "@/components/icons/github"
-import type { MenuOption } from "@/components/header/menu-options"
 import type { User } from "@/lib/auth/types"
 import { GITHUB_REPO_URL } from "@/lib/external-urls"
 
-export default function Header({
-  user,
-  avatarMenuOptions
-}: { user: User; avatarMenuOptions: readonly MenuOption[] }) {
+export default function Header({ user }: { user: User }) {
   return (
     <header className="sticky top-0 z-40 mx-auto box-content w-full max-w-container border-b bg-background/15 backdrop-blur-md lg:top-2 lg:mt-2 lg:w-[calc(100%-4rem)] lg:rounded-2xl lg:border">
       <nav className="flex h-12 w-full flex-row items-center justify-between px-4">
@@ -41,7 +37,7 @@ export default function Header({
             </Button>
             <ThemeToggle className="hidden md:flex" />
           </div>
-          <UserAvatar user={user} menuOptions={avatarMenuOptions} />
+          <UserAvatar user={user} />
         </div>
       </nav>
     </header>

@@ -1,11 +1,7 @@
 import { z } from "zod"
 
 export const botSearchSchema = z.object({
-  bot_uuid: z
-    .string()
-    .trim()
-    .min(1, "Please enter a bot UUID")
-    .uuid("Please enter a valid bot UUID")
+  bot_id: z.string().trim().min(1, "Please enter a bot UUID").uuid("Please enter a valid UUID")
 })
 
 const offsetSchema = z.number().min(0).default(0)

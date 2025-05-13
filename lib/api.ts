@@ -5,9 +5,9 @@ export async function fetchLogs(
   params: BotQueryParams | BotSearchServerFormData
 ): Promise<BotPaginated> {
   const queryParams =
-    "bot_uuid" in params
+    "bot_id" in params
       ? new URLSearchParams({
-          bot_uuid: params.bot_uuid ?? "",
+          bot_id: params.bot_id ?? "",
           offset: params.offset.toString(),
           limit: params.limit.toString()
         })

@@ -12,7 +12,7 @@ export async function GET(request: NextRequest) {
   const limit = Number(searchParams.get("limit"))
   const start_date = searchParams.get("start_date")
   const end_date = searchParams.get("end_date")
-  const bot_uuid = searchParams.get("bot_uuid")
+  const bot_id = searchParams.get("bot_id")
   const jwt = request.cookies.get("jwt")?.value
 
   if (!jwt) {
@@ -25,11 +25,11 @@ export async function GET(request: NextRequest) {
       limit,
       start_date,
       end_date,
-      bot_uuid
+      bot_id
     }
 
     // Validate the request object based on whether we are searching by bot UUID or not
-    const validatedRequestObject = bot_uuid
+    const validatedRequestObject = bot_id
       ? botSearchServerSchema.parse(requestObject)
       : botQueryParamsSchema.parse(requestObject)
 

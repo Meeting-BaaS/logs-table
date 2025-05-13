@@ -46,9 +46,10 @@ function IconButton({ icon, tooltip, onClick, disabled, loading }: IconButtonPro
 
 interface TableActionsProps {
   row: FormattedBotData
+  className?: string
 }
 
-export function TableActions({ row }: TableActionsProps) {
+export function TableActions({ row, className }: TableActionsProps) {
   const [resendLoading, setResendLoading] = useState(false)
   const [screenshotsLoading, setScreenshotsLoading] = useState(false)
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false)
@@ -107,7 +108,7 @@ export function TableActions({ row }: TableActionsProps) {
 
   return (
     <>
-      <div className="flex w-full justify-between gap-2">
+      <div className={cn("flex w-full justify-between gap-2", className)}>
         <IconButton
           icon={<RotateCcw className={iconClasses} />}
           tooltip="Resend Final Webhook"

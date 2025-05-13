@@ -45,20 +45,24 @@ A modern, feature-rich logs interface built with Next.js for displaying and mana
 ### Installation
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/Meeting-Baas/logs-table
    cd logs-table
    ```
 
 2. Install dependencies:
+
    ```bash
    pnpm install
    ```
 
 3. Set up environment variables:
+
    ```bash
    cp .env.example .env
    ```
+
    Fill in the required environment variables in `.env`. Details about the expected values for each key is documented in .env.example
 
 ### Development

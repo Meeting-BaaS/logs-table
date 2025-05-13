@@ -32,7 +32,7 @@ import type { DateValueType } from "react-tailwindcss-datepicker"
 import { DateRangeFilter } from "./date-range-filter"
 import { ExportCsvDialog } from "./export-csv-dialog"
 import { PageSizeSelector } from "@/components/logs-table/page-size-selector"
-import Link from "next/link"
+import { BotSearch } from "@/components/bot-search"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -113,9 +113,7 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
       <div className="mt-2 mb-4 flex">
-        <Button variant="link" asChild className="h-auto p-0 text-muted-foreground text-sm">
-          <Link href="/search">Can't find what you're looking for? Search by bot UUID</Link>
-        </Button>
+        <BotSearch />
       </div>
       <AdditionalFilters table={table} />
       <div>

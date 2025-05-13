@@ -4,19 +4,13 @@ import type { Session } from "@/lib/auth/types"
 import Header from "@/components/header"
 import Footer from "@/components/footer"
 import { useSession } from "@/hooks/use-session"
-import type { MenuOption } from "@/components/header/menu-options"
 
 interface LayoutRootProps {
   session: Session
   children: React.ReactNode
-  avatarMenuOptions: readonly MenuOption[]
 }
 
-export default function LayoutRoot({
-  children,
-  session: initialSession,
-  avatarMenuOptions
-}: LayoutRootProps) {
+export default function LayoutRoot({ children, session: initialSession }: LayoutRootProps) {
   const session = useSession(initialSession)
 
   if (!session) {
@@ -25,7 +19,7 @@ export default function LayoutRoot({
 
   return (
     <>
-      <Header user={session.user} avatarMenuOptions={avatarMenuOptions} />
+      <Header user={session.user} />
       <main className="grow">{children}</main>
       <Footer />
     </>
