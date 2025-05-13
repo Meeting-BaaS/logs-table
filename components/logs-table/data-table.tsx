@@ -31,6 +31,7 @@ import { Loader2 } from "lucide-react"
 import type { DateValueType } from "react-tailwindcss-datepicker"
 import { DateRangeFilter } from "./date-range-filter"
 import { ExportCsvDialog } from "./export-csv-dialog"
+import { PageSizeSelector } from "@/components/logs-table/page-size-selector"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -39,6 +40,7 @@ interface DataTableProps<TData, TValue> {
   pageIndex: number
   pageSize: number
   onPageChange: (pageIndex: number) => void
+  onPageSizeChange: (pageSize: number) => void
   isRefetching: boolean
   dateRange: DateValueType
   setDateRange: (dateRange: DateValueType) => void
@@ -51,6 +53,7 @@ export function DataTable<TData, TValue>({
   pageIndex,
   pageSize,
   onPageChange,
+  onPageSizeChange,
   isRefetching,
   dateRange,
   setDateRange
@@ -114,7 +117,7 @@ export function DataTable<TData, TValue>({
       </div>
       <AdditionalFilters table={table} />
       <div>
-        <Table>
+        <Table className={cn(isRefetching && "animate-pulse")}>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="bg-accent dark:bg-baas-primary-700">
@@ -168,25 +171,28 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="mb-4 flex w-full items-center justify-end space-x-2 md:w-auto">
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onPageChange(pageIndex - 1)}
-          className="w-1/2 md:w-auto"
-          disabled={pageIndex === 0}
-        >
-          Previous
-        </Button>
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={() => onPageChange(pageIndex + 1)}
-          disabled={pageIndex >= pageCount - 1}
-          className="w-1/2 md:w-auto"
-        >
-          Next
-        </Button>
+      <div className="mb-4 flex w-full flex-col items-center justify-between gap-2 md:w-auto md:flex-row">
+        <PageSizeSelector value={pageSize} onChange={onPageSizeChange} />
+        <div className="flex w-full items-center gap-2 md:w-auto">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onPageChange(pageIndex - 1)}
+            className="w-1/2 md:w-auto"
+            disabled={pageIndex === 0}
+          >
+            Previous
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => onPageChange(pageIndex + 1)}
+            disabled={pageIndex >= pageCount - 1}
+            className="w-1/2 md:w-auto"
+          >
+            Next
+          </Button>
+        </div>
       </div>
     </div>
   )

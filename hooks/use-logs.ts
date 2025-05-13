@@ -5,21 +5,20 @@ import { formatBotStatus } from "@/lib/format-logs"
 import { getPlatformFromUrl } from "@/lib/format-logs"
 import dayjs from "dayjs"
 
-export const PAGE_SIZE = 10
-
 interface UseLogsParams {
   offset: number
+  pageSize: number
   startDate: Date | null
   endDate: Date | null
 }
 
-export function useLogs({ offset, startDate, endDate }: UseLogsParams) {
+export function useLogs({ offset, pageSize, startDate, endDate }: UseLogsParams) {
   const { data, isLoading, isError, error, isRefetching } = useQuery({
-    queryKey: ["logs", { offset, limit: PAGE_SIZE, startDate, endDate }],
+    queryKey: ["logs", { offset, limit: pageSize, startDate, endDate }],
     queryFn: () =>
       fetchLogs({
         offset,
-        limit: PAGE_SIZE,
+        limit: pageSize,
         start_date: startDate ? `${dayjs(startDate).format("YYYY-MM-DD")}T00:00:00` : "",
         end_date: endDate ? `${dayjs(endDate).format("YYYY-MM-DD")}T23:59:59` : ""
       }),
