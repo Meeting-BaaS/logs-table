@@ -9,6 +9,7 @@ import { genericError } from "@/lib/errors"
 import type { DateValueType } from "react-tailwindcss-datepicker/dist/types"
 import dayjs from "dayjs"
 import { PAGE_SIZE_STORAGE_KEY, pageSizeOptions } from "@/components/logs-table/page-size-selector"
+import type { FormattedBotData } from "@/components/logs-table/types"
 
 export const DEFAULT_PAGE_SIZE = pageSizeOptions[0].value
 
@@ -50,7 +51,7 @@ export default function LogsTable() {
           Error: {error instanceof Error ? error.message : genericError}
         </div>
       ) : (
-        <DataTable
+        <DataTable<FormattedBotData, unknown>
           columns={columns}
           data={data?.bots || []}
           pageCount={data?.has_more ? pageIndex + 2 : pageIndex + 1}

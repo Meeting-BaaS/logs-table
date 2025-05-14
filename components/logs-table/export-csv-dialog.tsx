@@ -55,17 +55,21 @@ export function ExportCsvDialog<TData>({
 
   const data = table.getFilteredRowModel().rows.map((row) => {
     const rowData = row.original as FormattedBotData
-    return {
-      created_at: rowData.bot.created_at,
-      duration: rowData.duration,
-      uuid: rowData.bot.uuid,
-      platform: rowData.bot.meeting_url,
-      bot_name: rowData.params.bot_name,
-      reserved: rowData.bot.reserved,
-      extra: escapeExtraForCsv(rowData.params.extra),
-      status: rowData.formattedStatus.details || rowData.formattedStatus.text
+    if (!rowData) {
+      console.warn("Skipping undefined row data in CSV export")
+      return {}
     }
-  })
+    return {
+      created_at: rowData.created_at ?? "",
+      duration: rowData.duration ?? 0,
+      uuid: rowData.uuid ?? "",
+      platform: rowData.meeting_url ?? "",
+      bot_name: rowData.params?.bot_name ?? "",
+      reserved: rowData.reserved ?? false,
+      extra: escapeExtraForCsv(rowData.params?.extra ?? null),
+      status: rowData.formattedStatus?.details || rowData.formattedStatus?.text || ""
+    }
+  }).filter(row => Object.keys(row).length > 0) // Filter out empty rows
 
   const startDate = dateRange?.startDate ? dayjs(dateRange.startDate).format("YYYY-MM-DD") : "start"
   const endDate = dateRange?.endDate ? dayjs(dateRange.endDate).format("YYYY-MM-DD") : "end"

@@ -59,8 +59,13 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
   const { openViewer } = useScreenshotViewer()
   const session = useSession()
 
+  if (!row?.uuid) {
+    console.warn("TableActions: Missing bot UUID")
+    return null
+  }
+
   const handleViewRecording = () => {
-    const url = RECORDING_VIEWER_URL.replace(":uuid", row.bot.uuid)
+    const url = RECORDING_VIEWER_URL.replace(":uuid", row.uuid)
     window.open(url, "_blank")
   }
 
@@ -69,14 +74,14 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
       return
     }
 
-    if (!row.bot.ended_at) {
+    if (!row.ended_at) {
       toast.error("The meeting hasn't ended yet")
       return
     }
 
     try {
       setResendLoading(true)
-      await retryWebhook(row.bot.uuid)
+      await retryWebhook(row.uuid)
       toast.success("Retry successful")
     } catch {
       toast.error("Retry webhook failed")
@@ -97,7 +102,7 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
     setScreenshotsLoading(true)
     try {
       const fetchedScreenshots = await fetchScreenshots(
-        row.bot.uuid,
+        row.uuid,
         session?.user.botsApiKey || ""
       )
       if (fetchedScreenshots.length === 0) {
@@ -141,7 +146,7 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
       </div>
 
       <ReportErrorDialog
-        bot_uuid={row.bot.uuid}
+        bot_uuid={row.uuid}
         open={isReportDialogOpen}
         onOpenChange={setIsReportDialogOpen}
       />

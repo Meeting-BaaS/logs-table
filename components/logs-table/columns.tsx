@@ -20,13 +20,13 @@ import type { JSX } from "react"
 export const columns: ColumnDef<FormattedBotData>[] = [
   {
     id: "created_at",
-    accessorKey: "bot.created_at",
+    accessorKey: "created_at",
     meta: { displayName: "Created At" },
     header: ({ column }) => <SortableHeader column={column} title="Created At" isNumber />,
-    accessorFn: (row) => formatCreatedAt(row.bot.created_at),
+    accessorFn: (row) => formatCreatedAt(row.created_at),
     cell: ({ row, getValue }) => (
       <CopyTooltip
-        text={row.original.bot.created_at}
+        text={row.original.created_at}
         copyText="Copy timestamp"
         className="first-letter:capitalize"
       >
@@ -45,12 +45,12 @@ export const columns: ColumnDef<FormattedBotData>[] = [
   },
   {
     id: "uuid",
-    accessorKey: "bot.uuid",
+    accessorKey: "uuid",
     meta: { displayName: "Bot UUID" },
     header: ({ column }) => <SortableHeader column={column} title="Bot UUID" />,
     cell: ({ row }) => (
-      <CopyTooltip text={row.original.bot.uuid} copyText="Copy bot ID">
-        {row.original.bot.uuid}
+      <CopyTooltip text={row.original.uuid} copyText="Copy bot ID">
+        {row.original.uuid}
       </CopyTooltip>
     )
   },
@@ -61,7 +61,7 @@ export const columns: ColumnDef<FormattedBotData>[] = [
     header: ({ column }) => <SortableHeader column={column} title="Platform" centered />,
     cell: ({ row }) => (
       <div className="flex w-full justify-center">
-        <CopyTooltip text={row.original.bot.meeting_url} copyText="Copy meeting URL">
+        <CopyTooltip text={row.original.meeting_url} copyText="Copy meeting URL">
           {formatPlatform(row.original.platform)}
         </CopyTooltip>
       </div>
@@ -80,7 +80,7 @@ export const columns: ColumnDef<FormattedBotData>[] = [
   },
   {
     id: "reserved",
-    accessorKey: "bot.reserved",
+    accessorKey: "reserved",
     meta: { displayName: "Reserved" },
     header: ({ column }) => <SortableHeader column={column} title="Reserved" centered />,
     cell: ({ row }) => (
@@ -88,7 +88,7 @@ export const columns: ColumnDef<FormattedBotData>[] = [
         <Zap
           className={cn(
             "size-5",
-            row.original.bot.reserved ? "text-primary" : "text-primary/30 dark:text-primary/10"
+            row.original.reserved ? "text-primary" : "text-primary/30 dark:text-primary/10"
           )}
         />
       </div>
