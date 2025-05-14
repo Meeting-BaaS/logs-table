@@ -105,20 +105,20 @@ export const columns: ColumnDef<FormattedBotData>[] = [
   {
     id: "status",
     accessorKey: "formattedStatus.type",
-    accessorFn: (row) => `${row.formattedStatus.text} ${row.formattedStatus.details}`,
+    accessorFn: (row) => row.formattedStatus?.type ?? "",
     meta: { displayName: "Status" },
     header: ({ column }) => <SortableHeader column={column} title="Status" />,
     cell: ({ row }) => {
-      const { text, type, details } = row.original.formattedStatus
-      return <StatusBadge text={text} type={type} details={details} />
+      const status = row.original.formattedStatus
+      return <StatusBadge text={status.text} type={status.type} details={status.details} />
     },
-    filterFn: (row, _columnId, filterValue: StatusType[]) => {
+    filterFn: (row, _columnId, filterValue: string[]) => {
       if (!filterValue?.length) return false
       return filterValue.includes(row.original.formattedStatus.type)
     },
     sortingFn: (rowA, rowB) => {
-      const textA = rowA.original.formattedStatus.text.toLowerCase()
-      const textB = rowB.original.formattedStatus.text.toLowerCase()
+      const textA = rowA.original.formattedStatus.text?.toLowerCase() || ""
+      const textB = rowB.original.formattedStatus.text?.toLowerCase() || ""
       return textA.localeCompare(textB)
     }
   },

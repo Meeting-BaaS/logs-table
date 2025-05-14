@@ -45,6 +45,8 @@ interface DataTableProps<TData, TValue> {
   isRefetching: boolean
   dateRange: DateValueType
   setDateRange: (dateRange: DateValueType) => void
+  columnFilters?: ColumnFiltersState
+  onColumnFiltersChange?: (filters: ColumnFiltersState) => void
 }
 
 export function DataTable<TData, TValue>({
@@ -57,10 +59,12 @@ export function DataTable<TData, TValue>({
   onPageSizeChange,
   isRefetching,
   dateRange,
-  setDateRange
+  setDateRange,
+  columnFilters,
+  onColumnFiltersChange
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
+  const [internalColumnFilters, setInternalColumnFilters] = useState<ColumnFiltersState>([
     {
       id: "platform",
       value: allPlatforms
@@ -70,8 +74,25 @@ export function DataTable<TData, TValue>({
       value: allStatuses
     }
   ])
+  const effectiveColumnFilters = columnFilters ?? internalColumnFilters
+
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [globalFilter, setGlobalFilter] = useState("")
+
+  const handleColumnFiltersChange = (updaterOrValue: any) => {
+    if (onColumnFiltersChange) {
+      const value = typeof updaterOrValue === "function"
+        ? updaterOrValue(effectiveColumnFilters)
+        : updaterOrValue
+      onColumnFiltersChange(value)
+    } else {
+      if (typeof updaterOrValue === "function") {
+        setInternalColumnFilters((prev) => updaterOrValue(prev))
+      } else {
+        setInternalColumnFilters(updaterOrValue)
+      }
+    }
+  }
 
   const table = useReactTable({
     data,
@@ -79,7 +100,7 @@ export function DataTable<TData, TValue>({
     getCoreRowModel: getCoreRowModel(),
     onSortingChange: setSorting,
     getSortedRowModel: getSortedRowModel(),
-    onColumnFiltersChange: setColumnFilters,
+    onColumnFiltersChange: handleColumnFiltersChange,
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onGlobalFilterChange: setGlobalFilter,
@@ -87,7 +108,7 @@ export function DataTable<TData, TValue>({
     pageCount,
     state: {
       sorting,
-      columnFilters,
+      columnFilters: effectiveColumnFilters,
       columnVisibility,
       globalFilter,
       pagination: {

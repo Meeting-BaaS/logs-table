@@ -1,26 +1,41 @@
 import { useQuery } from "@tanstack/react-query"
-import { fetchLogs } from "@/lib/api"
+import { fetchLogs, type FetchLogsParams } from "@/lib/api"
 import type { BotPaginated, FormattedBotData, FormattedBotPaginated } from "@/components/logs-table/types"
 import { formatBotStatus } from "@/lib/format-logs"
 import { getPlatformFromUrl } from "@/lib/format-logs"
 import dayjs from "dayjs"
 
-interface UseLogsParams {
-  offset: number
+export interface UseLogsParams extends Partial<Omit<FetchLogsParams, "offset" | "limit">> {
+  pageIndex: number
   pageSize: number
-  startDate: Date | null
-  endDate: Date | null
+  startDate?: Date | null
+  endDate?: Date | null
 }
 
-export function useLogs({ offset, pageSize, startDate, endDate }: UseLogsParams) {
+export function useLogs({ 
+  pageIndex, 
+  pageSize,
+  startDate,
+  endDate,
+  ...filters
+}: UseLogsParams) {
+  const offset = pageIndex * pageSize
+
   const { data, isLoading, isError, error, isRefetching } = useQuery<BotPaginated, Error, FormattedBotPaginated>({
-    queryKey: ["logs", { offset, limit: pageSize, startDate, endDate }],
+    queryKey: ["logs", { 
+      offset, 
+      limit: pageSize,
+      startDate,
+      endDate,
+      ...filters
+    }],
     queryFn: async () => {
       const response = await fetchLogs({
         offset,
         limit: pageSize,
-        start_date: startDate ? `${dayjs(startDate).format("YYYY-MM-DD")}T00:00:00` : "",
-        end_date: endDate ? `${dayjs(endDate).format("YYYY-MM-DD")}T23:59:59` : ""
+        start_date: startDate ? dayjs(startDate).format("YYYY-MM-DD") + "T00:00:00" : undefined,
+        end_date: endDate ? dayjs(endDate).format("YYYY-MM-DD") + "T23:59:59" : undefined,
+        ...filters
       })
       console.log("API Response:", JSON.stringify(response, null, 2))
       return response
@@ -46,11 +61,5 @@ export function useLogs({ offset, pageSize, startDate, endDate }: UseLogsParams)
     placeholderData: (previousData) => previousData
   })
 
-  return {
-    data,
-    isLoading,
-    isError,
-    error,
-    isRefetching
-  }
+  return { data, isLoading, isError, error, isRefetching }
 }

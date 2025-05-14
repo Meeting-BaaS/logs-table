@@ -56,7 +56,7 @@ export function BotSearch() {
       const formattedBot: FormattedBotData = {
         ...response.bots[0],
         formattedStatus: formatBotStatus(response.bots[0]),
-        platform: getPlatformFromUrl(response.bots[0].bot.meeting_url)
+        platform: getPlatformFromUrl(response.bots[0].meeting_url)
       }
 
       setData(formattedBot)
