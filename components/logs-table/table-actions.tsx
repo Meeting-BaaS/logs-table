@@ -21,21 +21,23 @@ interface IconButtonProps {
   onClick: () => void
   disabled?: boolean
   loading?: boolean
+  children?: React.ReactNode
 }
 
-function IconButton({ icon, tooltip, onClick, disabled, loading }: IconButtonProps) {
+function IconButton({ icon, tooltip, onClick, disabled, loading, children }: IconButtonProps) {
   return (
     <Tooltip>
       <TooltipTrigger asChild>
         <Button
           variant="ghost"
           size="icon"
-          className="size-8"
+          className="size-8 relative"
           aria-label={loading ? "Loading..." : tooltip}
           onClick={onClick}
           disabled={disabled || loading}
         >
           {loading ? <Loader2 className={cn(iconClasses, "animate-spin stroke-primary")} /> : icon}
+          {children}
         </Button>
       </TooltipTrigger>
       <TooltipContent>
@@ -129,7 +131,17 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
           icon={<Bug className={iconClasses} />}
           tooltip="Report error"
           onClick={handleReportError}
-        />
+        >
+          {row.bot.user_reported_error && (
+            <div
+              className={cn(
+                "absolute top-1.5 right-1 size-1.5 rounded-full bg-destructive",
+                row.bot.user_reported_error.status === "in progress" && "bg-yellow-500",
+                row.bot.user_reported_error.status === "closed" && "bg-green-500"
+              )}
+            />
+          )}
+        </IconButton>
         <IconButton
           icon={<Image className={iconClasses} />}
           tooltip="View screenshots"

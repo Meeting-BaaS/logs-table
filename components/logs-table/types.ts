@@ -1,6 +1,17 @@
 export type PlatformName = "zoom" | "teams" | "google meet" | "unknown"
 export type StatusType = "success" | "error" | "pending" | "warning"
 
+export type UserReportedErrorMessage = {
+  created_at: string
+  author: string
+  note: string
+}
+
+export type UserReportedError = {
+  status: "open" | "closed" | "in progress"
+  messages: UserReportedErrorMessage[]
+}
+
 export type Bot = {
   id: number
   account_id: number
@@ -11,6 +22,7 @@ export type Bot = {
   errors: string | null
   ended_at: string | null
   uuid: string
+  user_reported_error: UserReportedError | null
 }
 
 export type BotParams = {

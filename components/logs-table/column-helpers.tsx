@@ -1,8 +1,6 @@
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
 import duration from "dayjs/plugin/duration"
-import utc from "dayjs/plugin/utc"
-import timezone from "dayjs/plugin/timezone"
 import type { SortingFn } from "@tanstack/react-table"
 import type { FormattedBotData, PlatformName, StatusType } from "@/components/logs-table/types"
 import { ZoomLogo } from "@/components/icons/zoom"
@@ -14,16 +12,13 @@ import { cn } from "@/lib/utils"
 // Initialize dayjs plugins
 dayjs.extend(relativeTime)
 dayjs.extend(duration)
-dayjs.extend(utc)
-dayjs.extend(timezone)
 
 const iconClasses = "size-5"
 export const allPlatforms: PlatformName[] = ["zoom", "teams", "google meet", "unknown"]
 export const allStatuses: StatusType[] = ["success", "error", "pending", "warning"]
 
 export const formatCreatedAt = (dateStr: string) => {
-  // Parse the date as CET and convert to user's local timezone
-  const date = dayjs.tz(dateStr, "Europe/Paris")
+  const date = dayjs(dateStr)
   const now = dayjs()
 
   // If the date is more than 7 days old, show the full date
