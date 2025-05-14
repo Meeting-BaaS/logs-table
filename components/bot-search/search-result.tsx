@@ -68,7 +68,7 @@ export const SearchResult = ({
         )
       },
       actions: {
-        value: <TableActions row={data} className="justify-start" />
+        value: <TableActions row={data} containerClassName="justify-start" />
       }
     }),
     [data]
