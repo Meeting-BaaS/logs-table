@@ -11,6 +11,7 @@ import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { useScreenshotViewer } from "@/hooks/use-screenshot-viewer"
 import { ReportErrorDialog } from "./report-error-dialog"
+import { useSession } from "@/hooks/use-session"
 
 const iconClasses = "size-4"
 
@@ -54,6 +55,7 @@ export function TableActions({ row, className }: TableActionsProps) {
   const [screenshotsLoading, setScreenshotsLoading] = useState(false)
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false)
   const { openViewer } = useScreenshotViewer()
+  const session = useSession()
 
   const handleViewRecording = () => {
     const url = RECORDING_VIEWER_URL.replace(":uuid", row.bot.uuid)
@@ -92,7 +94,10 @@ export function TableActions({ row, className }: TableActionsProps) {
 
     setScreenshotsLoading(true)
     try {
-      const fetchedScreenshots = await fetchScreenshots(row.bot.uuid)
+      const fetchedScreenshots = await fetchScreenshots(
+        row.bot.uuid,
+        session?.user.botsApiKey || ""
+      )
       if (fetchedScreenshots.length === 0) {
         toast.warning("No screenshots found")
         return

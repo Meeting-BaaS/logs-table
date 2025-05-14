@@ -48,8 +48,15 @@ export async function reportError(bot_uuid: string, note?: string): Promise<void
   }
 }
 
-export async function fetchScreenshots(bot_uuid: string): Promise<Screenshot[]> {
-  const response = await fetch(`/api/screenshots?bot_uuid=${bot_uuid}`)
+export async function fetchScreenshots(
+  bot_uuid: string,
+  bots_api_key: string
+): Promise<Screenshot[]> {
+  const response = await fetch(`/api/bots/${bot_uuid}/screenshots`, {
+    headers: {
+      "x-meeting-baas-api-key": bots_api_key
+    }
+  })
 
   if (!response.ok) {
     throw new Error(`Failed to fetch screenshots: ${response.status} ${response.statusText}`)

@@ -26,12 +26,3 @@ export const GITHUB_REPO_URL = "https://github.com/Meeting-Baas/logs-table"
 
 // Recording Viewer. Append uuid to the end of the URL to view a specific recording.
 export const RECORDING_VIEWER_URL = `https://${environment}meetingbaas.com/viewer/:uuid`
-
-export const getApiBaseUrl = () => {
-  const apiServerBaseUrl = process.env.NEXT_PUBLIC_API_SERVER_BASEURL
-  if (!apiServerBaseUrl) {
-    throw new Error("NEXT_PUBLIC_API_SERVER_BASEURL is not defined")
-  }
-
-  return apiServerBaseUrl
-}

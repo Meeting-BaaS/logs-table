@@ -1,9 +1,14 @@
-import { AI_CHAT_URL, getApiBaseUrl } from "@/lib/external-urls"
+import { AI_CHAT_URL } from "@/lib/external-urls"
 import { reportErrorServerSchema } from "@/lib/schemas/report-error"
 import { generateUUID } from "@/lib/utils"
 import { type NextRequest, NextResponse } from "next/server"
 
-const apiServerBaseUrl = getApiBaseUrl()
+const apiServerBaseUrl = process.env.API_SERVER_BASEURL
+if (!apiServerBaseUrl) {
+  throw new Error(
+    "API_SERVER_BASEURL is not defined in the environment variables. Please set it in your .env file."
+  )
+}
 
 export async function POST(request: NextRequest) {
   const jwt = request.cookies.get("jwt")?.value
