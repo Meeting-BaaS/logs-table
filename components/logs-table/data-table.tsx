@@ -115,7 +115,10 @@ export function DataTable<TData, TValue>({
       <div className="mt-2 mb-4 flex">
         <BotSearch />
       </div>
-      <AdditionalFilters table={table} />
+      <div className="mb-1 flex flex-col-reverse justify-between gap-2 md:mb-2 md:flex-row">
+        <AdditionalFilters table={table} />
+        <PageSizeSelector value={pageSize} onChange={onPageSizeChange} />
+      </div>
       <div>
         <Table className={cn(isRefetching && "animate-pulse")}>
           <TableHeader>
@@ -171,28 +174,25 @@ export function DataTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <div className="my-4 flex w-full flex-col items-center justify-between gap-2 md:w-auto md:flex-row">
-        <PageSizeSelector value={pageSize} onChange={onPageSizeChange} />
-        <div className="flex w-full items-center gap-2 md:w-auto">
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange(pageIndex - 1)}
-            className="w-1/2 md:w-auto"
-            disabled={pageIndex === 0}
-          >
-            Previous
-          </Button>
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => onPageChange(pageIndex + 1)}
-            disabled={pageIndex >= pageCount - 1}
-            className="w-1/2 md:w-auto"
-          >
-            Next
-          </Button>
-        </div>
+      <div className="mt-4 flex w-full items-center justify-end gap-2 md:w-auto">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(pageIndex - 1)}
+          className="w-1/2 md:w-auto"
+          disabled={pageIndex === 0}
+        >
+          Previous
+        </Button>
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => onPageChange(pageIndex + 1)}
+          disabled={pageIndex >= pageCount - 1}
+          className="w-1/2 md:w-auto"
+        >
+          Next
+        </Button>
       </div>
     </div>
   )

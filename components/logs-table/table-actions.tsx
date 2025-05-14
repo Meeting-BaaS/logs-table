@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
-import { RotateCcw, ExternalLink, AlertCircle, Loader2, Image } from "lucide-react"
+import { RotateCcw, ExternalLink, Loader2, Image, Bug } from "lucide-react"
 import type { FormattedBotData } from "@/components/logs-table/types"
 import { RECORDING_VIEWER_URL } from "@/lib/external-urls"
 import { retryWebhook, fetchScreenshots } from "@/lib/api"
@@ -126,7 +126,7 @@ export function TableActions({ row, className }: TableActionsProps) {
           onClick={handleViewRecording}
         />
         <IconButton
-          icon={<AlertCircle className={iconClasses} />}
+          icon={<Bug className={iconClasses} />}
           tooltip="Report error"
           onClick={handleReportError}
         />
