@@ -15,6 +15,7 @@ import { TableActions } from "@/components/logs-table/table-actions"
 import { JsonPreview } from "@/components/logs-table/json-preview"
 import { StatusBadge } from "@/components/logs-table/status-badge"
 import { cn } from "@/lib/utils"
+import type { JSX } from "react"
 
 export const columns: ColumnDef<FormattedBotData>[] = [
   {
@@ -22,9 +23,14 @@ export const columns: ColumnDef<FormattedBotData>[] = [
     accessorKey: "bot.created_at",
     meta: { displayName: "Created At" },
     header: ({ column }) => <SortableHeader column={column} title="Created At" isNumber />,
-    cell: ({ row }) => (
-      <CopyTooltip text={row.original.bot.created_at} copyText="Copy timestamp">
-        <span>{formatCreatedAt(row.original.bot.created_at)}</span>
+    accessorFn: (row) => formatCreatedAt(row.bot.created_at),
+    cell: ({ row, getValue }) => (
+      <CopyTooltip
+        text={row.original.bot.created_at}
+        copyText="Copy timestamp"
+        className="first-letter:capitalize"
+      >
+        <span>{getValue<string>()}</span>
       </CopyTooltip>
     ),
     sortingFn: dateSort
@@ -34,7 +40,8 @@ export const columns: ColumnDef<FormattedBotData>[] = [
     accessorKey: "duration",
     meta: { displayName: "Duration" },
     header: ({ column }) => <SortableHeader column={column} title="Duration" isNumber />,
-    cell: ({ row }) => formatDuration(row.original.duration)
+    accessorFn: (row) => formatDuration(row.duration),
+    cell: ({ getValue }) => <span>{getValue<string | JSX.Element>()}</span>
   },
   {
     id: "uuid",
@@ -92,20 +99,22 @@ export const columns: ColumnDef<FormattedBotData>[] = [
     accessorKey: "params.extra",
     meta: { displayName: "Extra" },
     header: ({ column }) => <SortableHeader column={column} title="Extra" />,
+    accessorFn: (row) => (row.params.extra ? JSON.stringify(row.params.extra) : ""),
     cell: ({ row }) => <JsonPreview data={row.original.params.extra} />
   },
   {
     id: "status",
     accessorKey: "formattedStatus.type",
+    accessorFn: (row) => `${row.formattedStatus.text} ${row.formattedStatus.details}`,
     meta: { displayName: "Status" },
     header: ({ column }) => <SortableHeader column={column} title="Status" />,
     cell: ({ row }) => {
       const { text, type, details } = row.original.formattedStatus
       return <StatusBadge text={text} type={type} details={details} />
     },
-    filterFn: (row, columnId, filterValue: StatusType[]) => {
+    filterFn: (row, _columnId, filterValue: StatusType[]) => {
       if (!filterValue?.length) return false
-      return filterValue.includes(row.getValue(columnId))
+      return filterValue.includes(row.original.formattedStatus.type)
     },
     sortingFn: (rowA, rowB) => {
       const textA = rowA.original.formattedStatus.text.toLowerCase()

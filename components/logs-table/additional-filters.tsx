@@ -18,7 +18,7 @@ export function AdditionalFilters<TData>({ table }: AdditionalFiltersProps<TData
   return (
     <Accordion type="single" collapsible>
       <AccordionItem value="filters">
-        <AccordionTrigger className="py-0.5 pb-2 text-primary">Additional filters</AccordionTrigger>
+        <AccordionTrigger className="h-9 text-primary">Additional filters</AccordionTrigger>
         <AccordionContent className="flex flex-col gap-2 pt-2">
           <CheckboxFilter
             table={table}

@@ -55,7 +55,7 @@
   --muted-foreground: var(--secondary-foreground);
   --accent: var(--secondary);
   --accent-foreground: var(--secondary-foreground);
-  --destructive: oklch(0.577 0.245 27.325);
+  --destructive: oklch(0.64 0.2465 18.31);
   --border: oklch(0.92 0.004 286.32);
   --input: var(--border);
   --ring: var(--border);

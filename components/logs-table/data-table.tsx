@@ -31,6 +31,8 @@ import { Loader2 } from "lucide-react"
 import type { DateValueType } from "react-tailwindcss-datepicker"
 import { DateRangeFilter } from "./date-range-filter"
 import { ExportCsvDialog } from "./export-csv-dialog"
+import { PageSizeSelector } from "@/components/logs-table/page-size-selector"
+import { BotSearch } from "@/components/bot-search"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -39,6 +41,7 @@ interface DataTableProps<TData, TValue> {
   pageIndex: number
   pageSize: number
   onPageChange: (pageIndex: number) => void
+  onPageSizeChange: (pageSize: number) => void
   isRefetching: boolean
   dateRange: DateValueType
   setDateRange: (dateRange: DateValueType) => void
@@ -51,6 +54,7 @@ export function DataTable<TData, TValue>({
   pageIndex,
   pageSize,
   onPageChange,
+  onPageSizeChange,
   isRefetching,
   dateRange,
   setDateRange
@@ -94,7 +98,7 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col">
       <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
         <div className="flex w-full items-center gap-2 md:w-1/2">
           <DateRangeFilter value={dateRange} onChange={setDateRange} />
@@ -103,18 +107,20 @@ export function DataTable<TData, TValue>({
           )}
         </div>
         <div className="flex w-full items-center gap-2 md:w-1/2 lg:w-1/3 xl:w-1/4">
-          <DataTableFilter
-            table={table}
-            globalFilter={globalFilter}
-            onGlobalFilterChange={setGlobalFilter}
-          />
+          <DataTableFilter globalFilter={globalFilter} onGlobalFilterChange={setGlobalFilter} />
           <ExportCsvDialog table={table} dateRange={dateRange} pageIndex={pageIndex} />
           <ColumnVisibilityDropdown table={table} />
         </div>
       </div>
-      <AdditionalFilters table={table} />
+      <div className="mt-2 mb-4 flex">
+        <BotSearch />
+      </div>
+      <div className="mb-1 flex flex-col-reverse justify-between gap-2 md:mb-2 md:flex-row">
+        <AdditionalFilters table={table} />
+        <PageSizeSelector value={pageSize} onChange={onPageSizeChange} />
+      </div>
       <div>
-        <Table>
+        <Table className={cn(isRefetching && "animate-pulse")}>
           <TableHeader>
             {table.getHeaderGroups().map((headerGroup) => (
               <TableRow key={headerGroup.id} className="bg-accent dark:bg-baas-primary-700">
@@ -161,14 +167,14 @@ export function DataTable<TData, TValue>({
             ) : (
               <TableRow>
                 <TableCell colSpan={columns.length} className="h-24 text-center">
-                  No logs found.
+                  No logs found. Please try a different date range or filter.
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
-      <div className="mb-4 flex w-full items-center justify-end space-x-2 md:w-auto">
+      <div className="mt-4 flex w-full items-center justify-end gap-2 md:w-auto">
         <Button
           variant="outline"
           size="sm"

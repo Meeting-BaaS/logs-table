@@ -4,7 +4,6 @@ import { ThemeToggle } from "@/components/header/theme-toggle"
 import { Button } from "@/components/ui/button"
 import Link from "next/link"
 import { GitHubLogo } from "@/components/icons/github"
-import { menuOptions } from "@/components/header/menu-options"
 import type { User } from "@/lib/auth/types"
 import { GITHUB_REPO_URL } from "@/lib/external-urls"
 
@@ -38,7 +37,7 @@ export default function Header({ user }: { user: User }) {
             </Button>
             <ThemeToggle className="hidden md:flex" />
           </div>
-          <UserAvatar user={user} menuOptions={menuOptions} />
+          <UserAvatar user={user} />
         </div>
       </nav>
     </header>

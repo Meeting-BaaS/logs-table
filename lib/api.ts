@@ -1,22 +1,24 @@
-import type { BotPaginated, BotQueryParams, Screenshot } from "@/components/logs-table/types"
+import type { BotPaginated, Screenshot } from "@/components/logs-table/types"
+import type { BotQueryParams, BotSearchServerFormData } from "@/lib/schemas/bot-search"
 
-const apiServerBaseUrl = process.env.NEXT_PUBLIC_API_SERVER_BASEURL
+export async function fetchLogs(
+  params: BotQueryParams | BotSearchServerFormData
+): Promise<BotPaginated> {
+  const queryParams =
+    "bot_id" in params
+      ? new URLSearchParams({
+          bot_id: params.bot_id ?? "",
+          offset: params.offset.toString(),
+          limit: params.limit.toString()
+        })
+      : new URLSearchParams({
+          offset: params.offset.toString(),
+          limit: params.limit.toString(),
+          start_date: params.start_date,
+          end_date: params.end_date
+        })
 
-if (!apiServerBaseUrl) {
-  throw new Error("NEXT_PUBLIC_API_SERVER_BASEURL is not defined")
-}
-
-export async function fetchLogs(params: BotQueryParams): Promise<BotPaginated> {
-  const queryParams = new URLSearchParams({
-    offset: params.offset.toString(),
-    limit: params.limit.toString(),
-    start_date: params.start_date,
-    end_date: params.end_date
-  })
-
-  const response = await fetch(`${apiServerBaseUrl}/bots?${queryParams.toString()}`, {
-    credentials: "include"
-  })
+  const response = await fetch(`/api/logs?${queryParams.toString()}`)
 
   if (!response.ok) {
     throw new Error(`Failed to fetch logs: ${response.status} ${response.statusText}`)
@@ -25,10 +27,9 @@ export async function fetchLogs(params: BotQueryParams): Promise<BotPaginated> {
   return response.json()
 }
 
-export async function retryWebhook(bot_id: string): Promise<void> {
-  const response = await fetch(`${apiServerBaseUrl}/bots/retry_webhook?bot_uuid=${bot_id}`, {
-    method: "POST",
-    credentials: "include"
+export async function retryWebhook(bot_uuid: string): Promise<void> {
+  const response = await fetch(`/api/retry-webhook?bot_uuid=${bot_uuid}`, {
+    method: "POST"
   })
 
   if (!response.ok) {
@@ -36,10 +37,10 @@ export async function retryWebhook(bot_id: string): Promise<void> {
   }
 }
 
-export async function reportError(bot_id: number): Promise<void> {
-  const response = await fetch(`${apiServerBaseUrl}/report_error/${bot_id}`, {
+export async function reportError(bot_uuid: string, note?: string): Promise<void> {
+  const response = await fetch("/api/report-error", {
     method: "POST",
-    credentials: "include"
+    body: JSON.stringify({ note, bot_uuid })
   })
 
   if (!response.ok) {
@@ -47,9 +48,14 @@ export async function reportError(bot_id: number): Promise<void> {
   }
 }
 
-export async function fetchScreenshots(bot_id: string): Promise<Screenshot[]> {
-  const response = await fetch(`${apiServerBaseUrl}/bots/${bot_id}/screenshots`, {
-    credentials: "include"
+export async function fetchScreenshots(
+  bot_uuid: string,
+  bots_api_key: string
+): Promise<Screenshot[]> {
+  const response = await fetch(`/api/bots/${bot_uuid}/screenshots`, {
+    headers: {
+      "x-meeting-baas-api-key": bots_api_key
+    }
   })
 
   if (!response.ok) {

@@ -3,18 +3,16 @@
 import { CopyHoverCard } from "@/components/logs-table/copy-hover-card"
 
 interface JsonPreviewProps {
-  data: string | null
+  data: Record<string, unknown> | null
 }
 
 export function JsonPreview({ data }: JsonPreviewProps) {
-  if (!data) {
+  if (!data || Object.keys(data).length === 0) {
     return <span className="text-muted-foreground text-xs">N/A</span>
   }
 
-  const parsedData = JSON.parse(data)
-
   // Get the first entry for preview
-  const [firstKey, firstValue] = Object.entries(parsedData)[0] ?? []
+  const [firstKey, firstValue] = Object.entries(data)[0] ?? []
   if (!firstKey) return null
 
   const valueStr = JSON.stringify(firstValue)
@@ -25,7 +23,7 @@ export function JsonPreview({ data }: JsonPreviewProps) {
     <CopyHoverCard
       trigger={<span className="text-xs">{truncatedPreview}</span>}
       title="Complete JSON"
-      content={JSON.stringify(parsedData, null, 2)}
+      content={JSON.stringify(data, null, 2)}
     />
   )
 }

@@ -1,9 +1,10 @@
 // Meeting BaaS environment prefix for app URLs. For lower environments, it would be something like pre-prod-
 // It would be empty for prod.
-const environment = process.env.ENVIRONMENT || ""
+const environment = process.env.NEXT_PUBLIC_ENVIRONMENT || ""
 
 // Chat App
-export const AI_CHAT_URL = `https://chat.${environment}meetingbaas.com`
+export const AI_CHAT_URL =
+  process.env.AI_CHAT_APP_URL || `https://chat.${environment}meetingbaas.com`
 
 // Meeting BaaS home page
 export const MEETING_BAAS_HOMEPAGE_URL = "https://meetingbaas.com"

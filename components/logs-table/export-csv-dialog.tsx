@@ -29,6 +29,18 @@ interface ExportCsvDialogProps<TData> {
   pageIndex: number
 }
 
+// Escape quotes in JSON string to avoid CSV parsing issues
+function escapeExtraForCsv(extra: object | null): string {
+  if (!extra) return ""
+  try {
+    const jsonString = JSON.stringify(extra)
+    return jsonString.replace(/"/g, '""')
+  } catch (error) {
+    console.error("Failed to stringify extra data for CSV export", error)
+    return "[Complex object - unable to export]"
+  }
+}
+
 export function ExportCsvDialog<TData>({
   table,
   dateRange,
@@ -50,7 +62,7 @@ export function ExportCsvDialog<TData>({
       platform: rowData.bot.meeting_url,
       bot_name: rowData.params.bot_name,
       reserved: rowData.bot.reserved,
-      extra: rowData.params.extra,
+      extra: escapeExtraForCsv(rowData.params.extra),
       status: rowData.formattedStatus.details || rowData.formattedStatus.text
     }
   })

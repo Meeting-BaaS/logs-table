@@ -85,7 +85,7 @@ export function getReadableError(error: string): ErrorInfo {
 
   // If no specific error type found, treat as warning by default
   return {
-    text: error,
+    text: error.length > 10 ? `${error.slice(0, 10)}...` : error,
     type: "warning"
   }
 }
