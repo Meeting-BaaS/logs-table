@@ -31,7 +31,7 @@ function IconButton({ icon, tooltip, onClick, disabled, loading, children }: Ico
         <Button
           variant="ghost"
           size="icon"
-          className="size-8 relative"
+          className="relative size-8"
           aria-label={loading ? "Loading..." : tooltip}
           onClick={onClick}
           disabled={disabled || loading}
@@ -131,17 +131,7 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
           icon={<Bug className={iconClasses} />}
           tooltip="Report error"
           onClick={handleReportError}
-        >
-          {row.bot.user_reported_error && (
-            <div
-              className={cn(
-                "absolute top-1.5 right-1 size-1.5 rounded-full bg-destructive",
-                row.bot.user_reported_error.status === "in progress" && "bg-yellow-500",
-                row.bot.user_reported_error.status === "closed" && "bg-green-500"
-              )}
-            />
-          )}
-        </IconButton>
+        />
         <IconButton
           icon={<Image className={iconClasses} />}
           tooltip="View screenshots"
