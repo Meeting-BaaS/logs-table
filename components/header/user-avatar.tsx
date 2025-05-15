@@ -19,11 +19,9 @@ import { menuOptions } from "@/components/header/menu-options"
 import type { User } from "@/lib/auth/types"
 import { signOut } from "@/lib/auth/sign-out"
 import { genericError } from "@/lib/errors"
-import { useSession } from "@/hooks/use-session"
 
 export const UserAvatar = ({ user }: { user: User }) => {
   const [loading, setLoading] = useState(false)
-  const session = useSession()
 
   const onSignOut = async () => {
     setLoading(true)
@@ -58,7 +56,7 @@ export const UserAvatar = ({ user }: { user: User }) => {
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-48">
         <DropdownMenuLabel className="text-muted-foreground first-letter:uppercase">
-          {session?.user.email ?? ""}
+          {user.email}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem
