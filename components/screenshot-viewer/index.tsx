@@ -1,7 +1,7 @@
 "use client"
 
 import { Dialog, DialogContent, DialogTitle } from "@/components/ui/dialog"
-import { ScreenshotCarousel } from "./screenshot-carousel"
+import { ScreenshotCarousel } from "@/components/screenshot-viewer/screenshot-carousel"
 import { useScreenshotViewer } from "@/hooks/use-screenshot-viewer"
 
 export function ScreenshotViewer() {

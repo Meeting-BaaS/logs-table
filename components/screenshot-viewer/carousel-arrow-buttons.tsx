@@ -1,6 +1,6 @@
 import { type ComponentPropsWithRef, useCallback, useEffect, useState } from "react"
 import type { EmblaCarouselType } from "embla-carousel"
-import { Button } from "../ui/button"
+import { Button } from "@/components/ui/button"
 import { cn } from "@/lib/utils"
 import { ChevronLeft, ChevronRight } from "lucide-react"
 

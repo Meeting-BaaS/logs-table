@@ -12,6 +12,7 @@ import {
 import {
   Form,
   FormControl,
+  FormDescription,
   FormField,
   FormItem,
   FormLabel,
@@ -86,8 +87,12 @@ export function ReportErrorDialog({ bot_uuid, open, onOpenChange }: ReportErrorD
                       placeholder="Enter additional context about the error..."
                       className="resize-none"
                       {...field}
+                      maxLength={200}
                     />
                   </FormControl>
+                  <FormDescription className="-mt-1 text-right text-xs">
+                    {field.value?.length || 0}/200
+                  </FormDescription>
                   <FormMessage />
                 </FormItem>
               )}

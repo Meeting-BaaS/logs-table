@@ -11,7 +11,8 @@ if (!apiServerBaseUrl) {
 }
 
 export async function POST(request: NextRequest) {
-  const jwt = request.cookies.get("jwt")?.value
+  const cookies = request.cookies
+  const jwt = cookies.get("jwt")?.value
 
   if (!jwt) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -26,7 +27,7 @@ export async function POST(request: NextRequest) {
     const chatId = generateUUID()
     const messageId = generateUUID()
 
-    const errorDetails = note ? ` Error details: ${note}.` : ""
+    const errorDetails = note ? ` Additional context: ${note}.` : ""
 
     const chatResponse = await fetch(`${AI_CHAT_URL}/api/chat`, {
       method: "POST",
@@ -58,13 +59,19 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. Report the error to the server
+    const message = `User reported an error.${errorDetails}`
     const response = await fetch(`${apiServerBaseUrl}/bots/${bot_uuid}/user_reported_error`, {
       method: "POST",
       headers: {
         Cookie: `jwt=${jwt}`,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ bot_uuid, note, chat_id: chatId })
+      body: JSON.stringify({
+        bot_uuid,
+        note: message,
+        chat_id: chatId,
+        status: "open"
+      })
     })
 
     if (!response.ok) {

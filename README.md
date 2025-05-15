@@ -95,10 +95,7 @@ For deployment to hosting platforms like Vercel or Netlify, refer to their respe
 ```text
 ├── app/                    # Next.js app directory
 │   ├── api/                # Backend API routes  
-│   │   ├── logs/           # Logs retrieval endpoints  
-│   │   ├── report-error/   # Error reporting endpoints  
-│   │   ├── retry-webhook/  # Webhook retry functionality  
-│   │   └── screenshot/     # Screenshot retrieval endpoints 
+│   │   ├── report-error/   # Error reporting endpoints 
 ├── components/             # React components
 │   ├── logs-table/         # Main logs table components
 │   ├── ui/                 # Reusable UI components
@@ -108,7 +105,8 @@ For deployment to hosting platforms like Vercel or Netlify, refer to their respe
 │   ├── api.ts              # API client functions
 │   ├── utils.ts            # Utility functions
 │   └── ...
-└── public/                 # Static assets
+├── public/                 # Static assets
+└── next.config.ts          # Proxy for API routes and image host configuration
 ```
 
 ## Contributing

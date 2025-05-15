@@ -1,13 +1,15 @@
-import type { BotPaginated, Screenshot } from "@/components/logs-table/types"
-import type { BotQueryParams, BotSearchServerFormData } from "@/lib/schemas/bot-search"
+import type {
+  BotPaginated,
+  BotQueryParams,
+  Screenshot,
+  BotSearchParams
+} from "@/components/logs-table/types"
 
-export async function fetchLogs(
-  params: BotQueryParams | BotSearchServerFormData
-): Promise<BotPaginated> {
+export async function fetchLogs(params: BotQueryParams | BotSearchParams): Promise<BotPaginated> {
   const queryParams =
-    "bot_id" in params
+    "bot_uuid" in params
       ? new URLSearchParams({
-          bot_id: params.bot_id ?? "",
+          bot_uuid: params.bot_uuid,
           offset: params.offset.toString(),
           limit: params.limit.toString()
         })
@@ -18,7 +20,7 @@ export async function fetchLogs(
           end_date: params.end_date
         })
 
-  const response = await fetch(`/api/logs?${queryParams.toString()}`)
+  const response = await fetch(`/api/bots/all?${queryParams.toString()}`)
 
   if (!response.ok) {
     throw new Error(`Failed to fetch logs: ${response.status} ${response.statusText}`)
@@ -28,7 +30,7 @@ export async function fetchLogs(
 }
 
 export async function retryWebhook(bot_uuid: string): Promise<void> {
-  const response = await fetch(`/api/retry-webhook?bot_uuid=${bot_uuid}`, {
+  const response = await fetch(`/api/bots/retry-webhook?bot_uuid=${bot_uuid}`, {
     method: "POST"
   })
 

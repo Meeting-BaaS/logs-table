@@ -1,12 +1,12 @@
 "use client"
 
 import { Badge } from "@/components/ui/badge"
-import type { ErrorType } from "@/lib/bot-error-types"
+import type { StatusType } from "@/components/logs-table/types"
 import { CopyHoverCard } from "@/components/logs-table/copy-hover-card"
 
 interface StatusBadgeProps {
   text: string
-  type: ErrorType | "success" | string
+  type: StatusType
   details?: string | null
 }
 

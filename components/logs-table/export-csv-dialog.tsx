@@ -56,14 +56,14 @@ export function ExportCsvDialog<TData>({
   const data = table.getFilteredRowModel().rows.map((row) => {
     const rowData = row.original as FormattedBotData
     return {
-      created_at: rowData.bot.created_at,
+      created_at: rowData.created_at,
       duration: rowData.duration,
-      uuid: rowData.bot.uuid,
-      platform: rowData.bot.meeting_url,
+      uuid: rowData.uuid,
+      platform: rowData.meeting_url,
       bot_name: rowData.params.bot_name,
-      reserved: rowData.bot.reserved,
+      reserved: rowData.reserved,
       extra: escapeExtraForCsv(rowData.params.extra),
-      status: rowData.formattedStatus.details || rowData.formattedStatus.text
+      status: rowData.status.details || rowData.status.value
     }
   })
 

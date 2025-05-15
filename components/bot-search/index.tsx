@@ -20,7 +20,6 @@ import { fetchLogs } from "@/lib/api"
 import { Loader2 } from "lucide-react"
 import type { FormattedBotData } from "@/components/logs-table/types"
 import { getPlatformFromUrl } from "@/lib/format-logs"
-import { formatBotStatus } from "@/lib/format-logs"
 import { toast } from "sonner"
 import { motion } from "motion/react"
 import { SearchResult } from "@/components/bot-search/search-result"
@@ -34,7 +33,7 @@ export function BotSearch() {
   const form = useForm<BotSearchFormData>({
     resolver: zodResolver(botSearchSchema),
     defaultValues: {
-      bot_id: ""
+      bot_uuid: ""
     }
   })
 
@@ -45,7 +44,7 @@ export function BotSearch() {
     setSearchStarted(true)
     try {
       const response = await fetchLogs({
-        bot_id: data.bot_id,
+        bot_uuid: data.bot_uuid,
         limit: 1,
         offset: 0
       })
@@ -55,8 +54,7 @@ export function BotSearch() {
       }
       const formattedBot: FormattedBotData = {
         ...response.bots[0],
-        formattedStatus: formatBotStatus(response.bots[0]),
-        platform: getPlatformFromUrl(response.bots[0].bot.meeting_url)
+        platform: getPlatformFromUrl(response.bots[0].meeting_url)
       }
 
       setData(formattedBot)
@@ -71,7 +69,7 @@ export function BotSearch() {
   const handleDialogClose = (open: boolean) => {
     setOpen(open)
     form.reset(
-      { bot_id: "" },
+      { bot_uuid: "" },
       { keepDirty: false, keepErrors: false, keepTouched: false, keepValues: true }
     )
     setData(null)
@@ -106,7 +104,7 @@ export function BotSearch() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex">
               <FormField
                 control={form.control}
-                name="bot_id"
+                name="bot_uuid"
                 render={({ field }) => (
                   <FormItem className="relative grow">
                     <FormControl>

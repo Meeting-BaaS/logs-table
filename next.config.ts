@@ -11,16 +11,8 @@ const nextConfig: NextConfig = {
     const apiServerBaseUrl = process.env.API_SERVER_BASEURL
     return [
       {
-        source: "/api/logs",
-        destination: `${apiServerBaseUrl}/bots/all`
-      },
-      {
-        source: "/api/retry-webhook",
-        destination: `${apiServerBaseUrl}/bots/retry_webhook`
-      },
-      {
-        source: "/api/bots/:bot_uuid/screenshots",
-        destination: `${apiServerBaseUrl}/bots/:bot_uuid/screenshots`
+        source: "/api/bots/:path*",
+        destination: `${apiServerBaseUrl}/bots/:path*`
       }
     ]
   },

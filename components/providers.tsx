@@ -4,7 +4,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ThemeProvider } from "next-themes"
 import { JwtProvider } from "@/contexts/jwt-context"
 import { TooltipProvider } from "@/components/ui/tooltip"
-import { ScreenshotViewerProvider } from "../contexts/screenshot-viewer-context"
+import { ScreenshotViewerProvider } from "@/contexts/screenshot-viewer-context"
 
 const queryClient = new QueryClient()
 
