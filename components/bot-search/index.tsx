@@ -20,7 +20,6 @@ import { fetchLogs } from "@/lib/api"
 import { Loader2 } from "lucide-react"
 import type { FormattedBotData } from "@/components/logs-table/types"
 import { getPlatformFromUrl } from "@/lib/format-logs"
-import { formatBotStatus } from "@/lib/format-logs"
 import { toast } from "sonner"
 import { motion } from "motion/react"
 import { SearchResult } from "@/components/bot-search/search-result"
@@ -55,8 +54,7 @@ export function BotSearch() {
       }
       const formattedBot: FormattedBotData = {
         ...response.bots[0],
-        formattedStatus: formatBotStatus(response.bots[0]),
-        platform: getPlatformFromUrl(response.bots[0].bot.meeting_url)
+        platform: getPlatformFromUrl(response.bots[0].meeting_url)
       }
 
       setData(formattedBot)

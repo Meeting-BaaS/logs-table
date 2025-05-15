@@ -36,14 +36,14 @@ export const SearchResult = ({
   const transformedData = useMemo<TransformedData>(
     () => ({
       created_at: {
-        value: formatCreatedAt(data.bot.created_at),
+        value: formatCreatedAt(data.created_at),
         className: "first-letter:capitalize"
       },
       duration: {
         value: formatDuration(data.duration)
       },
       uuid: {
-        value: data.bot.uuid
+        value: data.uuid
       },
       platform: {
         value: data.platform,
@@ -53,7 +53,7 @@ export const SearchResult = ({
         value: data.params.bot_name
       },
       reserved: {
-        value: data.bot.reserved ? "Yes" : "No"
+        value: data.reserved ? "Yes" : "No"
       },
       extra: {
         value: <JsonPreview data={data.params.extra} />
@@ -61,9 +61,9 @@ export const SearchResult = ({
       status: {
         value: (
           <StatusBadge
-            text={data.formattedStatus.text}
-            type={data.formattedStatus.type}
-            details={data.formattedStatus.details}
+            text={data.status.value}
+            type={data.status.type}
+            details={data.status.details}
           />
         )
       },

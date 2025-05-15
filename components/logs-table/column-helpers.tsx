@@ -59,8 +59,8 @@ export const formatPlatform = (platform: PlatformName) => {
 }
 
 export const dateSort: SortingFn<FormattedBotData> = (rowA, rowB, columnId) => {
-  const dateA = dayjs(rowA.original.bot.created_at)
-  const dateB = dayjs(rowB.original.bot.created_at)
+  const dateA = dayjs(rowA.original.created_at)
+  const dateB = dayjs(rowB.original.created_at)
 
   return dateA.isBefore(dateB) ? -1 : dateA.isAfter(dateB) ? 1 : 0
 }

@@ -1,7 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { fetchLogs } from "@/lib/api"
 import type { FormattedBotData } from "@/components/logs-table/types"
-import { formatBotStatus } from "@/lib/format-logs"
 import { getPlatformFromUrl } from "@/lib/format-logs"
 import dayjs from "dayjs"
 
@@ -25,8 +24,7 @@ export function useLogs({ offset, pageSize, startDate, endDate }: UseLogsParams)
     select: (data) => {
       const formattedBots: FormattedBotData[] = data.bots.map((bot) => ({
         ...bot,
-        formattedStatus: formatBotStatus(bot),
-        platform: getPlatformFromUrl(bot.bot.meeting_url)
+        platform: getPlatformFromUrl(bot.meeting_url)
       }))
 
       return {

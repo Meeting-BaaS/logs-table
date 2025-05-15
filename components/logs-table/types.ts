@@ -12,7 +12,21 @@ export type UserReportedError = {
   messages: UserReportedErrorMessage[]
 }
 
-export type Bot = {
+export type Status = {
+  value: string
+  type: StatusType
+  details?: string | null
+  sort_priority: number
+  category: string
+}
+
+export type BotParams = {
+  webhook_url: string | null
+  extra: Record<string, unknown> | null
+  bot_name: string | null
+}
+
+export type BotData = {
   id: number
   account_id: number
   meeting_url: string
@@ -23,18 +37,9 @@ export type Bot = {
   ended_at: string | null
   uuid: string
   user_reported_error: UserReportedError | null
-}
-
-export type BotParams = {
-  webhook_url: string | null
-  extra: Record<string, unknown> | null
-  bot_name: string | null
-}
-
-export type BotData = {
-  bot: Bot
   params: BotParams
   duration: number
+  status: Status
 }
 
 export type BotPaginated = {
@@ -42,14 +47,7 @@ export type BotPaginated = {
   bots: BotData[]
 }
 
-export type BotStatus = {
-  text: string
-  type: StatusType
-  details?: string | null
-}
-
 export type FormattedBotData = BotData & {
-  formattedStatus: BotStatus
   platform: PlatformName
 }
 
@@ -61,4 +59,17 @@ export type FormattedBotPaginated = {
 export type Screenshot = {
   url: string
   date: string
+}
+
+export type BotSearchParams = {
+  bot_id: string
+  offset: number
+  limit: number
+}
+
+export type BotQueryParams = {
+  offset: number
+  limit: number
+  start_date: string
+  end_date: string
 }
