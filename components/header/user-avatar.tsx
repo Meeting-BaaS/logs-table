@@ -55,7 +55,7 @@ export const UserAvatar = ({ user }: { user: User }) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-48">
-        <DropdownMenuLabel className="text-muted-foreground first-letter:uppercase">
+        <DropdownMenuLabel className="truncate text-muted-foreground first-letter:uppercase">
           {user.email}
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
