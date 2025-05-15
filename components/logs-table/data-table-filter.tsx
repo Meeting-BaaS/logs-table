@@ -20,16 +20,18 @@ export function DataTableFilter({ globalFilter, onGlobalFilterChange }: DataTabl
         aria-label="search all columns"
         name="global-search"
       />
-      <Button
-        variant="ghost"
-        size="icon"
-        className="absolute top-0 right-0 py-0.5"
-        onClick={() => onGlobalFilterChange("")}
-        disabled={!globalFilter}
-        aria-label="clear search"
-      >
-        <X />
-      </Button>
+      {globalFilter && (
+        <Button
+          variant="ghost"
+          size="icon"
+          className="absolute top-0 right-0 py-0.5"
+          onClick={() => onGlobalFilterChange("")}
+          disabled={!globalFilter}
+          aria-label="clear search"
+        >
+          <X />
+        </Button>
+      )}
     </div>
   )
 }
