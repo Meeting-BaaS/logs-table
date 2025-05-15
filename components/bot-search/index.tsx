@@ -33,7 +33,7 @@ export function BotSearch() {
   const form = useForm<BotSearchFormData>({
     resolver: zodResolver(botSearchSchema),
     defaultValues: {
-      bot_id: ""
+      bot_uuid: ""
     }
   })
 
@@ -44,7 +44,7 @@ export function BotSearch() {
     setSearchStarted(true)
     try {
       const response = await fetchLogs({
-        bot_id: data.bot_id,
+        bot_uuid: data.bot_uuid,
         limit: 1,
         offset: 0
       })
@@ -69,7 +69,7 @@ export function BotSearch() {
   const handleDialogClose = (open: boolean) => {
     setOpen(open)
     form.reset(
-      { bot_id: "" },
+      { bot_uuid: "" },
       { keepDirty: false, keepErrors: false, keepTouched: false, keepValues: true }
     )
     setData(null)
@@ -104,7 +104,7 @@ export function BotSearch() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="flex">
               <FormField
                 control={form.control}
-                name="bot_id"
+                name="bot_uuid"
                 render={({ field }) => (
                   <FormItem className="relative grow">
                     <FormControl>

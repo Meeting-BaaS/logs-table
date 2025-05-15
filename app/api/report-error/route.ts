@@ -1,3 +1,4 @@
+import { getAuthSession } from "@/lib/auth/session"
 import { AI_CHAT_URL } from "@/lib/external-urls"
 import { reportErrorServerSchema } from "@/lib/schemas/report-error"
 import { generateUUID } from "@/lib/utils"
@@ -11,7 +12,13 @@ if (!apiServerBaseUrl) {
 }
 
 export async function POST(request: NextRequest) {
-  const jwt = request.cookies.get("jwt")?.value
+  const cookies = request.cookies
+  const session = await getAuthSession(cookies.toString())
+  const jwt = cookies.get("jwt")?.value
+
+  if (!session || !session.user.id) {
+    return NextResponse.json({ error: "Unauthorized session" }, { status: 401 })
+  }
 
   if (!jwt) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
@@ -64,7 +71,13 @@ export async function POST(request: NextRequest) {
         Cookie: `jwt=${jwt}`,
         "Content-Type": "application/json"
       },
-      body: JSON.stringify({ bot_uuid, note, chat_id: chatId })
+      body: JSON.stringify({
+        bot_uuid,
+        note,
+        chat_id: chatId,
+        status: "open",
+        author: session.user.email
+      })
     })
 
     if (!response.ok) {

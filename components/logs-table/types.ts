@@ -62,7 +62,7 @@ export type Screenshot = {
 }
 
 export type BotSearchParams = {
-  bot_id: string
+  bot_uuid: string
   offset: number
   limit: number
 }
