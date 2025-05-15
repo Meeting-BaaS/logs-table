@@ -6,6 +6,7 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu"
@@ -18,9 +19,11 @@ import { menuOptions } from "@/components/header/menu-options"
 import type { User } from "@/lib/auth/types"
 import { signOut } from "@/lib/auth/sign-out"
 import { genericError } from "@/lib/errors"
+import { useSession } from "@/hooks/use-session"
 
 export const UserAvatar = ({ user }: { user: User }) => {
   const [loading, setLoading] = useState(false)
+  const session = useSession()
 
   const onSignOut = async () => {
     setLoading(true)
@@ -54,6 +57,10 @@ export const UserAvatar = ({ user }: { user: User }) => {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="w-48">
+        <DropdownMenuLabel className="text-muted-foreground first-letter:uppercase">
+          {session?.user.email ?? ""}
+        </DropdownMenuLabel>
+        <DropdownMenuSeparator />
         <DropdownMenuItem
           className="hover:!bg-popover inline-flex w-full justify-between py-1 md:hidden"
           onSelect={(e: Event) => {

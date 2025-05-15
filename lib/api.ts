@@ -20,7 +20,7 @@ export async function fetchLogs(params: BotQueryParams | BotSearchParams): Promi
           end_date: params.end_date
         })
 
-  const response = await fetch(`/api/logs?${queryParams.toString()}`)
+  const response = await fetch(`/api/bots/all?${queryParams.toString()}`)
 
   if (!response.ok) {
     throw new Error(`Failed to fetch logs: ${response.status} ${response.statusText}`)
@@ -30,7 +30,7 @@ export async function fetchLogs(params: BotQueryParams | BotSearchParams): Promi
 }
 
 export async function retryWebhook(bot_uuid: string): Promise<void> {
-  const response = await fetch(`/api/retry-webhook?bot_uuid=${bot_uuid}`, {
+  const response = await fetch(`/api/bots/retry-webhook?bot_uuid=${bot_uuid}`, {
     method: "POST"
   })
 
