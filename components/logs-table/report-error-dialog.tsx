@@ -86,6 +86,7 @@ export function ReportErrorDialog({ bot_uuid, open, onOpenChange }: ReportErrorD
                       placeholder="Enter additional context about the error..."
                       className="resize-none"
                       {...field}
+                      maxLength={200}
                     />
                   </FormControl>
                   <FormMessage />
