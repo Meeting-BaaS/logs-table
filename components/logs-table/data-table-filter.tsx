@@ -26,7 +26,6 @@ export function DataTableFilter({ globalFilter, onGlobalFilterChange }: DataTabl
           size="icon"
           className="absolute top-0 right-0 py-0.5"
           onClick={() => onGlobalFilterChange("")}
-          disabled={!globalFilter}
           aria-label="clear search"
         >
           <X />
