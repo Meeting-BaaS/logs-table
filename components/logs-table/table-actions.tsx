@@ -10,7 +10,7 @@ import { toast } from "sonner"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { useScreenshotViewer } from "@/hooks/use-screenshot-viewer"
-import { ReportErrorDialog } from "./report-error-dialog"
+import { ReportErrorDialog } from "@/components/logs-table/report-error-dialog"
 import { useSession } from "@/hooks/use-session"
 
 const iconClasses = "size-4"

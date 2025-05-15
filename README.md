@@ -105,7 +105,7 @@ For deployment to hosting platforms like Vercel or Netlify, refer to their respe
 │   ├── api.ts              # API client functions
 │   ├── utils.ts            # Utility functions
 │   └── ...
-│── public/                 # Static assets
+├── public/                 # Static assets
 └── next.config.ts          # Proxy for API routes and image host configuration
 ```
 

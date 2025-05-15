@@ -1,4 +1,3 @@
-import { getAuthSession } from "@/lib/auth/session"
 import { AI_CHAT_URL } from "@/lib/external-urls"
 import { reportErrorServerSchema } from "@/lib/schemas/report-error"
 import { generateUUID } from "@/lib/utils"
