@@ -93,8 +93,8 @@ export function NewMessage({
                   <Textarea
                     placeholder={
                       errorStatus === "closed"
-                        ? "Add additional notes for Meeting BaaS developers..."
-                        : "Add a note to reopen the error..."
+                        ? "Add a note to reopen the error..."
+                        : "Add additional notes for Meeting BaaS developers..."
                     }
                     className="w-full resize-none overflow-y-auto overflow-x-hidden whitespace-pre-wrap pr-10"
                     style={{ wordBreak: "break-word" }}
