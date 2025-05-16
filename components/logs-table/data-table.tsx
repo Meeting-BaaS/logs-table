@@ -98,8 +98,8 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className="flex flex-col">
-      <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+    <div className="relative">
+      <div className="flex flex-col items-center justify-between gap-4 md:flex-row sticky top-0 py-5 left-0 right-0 z-50 bg-background">
         <div className="flex w-full items-center gap-2 md:w-1/2">
           <DateRangeFilter value={dateRange} onChange={setDateRange} />
           {isRefetching && (
