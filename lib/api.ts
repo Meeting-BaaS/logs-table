@@ -30,7 +30,7 @@ export async function fetchLogs(params: BotQueryParams | BotSearchParams): Promi
 }
 
 export async function retryWebhook(bot_uuid: string): Promise<void> {
-  const response = await fetch(`/api/bots/retry-webhook?bot_uuid=${bot_uuid}`, {
+  const response = await fetch(`/api/bots/retry_webhook?bot_uuid=${bot_uuid}`, {
     method: "POST"
   })
 
