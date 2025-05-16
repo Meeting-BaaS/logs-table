@@ -5,10 +5,14 @@ export type UserReportedErrorMessage = {
   created_at: string
   author: string
   note: string
+  chat_id?: string
+  // Not received from the API, added by client to handle UI for sending messages
+  id?: string
+  status?: "pending" | "error" | "success"
 }
 
 export type UserReportedError = {
-  status: "open" | "closed" | "in progress"
+  status: "open" | "closed" | "in_progress"
   messages: UserReportedErrorMessage[]
 }
 

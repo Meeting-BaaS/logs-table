@@ -26,6 +26,7 @@ import { reportError } from "@/lib/api"
 import { toast } from "sonner"
 import { useState } from "react"
 import { Loader2 } from "lucide-react"
+import { useQueryClient } from "@tanstack/react-query"
 
 interface ReportErrorDialogProps {
   bot_uuid: string
@@ -35,6 +36,7 @@ interface ReportErrorDialogProps {
 
 export function ReportErrorDialog({ bot_uuid, open, onOpenChange }: ReportErrorDialogProps) {
   const [isSubmitting, setIsSubmitting] = useState(false)
+  const queryClient = useQueryClient()
 
   const form = useForm<ReportErrorFormData>({
     resolver: zodResolver(reportErrorSchema),
@@ -48,7 +50,7 @@ export function ReportErrorDialog({ bot_uuid, open, onOpenChange }: ReportErrorD
       setIsSubmitting(true)
       await reportError(bot_uuid, data.note)
       toast.success("Error reported successfully")
-      handleOpenChange(false)
+      handleOpenChange(false, true)
     } catch {
       toast.error("Failed to report error")
     } finally {
@@ -56,9 +58,13 @@ export function ReportErrorDialog({ bot_uuid, open, onOpenChange }: ReportErrorD
     }
   }
 
-  const handleOpenChange = (open: boolean) => {
+  const handleOpenChange = (open: boolean, invalidateLogs?: boolean) => {
     if (!open) {
       form.reset()
+      // Invalidate logs query so that logs are fetched again
+      if (invalidateLogs) {
+        queryClient.invalidateQueries({ queryKey: ["logs"] })
+      }
     }
     onOpenChange(open)
   }

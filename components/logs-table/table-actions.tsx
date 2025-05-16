@@ -12,6 +12,7 @@ import { cn } from "@/lib/utils"
 import { useScreenshotViewer } from "@/hooks/use-screenshot-viewer"
 import { ReportErrorDialog } from "@/components/logs-table/report-error-dialog"
 import { useSession } from "@/hooks/use-session"
+import ReportedErrorDialog from "@/components/reported-errors"
 
 const iconClasses = "size-4"
 
@@ -56,6 +57,7 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
   const [resendLoading, setResendLoading] = useState(false)
   const [screenshotsLoading, setScreenshotsLoading] = useState(false)
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false)
+  const [isMessagesDialogOpen, setIsMessagesDialogOpen] = useState(false)
   const { openViewer } = useScreenshotViewer()
   const session = useSession()
 
@@ -88,7 +90,11 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
   }
 
   const handleReportError = () => {
-    setIsReportDialogOpen(true)
+    if (row.user_reported_error) {
+      setIsMessagesDialogOpen(true)
+    } else {
+      setIsReportDialogOpen(true)
+    }
   }
 
   const handleViewScreenshots = async () => {
@@ -140,9 +146,20 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
         />
         <IconButton
           icon={<Bug className={iconClasses} />}
-          tooltip="Report error"
+          tooltip={row.user_reported_error ? "Reported error" : "Report error"}
           onClick={handleReportError}
-        />
+        >
+          {row.user_reported_error && (
+            <div
+              className={cn(
+                "absolute top-0.5 right-1.5 size-2 rounded-full",
+                row.user_reported_error.status === "open" && "bg-destructive",
+                row.user_reported_error.status === "closed" && "bg-green-500",
+                row.user_reported_error.status === "in_progress" && "bg-baas-warning-500"
+              )}
+            />
+          )}
+        </IconButton>
         <IconButton
           icon={<Image className={iconClasses} />}
           tooltip="View screenshots"
@@ -156,6 +173,16 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
         open={isReportDialogOpen}
         onOpenChange={setIsReportDialogOpen}
       />
+
+      {row.user_reported_error && (
+        <ReportedErrorDialog
+          bot_uuid={row.uuid}
+          error={row.user_reported_error}
+          open={isMessagesDialogOpen}
+          onOpenChange={setIsMessagesDialogOpen}
+          isMeetingBaasUser={isMeetingBaasUser}
+        />
+      )}
     </>
   )
 }

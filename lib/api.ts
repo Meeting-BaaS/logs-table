@@ -2,7 +2,8 @@ import type {
   BotPaginated,
   BotQueryParams,
   Screenshot,
-  BotSearchParams
+  BotSearchParams,
+  UserReportedError
 } from "@/components/logs-table/types"
 
 export async function fetchLogs(params: BotQueryParams | BotSearchParams): Promise<BotPaginated> {
@@ -20,7 +21,11 @@ export async function fetchLogs(params: BotQueryParams | BotSearchParams): Promi
           end_date: params.end_date
         })
 
-  const response = await fetch(`/api/bots/all?${queryParams.toString()}`)
+  const response = await fetch(`/api/bots/all?${queryParams.toString()}`, {
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
 
   if (!response.ok) {
     throw new Error(`Failed to fetch logs: ${response.status} ${response.statusText}`)
@@ -31,11 +36,32 @@ export async function fetchLogs(params: BotQueryParams | BotSearchParams): Promi
 
 export async function retryWebhook(bot_uuid: string): Promise<void> {
   const response = await fetch(`/api/bots/retry_webhook?bot_uuid=${bot_uuid}`, {
-    method: "POST"
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    }
   })
 
   if (!response.ok) {
     throw new Error(`Failed to resend webhook: ${response.status} ${response.statusText}`)
+  }
+}
+
+export async function updateError(
+  bot_uuid: string,
+  note: string,
+  status?: UserReportedError["status"]
+): Promise<void> {
+  const response = await fetch(`/api/bots/${bot_uuid}/user_reported_error`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ note, bot_uuid, ...(status && { status }) })
+  })
+
+  if (!response.ok) {
+    throw new Error(`Failed to update error: ${response.status} ${response.statusText}`)
   }
 }
 
@@ -56,7 +82,8 @@ export async function fetchScreenshots(
 ): Promise<Screenshot[]> {
   const response = await fetch(`/api/bots/${bot_uuid}/screenshots`, {
     headers: {
-      "x-meeting-baas-api-key": bots_api_key
+      "x-meeting-baas-api-key": bots_api_key,
+      "Content-Type": "application/json"
     }
   })
 
