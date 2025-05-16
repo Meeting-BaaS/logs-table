@@ -55,7 +55,9 @@ export const ViewMessages = ({ messages, retry }: ViewMessagesProps) => {
                       {message.status === "pending" ? (
                         <Loader2 className="size-3 animate-spin" />
                       ) : message.status === "success" ? (
-                        <span className="opacity-70">{formatCreatedAt(message.created_at)}</span>
+                        <span className="opacity-70">
+                          {formatCreatedAt(message.created_at, message.timezoneCorrection)}
+                        </span>
                       ) : (
                         <div>
                           <Button
@@ -84,7 +86,7 @@ export const ViewMessages = ({ messages, retry }: ViewMessagesProps) => {
                     <div className="mb-1 font-semibold text-primary text-xs">{message.author}</div>
                     <div className="text-sm">{message.note}</div>
                     <div className="mt-1 flex justify-end text-xs opacity-70">
-                      {formatCreatedAt(message.created_at)}
+                      {formatCreatedAt(message.created_at, message.timezoneCorrection)}
                     </div>
                   </div>
                 </div>
@@ -99,8 +101,8 @@ export const ViewMessages = ({ messages, retry }: ViewMessagesProps) => {
                   <div className="mr-auto w-2/3 rounded-md bg-secondary p-2 text-secondary-foreground">
                     <div className="mb-1 font-semibold text-primary text-xs">BaaS Chat</div>
                     <div className="text-sm">
-                      I am sorry to hear that you are having trouble with the bot. An AI chat has
-                      been created for you. Please follow this{" "}
+                      Your issue has been raised. In the meantime, we have created an AI chat for
+                      you to understand the lifecycle of your bot. Click this{" "}
                       <Button variant="link" asChild className="h-auto whitespace-normal p-0">
                         <Link
                           href={`${AI_CHAT_URL}/chat/${message.chat_id}`}
@@ -110,10 +112,10 @@ export const ViewMessages = ({ messages, retry }: ViewMessagesProps) => {
                           link
                         </Link>
                       </Button>{" "}
-                      to continue the conversation.
+                      to open it.
                     </div>
                     <div className="mt-1 flex justify-end text-xs opacity-70">
-                      {formatCreatedAt(message.created_at)}
+                      {formatCreatedAt(message.created_at, message.timezoneCorrection)}
                     </div>
                   </div>
                 </div>

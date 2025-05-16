@@ -9,6 +9,7 @@ export type UserReportedErrorMessage = {
   // Not received from the API, added by client to handle UI for sending messages
   id?: string
   status?: "pending" | "error" | "success"
+  timezoneCorrection?: boolean
 }
 
 export type UserReportedError = {

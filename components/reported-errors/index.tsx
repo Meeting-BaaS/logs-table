@@ -38,7 +38,8 @@ export default function ReportedErrorDialog({
       ...message,
       // Generated a random UUID and set status to success for the message to handle UI changes
       id: message.id || crypto.randomUUID(),
-      status: message.status || "success"
+      status: message.status || "success",
+      timezoneCorrection: message.timezoneCorrection || true
     }))
   })
   const [errorStatus, setErrorStatus] = useState<UserReportedError["status"]>(error.status)

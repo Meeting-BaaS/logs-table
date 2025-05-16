@@ -54,7 +54,8 @@ export function NewMessage({
       author: session?.user.email || "",
       note: data.note,
       created_at: new Date().toISOString(),
-      status: "pending"
+      status: "pending",
+      timezoneCorrection: false // created in user's timezone, no timezone correction needed
     }
 
     // Add the pending message to the list
@@ -90,7 +91,11 @@ export function NewMessage({
               <div className="relative flex grow flex-col gap-2">
                 <FormControl>
                   <Textarea
-                    placeholder="Add a new message..."
+                    placeholder={
+                      errorStatus === "closed"
+                        ? "Add additional notes for Meeting BaaS developers..."
+                        : "Add a note to reopen the error..."
+                    }
                     className="w-full resize-none overflow-y-auto overflow-x-hidden whitespace-pre-wrap pr-10"
                     style={{ wordBreak: "break-word" }}
                     {...field}
