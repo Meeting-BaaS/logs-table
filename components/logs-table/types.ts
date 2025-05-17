@@ -12,8 +12,10 @@ export type UserReportedErrorMessage = {
   timezoneCorrection?: boolean
 }
 
+export type UserReportedErrorStatus = "open" | "closed" | "in_progress"
+
 export type UserReportedError = {
-  status: "open" | "closed" | "in_progress"
+  status: UserReportedErrorStatus
   messages: UserReportedErrorMessage[]
 }
 

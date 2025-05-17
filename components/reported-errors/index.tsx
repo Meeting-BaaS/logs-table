@@ -13,8 +13,6 @@ import { Badge } from "@/components/ui/badge"
 import { NewMessage } from "@/components/reported-errors/new-message"
 import { updateError } from "@/lib/api"
 import { ViewMessages } from "@/components/reported-errors/view-messages"
-import { toast } from "sonner"
-import { Loader2 } from "lucide-react"
 import { useQueryClient } from "@tanstack/react-query"
 
 interface ReportedErrorDialogProps {
@@ -87,20 +85,6 @@ export default function ReportedErrorDialog({
     }
   }
 
-  const handleSetToInProgress = async () => {
-    if (isSettingToInProgress) return
-    setIsSettingToInProgress(true)
-    try {
-      await updateError(bot_uuid, "", "in_progress")
-      setErrorStatus("in_progress")
-    } catch (error) {
-      console.error("Failed to set error to in progress", error)
-      toast.error("Failed to set error to in progress")
-    } finally {
-      setIsSettingToInProgress(false)
-    }
-  }
-
   const handleDialogOpenChange = (newOpen: boolean) => {
     if (!newOpen) {
       // Invalidate logs query when dialog closes, so that logs are fetched again
@@ -111,28 +95,13 @@ export default function ReportedErrorDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleDialogOpenChange}>
-      <DialogContent className="max-h-[80vh] max-w-2xl sm:max-h-[90vh]">
+      <DialogContent className="max-h-[85vh] max-w-2xl sm:max-h-[90vh]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             Reported Error
             <Badge variant={getStatusVariant(errorStatus)} className="capitalize">
               {errorStatus.replace("_", " ")}
             </Badge>
-            {isMeetingBaasUser && errorStatus === "open" && (
-              <Badge variant="warning" className="cursor-pointer" asChild>
-                <button
-                  type="button"
-                  disabled={isSettingToInProgress}
-                  onClick={handleSetToInProgress}
-                >
-                  {isSettingToInProgress ? (
-                    <Loader2 className="size-3 animate-spin" />
-                  ) : (
-                    "Set to in progress"
-                  )}
-                </button>
-              </Badge>
-            )}
           </DialogTitle>
           <DialogDescription>Bot ID: {bot_uuid}</DialogDescription>
         </DialogHeader>
@@ -142,6 +111,7 @@ export default function ReportedErrorDialog({
           onMessageSent={handleMessageSent}
           onMessageUpdate={handleMessageUpdate}
           errorStatus={errorStatus}
+          isMeetingBaasUser={isMeetingBaasUser}
         />
       </DialogContent>
     </Dialog>

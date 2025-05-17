@@ -1,4 +1,7 @@
+import type { UserReportedErrorStatus } from "@/components/logs-table/types"
 import { z } from "zod"
+
+export const statusEnum: UserReportedErrorStatus[] = ["open", "in_progress", "closed"]
 
 export const reportErrorSchema = z.object({
   note: z.string().trim().optional()
@@ -9,7 +12,8 @@ export const reportErrorServerSchema = reportErrorSchema.extend({
 })
 
 export const newMessageSchema = z.object({
-  note: z.string().trim().min(1, "Message cannot be empty").max(200, "Message is too long")
+  note: z.string().trim().min(1, "Message cannot be empty").max(200, "Message is too long"),
+  status: z.enum(statusEnum as [string, ...string[]])
 })
 
 export type ReportErrorFormData = z.infer<typeof reportErrorSchema>

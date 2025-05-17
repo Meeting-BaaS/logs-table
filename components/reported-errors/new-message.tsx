@@ -4,7 +4,11 @@ import { updateError } from "@/lib/api"
 import { useSession } from "@/hooks/use-session"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
-import type { UserReportedError, UserReportedErrorMessage } from "@/components/logs-table/types"
+import type {
+  UserReportedError,
+  UserReportedErrorMessage,
+  UserReportedErrorStatus
+} from "@/components/logs-table/types"
 import { newMessageSchema, type NewMessageFormData } from "@/lib/schemas/report-error"
 import {
   Form,
@@ -12,12 +16,14 @@ import {
   FormDescription,
   FormField,
   FormItem,
+  FormLabel,
   FormMessage
 } from "@/components/ui/form"
 import { Textarea } from "@/components/ui/textarea"
 import { CircleCheck, SendHorizontal } from "lucide-react"
 import { Button } from "../ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select"
 
 interface NewMessageProps {
   bot_uuid: string
@@ -28,24 +34,27 @@ interface NewMessageProps {
     errorStatus: UserReportedError["status"]
   ) => void
   errorStatus: UserReportedError["status"]
+  isMeetingBaasUser?: boolean | undefined
 }
 
 export function NewMessage({
   bot_uuid,
   onMessageSent,
   onMessageUpdate,
-  errorStatus
+  errorStatus,
+  isMeetingBaasUser = false
 }: NewMessageProps) {
   const session = useSession()
 
   const form = useForm<NewMessageFormData>({
     resolver: zodResolver(newMessageSchema),
     defaultValues: {
+      status: errorStatus,
       note: ""
     }
   })
 
-  const onSubmit = async (data: NewMessageFormData, status: UserReportedError["status"]) => {
+  const onSubmit = async (data: NewMessageFormData) => {
     const messageId = crypto.randomUUID()
 
     // Create a pending message
@@ -62,6 +71,12 @@ export function NewMessage({
     onMessageSent(pendingMessage)
     form.reset()
 
+    // If the user is not a Meeting BaaS user and the error was closed, reopen the error upon submitting a new message
+    const status =
+      !isMeetingBaasUser && errorStatus === "closed"
+        ? "open"
+        : (data.status as UserReportedErrorStatus)
+
     try {
       await updateError(bot_uuid, data.note, status)
       onMessageUpdate(messageId, "success", status)
@@ -72,17 +87,46 @@ export function NewMessage({
   }
 
   const handleMarkAsResolved = () => {
-    onSubmit({ note: "User has marked this error as resolved" }, "closed")
+    onSubmit({ note: "User has marked this error as resolved", status: "closed" })
   }
+
+  // Set the placeholder text based on the user's role and the error status
+  const placeholder = isMeetingBaasUser
+    ? "Enter a message to respond to the user..."
+    : errorStatus === "closed"
+      ? "Add a note to reopen the error..."
+      : "Add additional notes for Meeting BaaS developers..."
 
   return (
     <Form {...form}>
-      <form
-        onSubmit={form.handleSubmit(
-          (data) => onSubmit(data, errorStatus === "closed" ? "open" : errorStatus) // Revert to open if the error is closed
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+        {/* Only show the status field if the user is a Meeting BaaS user */}
+        {isMeetingBaasUser && (
+          <FormField
+            control={form.control}
+            name="status"
+            render={({ field }) => (
+              <FormItem className="flex gap-2 pr-12">
+                <FormLabel>Set status</FormLabel>
+                <FormControl>
+                  <Select onValueChange={field.onChange} defaultValue={field.value}>
+                    <FormControl>
+                      <SelectTrigger className="grow">
+                        <SelectValue placeholder="Select a status" />
+                      </SelectTrigger>
+                    </FormControl>
+                    <SelectContent>
+                      <SelectItem value="open">Open</SelectItem>
+                      <SelectItem value="in_progress">In Progress</SelectItem>
+                      <SelectItem value="closed">Closed</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
         )}
-        className="space-y-4"
-      >
         <FormField
           control={form.control}
           name="note"
@@ -91,11 +135,7 @@ export function NewMessage({
               <div className="relative flex grow flex-col gap-2">
                 <FormControl>
                   <Textarea
-                    placeholder={
-                      errorStatus === "closed"
-                        ? "Add a note to reopen the error..."
-                        : "Add additional notes for Meeting BaaS developers..."
-                    }
+                    placeholder={placeholder}
                     className="w-full resize-none overflow-y-auto overflow-x-hidden whitespace-pre-wrap pr-10"
                     style={{ wordBreak: "break-word" }}
                     {...field}
@@ -106,7 +146,8 @@ export function NewMessage({
                   {field.value?.length || 0}/200
                 </FormDescription>
                 <FormMessage />
-                {errorStatus !== "closed" && (
+                {/* Only show the mark as resolved button if the user is not a Meeting BaaS user and the error is not closed */}
+                {errorStatus !== "closed" && !isMeetingBaasUser && (
                   <Tooltip>
                     <TooltipTrigger asChild>
                       <Button

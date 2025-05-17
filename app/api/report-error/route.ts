@@ -59,6 +59,9 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. Report the error to the server
+    // This is a hardcoded note. The client side will check if the note starts with this string
+    // and if it does, it will replace it with an empty string
+    // If updating this note, make sure to update the hardcoded note check in the client side as well
     const message = `User reported an error.${errorDetails}`
     const response = await fetch(`${apiServerBaseUrl}/bots/${bot_uuid}/user_reported_error`, {
       method: "POST",
