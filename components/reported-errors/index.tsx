@@ -82,7 +82,7 @@ export default function ReportedErrorDialog({
       await updateError(bot_uuid, message.note)
       handleMessageUpdate(message.id, "success", errorStatus)
     } catch (error) {
-      console.error("Error while retrying sending message", error)
+      console.error("Failed to retry message", error)
       handleMessageUpdate(message.id, "error", errorStatus)
     }
   }
@@ -94,8 +94,8 @@ export default function ReportedErrorDialog({
       await updateError(bot_uuid, "", "in_progress")
       setErrorStatus("in_progress")
     } catch (error) {
-      console.error("Error while setting the error to in progress", error)
-      toast.error("Error while setting the error to in progress")
+      console.error("Failed to set error to in progress", error)
+      toast.error("Failed to set error to in progress")
     } finally {
       setIsSettingToInProgress(false)
     }

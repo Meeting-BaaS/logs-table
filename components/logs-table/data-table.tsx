@@ -24,7 +24,6 @@ import { Button } from "@/components/ui/button"
 import { useState } from "react"
 import { ColumnVisibilityDropdown } from "@/components/logs-table/column-visibility-dropdown"
 import { DataTableFilter } from "@/components/logs-table/data-table-filter"
-import { allPlatforms, allStatuses } from "@/components/logs-table/column-helpers"
 import { cn } from "@/lib/utils"
 import { AdditionalFilters } from "@/components/logs-table/additional-filters"
 import { Loader2 } from "lucide-react"
@@ -33,6 +32,7 @@ import { DateRangeFilter } from "@/components/logs-table/date-range-filter"
 import { ExportCsvDialog } from "@/components/logs-table/export-csv-dialog"
 import { PageSizeSelector } from "@/components/logs-table/page-size-selector"
 import { BotSearch } from "@/components/bot-search"
+import type { FilterState } from "@/components/logs-table/types"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -45,6 +45,8 @@ interface DataTableProps<TData, TValue> {
   isRefetching: boolean
   dateRange: DateValueType
   setDateRange: (dateRange: DateValueType) => void
+  filters: FilterState
+  setFilters: (filters: FilterState) => void
 }
 
 export function DataTable<TData, TValue>({
@@ -57,19 +59,12 @@ export function DataTable<TData, TValue>({
   onPageSizeChange,
   isRefetching,
   dateRange,
-  setDateRange
+  setDateRange,
+  filters,
+  setFilters
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
-  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([
-    {
-      id: "platform",
-      value: allPlatforms
-    },
-    {
-      id: "status",
-      value: allStatuses
-    }
-  ])
+  const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]) // Required for global filter
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [globalFilter, setGlobalFilter] = useState("")
 
@@ -99,24 +94,31 @@ export function DataTable<TData, TValue>({
 
   return (
     <div className="relative">
-      <div className="flex flex-col items-center justify-between gap-4 md:flex-row sticky top-0 py-5 left-0 right-0 z-50 bg-background">
-        <div className="flex w-full items-center gap-2 md:w-1/2">
-          <DateRangeFilter value={dateRange} onChange={setDateRange} />
-          {isRefetching && (
-            <Loader2 className="size-4 animate-spin text-primary" aria-label="Refreshing logs" />
-          )}
+      <div className="sticky top-0 right-0 left-0 z-50 bg-background py-5">
+        <div className="flex flex-col items-center justify-between gap-4 md:flex-row">
+          <div className="flex w-full items-center gap-2 md:w-1/2">
+            <DateRangeFilter value={dateRange} onChange={setDateRange} />
+            {isRefetching && (
+              <Loader2 className="size-4 animate-spin text-primary" aria-label="Refreshing logs" />
+            )}
+          </div>
+          <div className="flex w-full items-center gap-2 md:w-1/2 lg:w-1/3 xl:w-1/4">
+            <DataTableFilter globalFilter={globalFilter} onGlobalFilterChange={setGlobalFilter} />
+            <ExportCsvDialog
+              table={table}
+              dateRange={dateRange}
+              pageIndex={pageIndex}
+              filters={filters}
+            />
+            <ColumnVisibilityDropdown table={table} />
+          </div>
         </div>
-        <div className="flex w-full items-center gap-2 md:w-1/2 lg:w-1/3 xl:w-1/4">
-          <DataTableFilter globalFilter={globalFilter} onGlobalFilterChange={setGlobalFilter} />
-          <ExportCsvDialog table={table} dateRange={dateRange} pageIndex={pageIndex} />
-          <ColumnVisibilityDropdown table={table} />
+        <div className="mt-2 flex">
+          <BotSearch />
         </div>
       </div>
-      <div className="mt-2 mb-4 flex">
-        <BotSearch />
-      </div>
-      <div className="mb-1 flex flex-col-reverse justify-between gap-2 md:mb-2 md:flex-row">
-        <AdditionalFilters table={table} />
+      <div className="mb-2 flex flex-col justify-between gap-2 md:flex-row">
+        <AdditionalFilters filters={filters} setFilters={setFilters} />
         <PageSizeSelector value={pageSize} onChange={onPageSizeChange} />
       </div>
       <div>

@@ -18,7 +18,12 @@ export async function fetchLogs(params: BotQueryParams | BotSearchParams): Promi
           offset: params.offset.toString(),
           limit: params.limit.toString(),
           start_date: params.start_date,
-          end_date: params.end_date
+          end_date: params.end_date,
+          ...(params.meeting_url_contains && { meeting_url_contains: params.meeting_url_contains }),
+          ...(params.status_type && { status_type: params.status_type }),
+          ...(params.user_reported_error_json && {
+            user_reported_error_json: params.user_reported_error_json
+          })
         })
 
   const response = await fetch(`/api/bots/all?${queryParams.toString()}`, {

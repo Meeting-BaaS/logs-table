@@ -2,55 +2,42 @@
 
 import { Checkbox } from "@/components/ui/checkbox"
 import { Label } from "@/components/ui/label"
-import type { Table } from "@tanstack/react-table"
+import type { Option } from "@/components/logs-table/column-helpers"
 
-interface CheckboxFilterProps<TData, TValue> {
-  table: Table<TData>
-  columnId: string
-  options: readonly TValue[]
+interface CheckboxFilterProps {
+  options: readonly Option[]
   label: string
+  selectedValues: string[]
+  onFilterChange: (value: string[]) => void
 }
 
-export function CheckboxFilter<TData, TValue extends string>({
-  table,
-  columnId,
+export function CheckboxFilter({
   options,
-  label
-}: CheckboxFilterProps<TData, TValue>) {
-  const filter = (table.getColumn(columnId)?.getFilterValue() as TValue[]) || []
-
-  const handleAllChange = (checked: boolean) => {
-    table.getColumn(columnId)?.setFilterValue(checked ? options : [])
-  }
-
-  const handleOptionChange = (option: TValue, checked: boolean) => {
-    const newFilter = checked ? [...filter, option] : filter.filter((o) => o !== option)
-    table.getColumn(columnId)?.setFilterValue(newFilter)
+  label,
+  selectedValues,
+  onFilterChange
+}: CheckboxFilterProps) {
+  const handleOptionChange = (option: Option, checked: boolean) => {
+    const newFilter = checked
+      ? [...selectedValues, option.value]
+      : selectedValues.filter((v) => v !== option.value)
+    onFilterChange(newFilter)
   }
 
   return (
     <>
       <div className="text-muted-foreground text-sm">{label}</div>
-      <div className="flex flex-wrap gap-10">
-        <div className="flex items-center space-x-2">
-          <Checkbox
-            id={`all-${columnId}`}
-            checked={filter.length === options.length}
-            onCheckedChange={handleAllChange}
-          />
-          <Label htmlFor={`all-${columnId}`} className="font-medium text-sm">
-            All
-          </Label>
-        </div>
+      <div className="flex flex-col gap-2">
         {options.map((option) => (
-          <div key={option} className="flex items-center space-x-2">
+          <div key={option.value} className="flex items-center space-x-2">
             <Checkbox
-              id={option}
-              checked={filter.includes(option)}
+              id={`${label}-${option.label}`}
+              name={`${label}-${option.label}`}
+              checked={selectedValues.includes(option.value)}
               onCheckedChange={(checked) => handleOptionChange(option, checked as boolean)}
             />
-            <Label htmlFor={option} className="font-medium text-sm capitalize">
-              {option}
+            <Label htmlFor={`${label}-${option.label}`} className="font-medium text-sm">
+              {option.label}
             </Label>
           </div>
         ))}

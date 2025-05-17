@@ -18,8 +18,30 @@ dayjs.extend(utc)
 dayjs.extend(timezone)
 
 const iconClasses = "size-5"
-export const allPlatforms: PlatformName[] = ["zoom", "teams", "google meet", "unknown"]
-export const allStatuses: StatusType[] = ["success", "error", "pending", "warning"]
+
+export type Option = {
+  label: string
+  value: string
+}
+
+export const allPlatforms: Option[] = [
+  { label: "Zoom", value: "zoom.us" },
+  { label: "Google Meet", value: "meet.google.com" },
+  { label: "Teams", value: "teams.microsoft.com" }
+]
+
+export const allStatuses: Option[] = [
+  { label: "Success", value: "success" },
+  { label: "Error", value: "error" },
+  { label: "Pending", value: "pending" },
+  { label: "Warning", value: "warning" }
+]
+
+export const allUserReportedErrorStatuses: Option[] = [
+  { label: "Open", value: JSON.stringify({ status: "open" }) },
+  { label: "Closed", value: JSON.stringify({ status: "closed" }) },
+  { label: "In Progress", value: JSON.stringify({ status: "in_progress" }) }
+]
 
 export const formatCreatedAt = (dateStr: string, timezoneCorrection?: boolean) => {
   // Parse the date as UTC and convert to local timezone

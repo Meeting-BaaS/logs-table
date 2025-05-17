@@ -65,11 +65,7 @@ export const columns: ColumnDef<FormattedBotData>[] = [
           {formatPlatform(row.original.platform)}
         </CopyTooltip>
       </div>
-    ),
-    filterFn: (row, columnId, filterValue: PlatformName[]) => {
-      if (!filterValue?.length) return false
-      return filterValue.includes(row.getValue(columnId))
-    }
+    )
   },
   {
     id: "bot_name",
@@ -105,16 +101,12 @@ export const columns: ColumnDef<FormattedBotData>[] = [
   {
     id: "status",
     accessorKey: "status.type",
-    accessorFn: (row) => `${row.status.type} ${row.status.details}`,
+    accessorFn: (row) => `${row.status.type} ${row.status.value}`,
     meta: { displayName: "Status" },
     header: ({ column }) => <SortableHeader column={column} title="Status" />,
     cell: ({ row }) => {
       const { type, details, value } = row.original.status
       return <StatusBadge text={value} type={type} details={details} />
-    },
-    filterFn: (row, _columnId, filterValue: StatusType[]) => {
-      if (!filterValue?.length) return false
-      return filterValue.includes(row.original.status.type)
     },
     sortingFn: (rowA, rowB) => {
       const textA = rowA.original.status.value.toLowerCase()

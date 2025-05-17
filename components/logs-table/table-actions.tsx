@@ -81,9 +81,10 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
     try {
       setResendLoading(true)
       await retryWebhook(row.uuid)
-      toast.success("Retry successful")
-    } catch {
-      toast.error("Retry webhook failed")
+      toast.success("Final webhook resent successfully")
+    } catch (error) {
+      console.error("Failed to resend final webhook", error)
+      toast.error("Failed to resend final webhook")
     } finally {
       setResendLoading(false)
     }
@@ -145,7 +146,7 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
           onClick={handleViewRecording}
         />
         <IconButton
-          icon={<Bug className={iconClasses} />}
+          icon={<Bug className={cn(iconClasses, "stroke-amber-500")} />}
           tooltip={row.user_reported_error ? "Reported error" : "Report error"}
           onClick={handleReportError}
         >

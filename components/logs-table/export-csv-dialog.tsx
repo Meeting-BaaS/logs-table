@@ -15,7 +15,7 @@ import { Download } from "lucide-react"
 import type { Table } from "@tanstack/react-table"
 import dayjs from "dayjs"
 import type { DateValueType } from "react-tailwindcss-datepicker"
-import type { FormattedBotData } from "@/components/logs-table/types"
+import type { FilterState, FormattedBotData } from "@/components/logs-table/types"
 import { columns } from "@/components/logs-table/columns"
 import { CSVLink } from "react-csv"
 
@@ -27,6 +27,7 @@ interface ExportCsvDialogProps<TData> {
   table: Table<TData>
   dateRange: DateValueType
   pageIndex: number
+  filters: FilterState
 }
 
 // Escape quotes in JSON string to avoid CSV parsing issues
@@ -44,7 +45,8 @@ function escapeExtraForCsv(extra: object | null): string {
 export function ExportCsvDialog<TData>({
   table,
   dateRange,
-  pageIndex
+  pageIndex,
+  filters
 }: ExportCsvDialogProps<TData>) {
   const headers = columns
     .filter((column) => column.id !== "actions")
@@ -67,9 +69,13 @@ export function ExportCsvDialog<TData>({
     }
   })
 
+  const isFiltered = Object.values(filters).some((filter) => filter.length > 0)
+
   const startDate = dateRange?.startDate ? dayjs(dateRange.startDate).format("YYYY-MM-DD") : "start"
   const endDate = dateRange?.endDate ? dayjs(dateRange.endDate).format("YYYY-MM-DD") : "end"
-  const fileName = `bots_export_${startDate}_to_${endDate}_page_${pageIndex + 1}.csv`
+  const fileName = `bots_export_${startDate}_to_${endDate}_page_${pageIndex + 1}${
+    isFiltered ? "_filtered" : ""
+  }.csv`
 
   return (
     <Dialog>
@@ -83,7 +89,7 @@ export function ExportCsvDialog<TData>({
           <DialogTitle>Download CSV</DialogTitle>
           <DialogDescription>
             This will only export the currently shown rows. To export another set of data, navigate
-            to another page.
+            to another page or adjust the {isFiltered ? "filters" : "date range"}.
           </DialogDescription>
         </DialogHeader>
         <DialogFooter>

@@ -77,4 +77,13 @@ export type BotQueryParams = {
   limit: number
   start_date: string
   end_date: string
+  meeting_url_contains?: string
+  status_type?: string
+  user_reported_error_json?: string
+}
+
+export type FilterState = {
+  platformFilters: string[]
+  statusFilters: string[]
+  userReportedErrorStatusFilters: string[]
 }

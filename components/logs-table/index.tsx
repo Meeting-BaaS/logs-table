@@ -9,6 +9,7 @@ import { genericError } from "@/lib/errors"
 import type { DateValueType } from "react-tailwindcss-datepicker/dist/types"
 import dayjs from "dayjs"
 import { PAGE_SIZE_STORAGE_KEY, pageSizeOptions } from "@/components/logs-table/page-size-selector"
+import type { FilterState } from "@/components/logs-table/types"
 
 export const DEFAULT_PAGE_SIZE = pageSizeOptions[0].value
 
@@ -30,12 +31,19 @@ export default function LogsTable() {
     startDate: dayjs().subtract(14, "day").startOf("day").toDate(),
     endDate: dayjs().endOf("day").toDate()
   })
+  // Filter state - initialize as empty arrays
+  const [filters, setFilters] = useState<FilterState>({
+    platformFilters: [],
+    statusFilters: [],
+    userReportedErrorStatusFilters: []
+  })
 
   const { data, isLoading, isError, error, isRefetching } = useLogs({
     offset: pageIndex * pageSize,
     pageSize,
     startDate: dateRange?.startDate ?? null,
-    endDate: dateRange?.endDate ?? null
+    endDate: dateRange?.endDate ?? null,
+    filters
   })
 
   return (
@@ -61,6 +69,8 @@ export default function LogsTable() {
           isRefetching={isRefetching}
           dateRange={dateRange}
           setDateRange={setDateRange}
+          filters={filters}
+          setFilters={setFilters}
         />
       )}
     </div>
