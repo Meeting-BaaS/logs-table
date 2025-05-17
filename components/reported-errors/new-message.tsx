@@ -136,33 +136,39 @@ export function NewMessage({
                 <FormControl>
                   <Textarea
                     placeholder={placeholder}
-                    className="w-full resize-none overflow-y-auto overflow-x-hidden whitespace-pre-wrap pr-10"
+                    className="h-20 w-full resize-none pr-10"
                     style={{ wordBreak: "break-word" }}
                     {...field}
-                    maxLength={200}
+                    maxLength={isMeetingBaasUser ? 2000 : 200} // Increase the max length for Meeting BaaS users
                   />
                 </FormControl>
-                <FormDescription className="-mt-1 text-right text-xs">
-                  {field.value?.length || 0}/200
-                </FormDescription>
-                <FormMessage />
-                {/* Only show the mark as resolved button if the user is not a Meeting BaaS user and the error is not closed */}
-                {errorStatus !== "closed" && !isMeetingBaasUser && (
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        type="button"
-                        size="icon"
-                        className="absolute top-0 right-0"
-                        aria-label="Mark as resolved"
-                        onClick={handleMarkAsResolved}
-                      >
-                        <CircleCheck className="stroke-primary" />
-                      </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="left">Mark as resolved</TooltipContent>
-                  </Tooltip>
+                {isMeetingBaasUser ? (
+                  <FormDescription className="text-xs">
+                    As a Meeting BaaS developer, you can set the status and respond to the user.
+                  </FormDescription>
+                ) : (
+                  <>
+                    <FormDescription className="-mt-1 text-right text-xs">
+                      {field.value?.length || 0}/200
+                    </FormDescription>
+                    {errorStatus !== "closed" && (
+                      <Tooltip>
+                        <TooltipTrigger asChild>
+                          <Button
+                            variant="ghost"
+                            type="button"
+                            size="icon"
+                            className="absolute top-0 right-0"
+                            aria-label="Mark as resolved"
+                            onClick={handleMarkAsResolved}
+                          >
+                            <CircleCheck className="stroke-primary" />
+                          </Button>
+                        </TooltipTrigger>
+                        <TooltipContent side="left">Mark as resolved</TooltipContent>
+                      </Tooltip>
+                    )}
+                  </>
                 )}
               </div>
               <Button

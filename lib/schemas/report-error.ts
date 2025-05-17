@@ -12,7 +12,7 @@ export const reportErrorServerSchema = reportErrorSchema.extend({
 })
 
 export const newMessageSchema = z.object({
-  note: z.string().trim().min(1, "Message cannot be empty").max(200, "Message is too long"),
+  note: z.string().trim().min(1, "Message cannot be empty"),
   status: z.enum(statusEnum as [string, ...string[]])
 })
 
