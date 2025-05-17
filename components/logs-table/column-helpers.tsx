@@ -27,7 +27,7 @@ export type Option = {
 export const allPlatforms: Option[] = [
   { label: "Zoom", value: "zoom.us" },
   { label: "Google Meet", value: "meet.google.com" },
-  { label: "Teams", value: "teams.microsoft.com" }
+  { label: "Teams", value: "teams.microsoft.com,teams.live.com" }
 ]
 
 export const allStatuses: Option[] = [
