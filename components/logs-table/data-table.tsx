@@ -3,6 +3,7 @@
 import {
   type ColumnDef,
   type ColumnFiltersState,
+  type RowSelectionState,
   type SortingState,
   type VisibilityState,
   flexRender,
@@ -21,7 +22,7 @@ import {
   TableRow
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { ColumnVisibilityDropdown } from "@/components/logs-table/column-visibility-dropdown"
 import { DataTableFilter } from "@/components/logs-table/data-table-filter"
 import { cn } from "@/lib/utils"
@@ -36,7 +37,7 @@ import type { FilterState, FormattedBotData } from "@/components/logs-table/type
 import { TableSelectionShare } from "@/components/logs-table/table-selection-share"
 import { BackToAllLogs } from "@/components/logs-table/back-to-all-logs"
 
-interface DataTableProps<TData, TValue> {
+interface DataTableProps<TData extends FormattedBotData, TValue> {
   columns: ColumnDef<TData, TValue>[]
   data: TData[]
   pageCount: number
@@ -53,7 +54,7 @@ interface DataTableProps<TData, TValue> {
   setBotUuids: (botUuids: string[]) => void
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends FormattedBotData, TValue>({
   columns,
   data,
   pageCount,
@@ -73,7 +74,7 @@ export function DataTable<TData, TValue>({
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]) // Required for global filter
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [globalFilter, setGlobalFilter] = useState("")
-  const [rowSelection, setRowSelection] = useState({})
+  const [rowSelection, setRowSelection] = useState<RowSelectionState>({})
 
   const table = useReactTable({
     data,
@@ -86,7 +87,7 @@ export function DataTable<TData, TValue>({
     onColumnVisibilityChange: setColumnVisibility,
     onGlobalFilterChange: setGlobalFilter,
     onRowSelectionChange: setRowSelection,
-    getRowId: (row: TData) => (row as FormattedBotData).uuid,
+    getRowId: (row: TData) => row.uuid,
     manualPagination: true,
     pageCount,
     state: {
@@ -101,6 +102,12 @@ export function DataTable<TData, TValue>({
       rowSelection
     }
   })
+
+  // biome-ignore lint/correctness/useExhaustiveDependencies: We need to clear the selection when the underlying rows change
+  useEffect(() => {
+    // Clear selection when underlying rows change
+    setRowSelection({})
+  }, [data])
 
   return (
     <div className="relative">

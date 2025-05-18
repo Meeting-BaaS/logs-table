@@ -27,11 +27,7 @@ export async function fetchLogs(params: BotQueryParams | BotSearchParams): Promi
           ...(params.bot_uuid && { bot_uuid: params.bot_uuid })
         })
 
-  const response = await fetch(`/api/bots/all?${queryParams.toString()}`, {
-    headers: {
-      "Content-Type": "application/json"
-    }
-  })
+  const response = await fetch(`/api/bots/all?${queryParams.toString()}`)
 
   if (!response.ok) {
     throw new Error(`Failed to fetch logs: ${response.status} ${response.statusText}`)
@@ -41,7 +37,7 @@ export async function fetchLogs(params: BotQueryParams | BotSearchParams): Promi
 }
 
 export async function retryWebhook(bot_uuid: string, webhookUrl?: string): Promise<void> {
-  const webhookUrlParam = webhookUrl ? `&webhook_url=${webhookUrl}` : ""
+  const webhookUrlParam = webhookUrl ? `&webhook_url=${encodeURIComponent(webhookUrl)}` : ""
   const response = await fetch(`/api/bots/retry_webhook?bot_uuid=${bot_uuid}${webhookUrlParam}`, {
     method: "POST",
     headers: {
@@ -59,6 +55,7 @@ export async function updateError(
   note: string,
   status?: UserReportedError["status"]
 ): Promise<void> {
+  // Api requires the bot_uuid to be in the body and in the url
   const response = await fetch(`/api/bots/${bot_uuid}/user_reported_error`, {
     method: "POST",
     headers: {
@@ -89,8 +86,7 @@ export async function fetchScreenshots(
 ): Promise<Screenshot[]> {
   const response = await fetch(`/api/bots/${bot_uuid}/screenshots`, {
     headers: {
-      "x-meeting-baas-api-key": bots_api_key,
-      "Content-Type": "application/json"
+      "x-meeting-baas-api-key": bots_api_key
     }
   })
 

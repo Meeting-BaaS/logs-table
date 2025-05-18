@@ -41,6 +41,12 @@ const filtersFields = [
   }
 ]
 
+const clearFilters: FilterState = {
+  platformFilters: [],
+  statusFilters: [],
+  userReportedErrorStatusFilters: []
+}
+
 interface AdditionalFiltersProps {
   filters: FilterState
   setFilters: (filters: FilterState) => void
@@ -68,26 +74,16 @@ export function AdditionalFilters({ filters, setFilters }: AdditionalFiltersProp
 
   const handleClearAll = () => {
     setOpen(false)
-    form.reset({
-      platformFilters: [],
-      statusFilters: [],
-      userReportedErrorStatusFilters: []
-    })
-    setFilters({
-      platformFilters: [],
-      statusFilters: [],
-      userReportedErrorStatusFilters: []
-    })
+    form.reset(clearFilters)
+    setFilters(clearFilters)
   }
 
-  const isFiltered = Object.keys(filters).some(
-    (key) => filters[key as keyof FilterState].length > 0
-  )
+  const isFiltered = Object.values(filters).some((arr) => arr.length > 0)
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="outline" className="gap-2">
+        <Button variant="outline" className="gap-2" aria-pressed={isFiltered}>
           {isFiltered ? <FunnelX /> : <Filter />}
           Filters
         </Button>

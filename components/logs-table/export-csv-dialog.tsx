@@ -69,7 +69,7 @@ export function ExportCsvDialog<TData>({
     }
   })
 
-  const isFiltered = Object.values(filters).some((filter) => filter.length > 0)
+  const isFiltered = Object.values(filters).some((arr) => arr.length > 0)
 
   const startDate = dateRange?.startDate ? dayjs(dateRange.startDate).format("YYYY-MM-DD") : "start"
   const endDate = dateRange?.endDate ? dayjs(dateRange.endDate).format("YYYY-MM-DD") : "end"

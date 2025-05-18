@@ -58,7 +58,9 @@ export default function LogsTable() {
   // Update URL when date range, filters, or bot UUIDs change
   useEffect(() => {
     const newParams = updateSearchParams(searchParams, dateRange, filters, botUuids)
-    router.replace(`?${newParams.toString()}`, { scroll: false })
+    if (newParams.toString() !== searchParams.toString()) {
+      router.replace(`?${newParams.toString()}`, { scroll: false })
+    }
   }, [dateRange, filters, botUuids, router, searchParams])
 
   const { data, isLoading, isError, error, isRefetching } = useLogs({

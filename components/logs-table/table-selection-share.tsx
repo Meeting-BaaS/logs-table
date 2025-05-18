@@ -13,7 +13,9 @@ interface TableSelectionShareProps<TData> {
   table: Table<TData>
 }
 
-export function TableSelectionShare<TData>({ table }: TableSelectionShareProps<TData>) {
+export function TableSelectionShare<TData extends FormattedBotData>({
+  table
+}: TableSelectionShareProps<TData>) {
   const selectedRows = table.getSelectedRowModel().rows
   const searchParams = useSearchParams()
   const [isCopied, setIsCopied] = useState(false)
@@ -32,7 +34,7 @@ export function TableSelectionShare<TData>({ table }: TableSelectionShareProps<T
       return
     }
 
-    const selectedUuids = selectedRows.map((row) => (row.original as FormattedBotData).uuid)
+    const selectedUuids = selectedRows.map((row) => row.original.uuid)
 
     const newSearchParams = new URLSearchParams(searchParams.toString())
     newSearchParams.set("bot_uuid", selectedUuids.join(","))
@@ -59,7 +61,7 @@ export function TableSelectionShare<TData>({ table }: TableSelectionShareProps<T
           aria-label={isCopied ? "Copied" : "Share selected logs"}
           onClick={handleShare}
         >
-          {isCopied ? <Check className="text-primary" /> : <Share2 />}
+          {isCopied ? <Check /> : <Share2 />}
         </Button>
       </TooltipTrigger>
       <TooltipContent>

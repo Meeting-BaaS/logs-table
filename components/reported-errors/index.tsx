@@ -35,13 +35,14 @@ export default function ReportedErrorDialog({
     return error.messages.map((message) => ({
       ...message,
       // Generated a random UUID and set status to success for the message to handle UI changes
-      id: message.id || crypto.randomUUID(),
+      id:
+        message.id ||
+        (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2)),
       status: message.status || "success",
       timezoneCorrection: message.timezoneCorrection || true
     }))
   })
   const [errorStatus, setErrorStatus] = useState<UserReportedError["status"]>(error.status)
-  const [isSettingToInProgress, setIsSettingToInProgress] = useState(false)
 
   const getStatusVariant = (status: UserReportedError["status"]) => {
     switch (status) {

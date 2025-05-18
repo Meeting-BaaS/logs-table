@@ -55,7 +55,9 @@ export function NewMessage({
   })
 
   const onSubmit = async (data: NewMessageFormData) => {
-    const messageId = crypto.randomUUID()
+    const messageId = crypto.randomUUID
+      ? crypto.randomUUID()
+      : Math.random().toString(36).substring(2)
 
     // Create a pending message
     const pendingMessage: UserReportedErrorMessage = {
