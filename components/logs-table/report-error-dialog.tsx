@@ -49,10 +49,10 @@ export function ReportErrorDialog({ bot_uuid, open, onOpenChange }: ReportErrorD
     try {
       setIsSubmitting(true)
       await reportError(bot_uuid, data.note)
-      toast.success("Error reported successfully")
+      toast.success("Error reported successfully.")
       handleOpenChange(false, true)
     } catch {
-      toast.error("Failed to report error")
+      toast.error("Failed to report error.")
     } finally {
       setIsSubmitting(false)
     }

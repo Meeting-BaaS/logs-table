@@ -5,7 +5,7 @@ import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip
 import { RotateCcw, ExternalLink, Loader2, Image, Bug, Logs } from "lucide-react"
 import type { FormattedBotData } from "@/components/logs-table/types"
 import { RECORDING_VIEWER_URL } from "@/lib/external-urls"
-import { retryWebhook, fetchScreenshots } from "@/lib/api"
+import { fetchScreenshots } from "@/lib/api"
 import { toast } from "sonner"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
@@ -13,6 +13,7 @@ import { useScreenshotViewer } from "@/hooks/use-screenshot-viewer"
 import { ReportErrorDialog } from "@/components/logs-table/report-error-dialog"
 import { useSession } from "@/hooks/use-session"
 import ReportedErrorDialog from "@/components/reported-errors"
+import { ResendWebhookDialog } from "@/components/logs-table/resend-webhook-dialog"
 
 const iconClasses = "size-4"
 
@@ -54,10 +55,10 @@ interface TableActionsProps {
 }
 
 export function TableActions({ row, containerClassName }: TableActionsProps) {
-  const [resendLoading, setResendLoading] = useState(false)
   const [screenshotsLoading, setScreenshotsLoading] = useState(false)
   const [isReportDialogOpen, setIsReportDialogOpen] = useState(false)
   const [isMessagesDialogOpen, setIsMessagesDialogOpen] = useState(false)
+  const [isResendDialogOpen, setIsResendDialogOpen] = useState(false)
   const { openViewer } = useScreenshotViewer()
   const session = useSession()
 
@@ -68,25 +69,11 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
     window.open(url, "_blank")
   }
 
-  const handleRetry = async () => {
-    if (resendLoading) {
-      return
-    }
-
-    if (!row.ended_at) {
-      toast.error("The meeting hasn't ended yet")
-      return
-    }
-
-    try {
-      setResendLoading(true)
-      await retryWebhook(row.uuid)
-      toast.success("Final webhook resent successfully")
-    } catch (error) {
-      console.error("Failed to resend final webhook", error)
-      toast.error("Failed to resend final webhook")
-    } finally {
-      setResendLoading(false)
+  const handleResendWebhook = () => {
+    if (row.ended_at) {
+      setIsResendDialogOpen(true)
+    } else {
+      toast.error("The meeting hasn't ended yet.")
     }
   }
 
@@ -107,13 +94,13 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
     try {
       const fetchedScreenshots = await fetchScreenshots(row.uuid, session?.user.botsApiKey || "")
       if (fetchedScreenshots.length === 0) {
-        toast.warning("No screenshots found")
+        toast.warning("No screenshots found.")
         return
       }
 
       openViewer(fetchedScreenshots)
     } catch {
-      toast.error("Failed to fetch screenshots")
+      toast.error("Failed to fetch screenshots.")
     } finally {
       setScreenshotsLoading(false)
     }
@@ -137,8 +124,7 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
         <IconButton
           icon={<RotateCcw className={iconClasses} />}
           tooltip="Resend Final Webhook"
-          onClick={handleRetry}
-          loading={resendLoading}
+          onClick={handleResendWebhook}
         />
         <IconButton
           icon={<ExternalLink className={iconClasses} />}
@@ -168,6 +154,12 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
           loading={screenshotsLoading}
         />
       </div>
+
+      <ResendWebhookDialog
+        open={isResendDialogOpen}
+        onOpenChange={setIsResendDialogOpen}
+        bot_uuid={row.uuid}
+      />
 
       <ReportErrorDialog
         bot_uuid={row.uuid}

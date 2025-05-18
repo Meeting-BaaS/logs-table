@@ -20,7 +20,7 @@ export function TableSelectionShare<TData>({ table }: TableSelectionShareProps<T
 
   const handleShare = async () => {
     if (selectedRows.length === 0) {
-      toast.error("Please select at least one row to share")
+      toast.error("Please select at least one row to share.")
       return
     }
 
@@ -28,7 +28,7 @@ export function TableSelectionShare<TData>({ table }: TableSelectionShareProps<T
     // (accounting for the origin URL and other filter params)
     // Limit has been set to 30 to be safe
     if (selectedRows.length > 30) {
-      toast.error("You can only share up to 30 logs at a time")
+      toast.error("You can only share up to 30 logs at a time.")
       return
     }
 
@@ -46,7 +46,7 @@ export function TableSelectionShare<TData>({ table }: TableSelectionShareProps<T
       }, 2000)
     } catch (err) {
       console.error("Failed to copy selected logs", err)
-      toast.error("Failed to copy selected logs")
+      toast.error("Failed to copy selected logs.")
     }
   }
 

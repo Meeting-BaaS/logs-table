@@ -2,7 +2,7 @@ import { ArrowLeft } from "lucide-react"
 import { Button } from "../ui/button"
 import { AnimatePresence, motion } from "motion/react"
 
-const MotionButton = motion(Button)
+const MotionButton = motion.create(Button)
 
 interface BackToAllLogsProps {
   botUuids: string[]

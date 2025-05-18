@@ -61,7 +61,7 @@ export function BotSearch() {
       setData(formattedBot)
     } catch (error) {
       console.error("error searching using bot uuid", error)
-      toast.error("Error searching using bot uuid")
+      toast.error("Error searching using bot uuid.")
     } finally {
       setIsLoading(false)
     }
