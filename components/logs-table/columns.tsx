@@ -20,8 +20,8 @@ import { Checkbox } from "@/components/ui/checkbox"
 
 export const columns: ColumnDef<FormattedBotData>[] = [
   {
-    id: "select",
-    meta: { displayName: "Select" },
+    id: "checkboxes",
+    meta: { displayName: "Checkbox" },
     cell: ({ row }) => (
       <Checkbox
         checked={row.getIsSelected()}
