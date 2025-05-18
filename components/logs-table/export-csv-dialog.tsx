@@ -43,7 +43,7 @@ function escapeExtraForCsv(extra: object | null): string {
   }
 }
 
-export function ExportCsvDialog<TData>({
+export function ExportCsvDialog<TData extends FormattedBotData>({
   table,
   dateRange,
   pageIndex,

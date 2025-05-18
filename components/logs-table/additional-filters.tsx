@@ -71,15 +71,19 @@ export function AdditionalFilters({
     }
   })
 
+  const resetPageIndex = () => {
+    // Reset the page index to 0 when the filters change
+    if (pageIndex !== 0) {
+      onPageChange(0)
+    }
+  }
+
   const onSubmit = (data: FiltersFormData) => {
     setOpen(false)
     if (isEqual(data, filters)) {
       return
     }
-    // Reset the page index to 0 when the filters change
-    if (pageIndex !== 0) {
-      onPageChange(0)
-    }
+    resetPageIndex()
     setFilters({
       platformFilters: data.platformFilters ?? [],
       statusFilters: data.statusFilters ?? [],
@@ -89,6 +93,10 @@ export function AdditionalFilters({
 
   const handleClearAll = () => {
     setOpen(false)
+    if (isEqual(clearFilters, filters)) {
+      return
+    }
+    resetPageIndex()
     form.reset(clearFilters)
     setFilters(clearFilters)
   }

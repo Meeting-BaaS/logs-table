@@ -138,7 +138,7 @@ export function NewMessage({
                 <FormControl>
                   <Textarea
                     placeholder={placeholder}
-                    className="h-20 w-full resize-none break-all pr-10"
+                    className="h-20 w-full resize-none pr-10 [word-break:break-word]"
                     {...field}
                     maxLength={isMeetingBaasUser ? 2000 : 200} // Increase the max length for Meeting BaaS users
                   />

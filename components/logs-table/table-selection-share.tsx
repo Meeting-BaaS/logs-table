@@ -40,9 +40,11 @@ export function TableSelectionShare({ rowSelection }: TableSelectionShareProps) 
     try {
       await navigator.clipboard.writeText(shareUrl)
       setIsCopied(true)
-      setTimeout(() => {
+      const timer = setTimeout(() => {
         setIsCopied(false)
       }, 2000)
+      // Clear the timeout when the component unmounts
+      return () => clearTimeout(timer)
     } catch (err) {
       console.error("Failed to copy selected logs", err)
       toast.error("Failed to copy selected logs.")
