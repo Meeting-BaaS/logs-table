@@ -54,7 +54,7 @@ export function TableSelectionShare<TData>({ table }: TableSelectionShareProps<T
     <Tooltip>
       <TooltipTrigger asChild>
         <Button
-          variant="outline"
+          variant={selectedRows.length > 0 ? "default" : "outline"}
           size="icon"
           aria-label={isCopied ? "Copied" : "Share selected logs"}
           onClick={handleShare}
