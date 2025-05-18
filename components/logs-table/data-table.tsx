@@ -32,7 +32,9 @@ import { DateRangeFilter } from "@/components/logs-table/date-range-filter"
 import { ExportCsvDialog } from "@/components/logs-table/export-csv-dialog"
 import { PageSizeSelector } from "@/components/logs-table/page-size-selector"
 import { BotSearch } from "@/components/bot-search"
-import type { FilterState } from "@/components/logs-table/types"
+import type { FilterState, FormattedBotData } from "@/components/logs-table/types"
+import { TableSelectionShare } from "@/components/logs-table/table-selection-share"
+import { BackToAllLogs } from "@/components/logs-table/back-to-all-logs"
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -47,6 +49,8 @@ interface DataTableProps<TData, TValue> {
   setDateRange: (dateRange: DateValueType) => void
   filters: FilterState
   setFilters: (filters: FilterState) => void
+  botUuids: string[]
+  setBotUuids: (botUuids: string[]) => void
 }
 
 export function DataTable<TData, TValue>({
@@ -61,12 +65,15 @@ export function DataTable<TData, TValue>({
   dateRange,
   setDateRange,
   filters,
-  setFilters
+  setFilters,
+  botUuids,
+  setBotUuids
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]) // Required for global filter
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({})
   const [globalFilter, setGlobalFilter] = useState("")
+  const [rowSelection, setRowSelection] = useState({})
 
   const table = useReactTable({
     data,
@@ -78,6 +85,8 @@ export function DataTable<TData, TValue>({
     getFilteredRowModel: getFilteredRowModel(),
     onColumnVisibilityChange: setColumnVisibility,
     onGlobalFilterChange: setGlobalFilter,
+    onRowSelectionChange: setRowSelection,
+    getRowId: (row: TData) => (row as FormattedBotData).uuid,
     manualPagination: true,
     pageCount,
     state: {
@@ -88,7 +97,8 @@ export function DataTable<TData, TValue>({
       pagination: {
         pageIndex,
         pageSize
-      }
+      },
+      rowSelection
     }
   })
 
@@ -118,8 +128,14 @@ export function DataTable<TData, TValue>({
         </div>
       </div>
       <div className="mb-2 flex flex-col justify-between gap-2 md:flex-row">
-        <AdditionalFilters filters={filters} setFilters={setFilters} />
-        <PageSizeSelector value={pageSize} onChange={onPageSizeChange} />
+        <div className="flex items-center gap-2">
+          <BackToAllLogs botUuids={botUuids} setBotUuids={setBotUuids} />
+          <AdditionalFilters filters={filters} setFilters={setFilters} />
+        </div>
+        <div className="flex items-center gap-2">
+          <TableSelectionShare table={table} />
+          <PageSizeSelector value={pageSize} onChange={onPageSizeChange} />
+        </div>
       </div>
       <div>
         <Table className={cn(isRefetching && "animate-pulse")}>

@@ -8,7 +8,7 @@ import type {
 
 export async function fetchLogs(params: BotQueryParams | BotSearchParams): Promise<BotPaginated> {
   const queryParams =
-    "bot_uuid" in params
+    "search" in params
       ? new URLSearchParams({
           bot_uuid: params.bot_uuid,
           offset: params.offset.toString(),
@@ -23,7 +23,8 @@ export async function fetchLogs(params: BotQueryParams | BotSearchParams): Promi
           ...(params.status_type && { status_type: params.status_type }),
           ...(params.user_reported_error_json && {
             user_reported_error_json: params.user_reported_error_json
-          })
+          }),
+          ...(params.bot_uuid && { bot_uuid: params.bot_uuid })
         })
 
   const response = await fetch(`/api/bots/all?${queryParams.toString()}`, {

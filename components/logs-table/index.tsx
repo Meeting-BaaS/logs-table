@@ -13,8 +13,8 @@ import { useSearchParams, useRouter } from "next/navigation"
 import {
   validateDateRange,
   validateFilterValues,
-  filterStateToSearchValues,
-  dateToUtcString
+  validateBotUuids,
+  updateSearchParams
 } from "@/lib/search-params"
 
 export const DEFAULT_PAGE_SIZE = pageSizeOptions[0].value
@@ -50,57 +50,24 @@ export default function LogsTable() {
     )
   )
 
-  // Update URL when date range or filters change
+  // Initialize bot UUIDs from URL params
+  const [botUuids, setBotUuids] = useState<string[]>(() =>
+    validateBotUuids(searchParams.get("bot_uuid"))
+  )
+
+  // Update URL when date range, filters, or bot UUIDs change
   useEffect(() => {
-    const params = new URLSearchParams(searchParams.toString())
-
-    const startDateUtc = dateToUtcString(dateRange?.startDate ?? null)
-    if (startDateUtc) {
-      params.set("startDate", startDateUtc)
-    } else {
-      params.delete("startDate")
-    }
-
-    const endDateUtc = dateToUtcString(dateRange?.endDate ?? null)
-    if (endDateUtc) {
-      params.set("endDate", endDateUtc)
-    } else {
-      params.delete("endDate")
-    }
-
-    const searchValues = filterStateToSearchValues(filters)
-
-    if (searchValues.platformFilters.length > 0) {
-      params.set("platformFilters", searchValues.platformFilters.join(","))
-    } else {
-      params.delete("platformFilters")
-    }
-
-    if (searchValues.statusFilters.length > 0) {
-      params.set("statusFilters", searchValues.statusFilters.join(","))
-    } else {
-      params.delete("statusFilters")
-    }
-
-    if (searchValues.userReportedErrorStatusFilters.length > 0) {
-      params.set(
-        "userReportedErrorStatusFilters",
-        searchValues.userReportedErrorStatusFilters.join(",")
-      )
-    } else {
-      params.delete("userReportedErrorStatusFilters")
-    }
-
-    // Update URL without triggering a page reload
-    router.replace(`?${params.toString()}`, { scroll: false })
-  }, [dateRange, filters, router, searchParams])
+    const newParams = updateSearchParams(searchParams, dateRange, filters, botUuids)
+    router.replace(`?${newParams.toString()}`, { scroll: false })
+  }, [dateRange, filters, botUuids, router, searchParams])
 
   const { data, isLoading, isError, error, isRefetching } = useLogs({
     offset: pageIndex * pageSize,
     pageSize,
     startDate: dateRange?.startDate ?? null,
     endDate: dateRange?.endDate ?? null,
-    filters
+    filters,
+    botUuids
   })
 
   return (
@@ -128,6 +95,8 @@ export default function LogsTable() {
           setDateRange={setDateRange}
           filters={filters}
           setFilters={setFilters}
+          botUuids={botUuids}
+          setBotUuids={setBotUuids}
         />
       )}
     </div>

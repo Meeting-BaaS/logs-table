@@ -72,6 +72,7 @@ export type BotSearchParams = {
   bot_uuid: string
   offset: number
   limit: number
+  search: true
 }
 
 export type BotQueryParams = {
@@ -82,6 +83,7 @@ export type BotQueryParams = {
   meeting_url_contains?: string
   status_type?: string
   user_reported_error_json?: string
+  bot_uuid?: string
 }
 
 export type FilterState = {

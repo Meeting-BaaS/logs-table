@@ -1,5 +1,6 @@
 import dayjs from "dayjs"
 import utc from "dayjs/plugin/utc"
+import isUUID from "validator/lib/isUUID"
 import {
   allPlatforms,
   allStatuses,
@@ -105,4 +106,64 @@ export function validateDateRange(startDate: string | null, endDate: string | nu
 export function dateToUtcString(date: Date | null): string | null {
   if (!date) return null
   return dayjs(date).utc().format()
+}
+
+// Validate bot UUIDs from search params
+export function validateBotUuids(botUuidsStr: string | null): string[] {
+  if (!botUuidsStr) return []
+  return botUuidsStr.split(",").filter((uuid) => isUUID(uuid, 4))
+}
+
+// Update URL search params with all filter values
+export function updateSearchParams(
+  params: URLSearchParams,
+  dateRange: DateValueType,
+  filters: FilterState,
+  botUuids: string[]
+): URLSearchParams {
+  const newParams = new URLSearchParams(params.toString())
+
+  // Update date range params
+  const startDateUtc = dateToUtcString(dateRange?.startDate ?? null)
+  const endDateUtc = dateToUtcString(dateRange?.endDate ?? null)
+  if (startDateUtc && endDateUtc) {
+    newParams.set("startDate", startDateUtc)
+    newParams.set("endDate", endDateUtc)
+  } else {
+    newParams.delete("startDate")
+    newParams.delete("endDate")
+  }
+
+  // Update filter params
+  const searchValues = filterStateToSearchValues(filters)
+
+  if (searchValues.platformFilters.length > 0) {
+    newParams.set("platformFilters", searchValues.platformFilters.join(","))
+  } else {
+    newParams.delete("platformFilters")
+  }
+
+  if (searchValues.statusFilters.length > 0) {
+    newParams.set("statusFilters", searchValues.statusFilters.join(","))
+  } else {
+    newParams.delete("statusFilters")
+  }
+
+  if (searchValues.userReportedErrorStatusFilters.length > 0) {
+    newParams.set(
+      "userReportedErrorStatusFilters",
+      searchValues.userReportedErrorStatusFilters.join(",")
+    )
+  } else {
+    newParams.delete("userReportedErrorStatusFilters")
+  }
+
+  // Update bot UUIDs param
+  if (botUuids.length > 0) {
+    newParams.set("bot_uuid", botUuids.join(","))
+  } else {
+    newParams.delete("bot_uuid")
+  }
+
+  return newParams
 }

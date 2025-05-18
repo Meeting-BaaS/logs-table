@@ -16,8 +16,20 @@ import { JsonPreview } from "@/components/logs-table/json-preview"
 import { StatusBadge } from "@/components/logs-table/status-badge"
 import { cn } from "@/lib/utils"
 import type { JSX } from "react"
+import { Checkbox } from "@/components/ui/checkbox"
 
 export const columns: ColumnDef<FormattedBotData>[] = [
+  {
+    id: "select",
+    meta: { displayName: "Select" },
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    )
+  },
   {
     id: "created_at",
     accessorKey: "created_at",

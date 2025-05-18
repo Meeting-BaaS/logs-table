@@ -46,7 +46,8 @@ export function BotSearch() {
       const response = await fetchLogs({
         bot_uuid: data.bot_uuid,
         limit: 1,
-        offset: 0
+        offset: 0,
+        search: true
       })
       if (response.bots.length === 0) {
         setData(null)
