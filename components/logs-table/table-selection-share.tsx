@@ -9,7 +9,7 @@ import { TooltipTrigger, Tooltip, TooltipContent } from "@/components/ui/tooltip
 import { useState } from "react"
 
 interface TableSelectionShareProps {
-  rowSelection: RowSelectionState
+  rowSelection: RowSelectionState // Record<string, boolean> where keys are row indices
 }
 
 const MAX_SHARE_UUIDS = 30
@@ -40,11 +40,9 @@ export function TableSelectionShare({ rowSelection }: TableSelectionShareProps) 
     try {
       await navigator.clipboard.writeText(shareUrl)
       setIsCopied(true)
-      const timer = setTimeout(() => {
+      setTimeout(() => {
         setIsCopied(false)
       }, 2000)
-      // Clear the timeout when the component unmounts
-      return () => clearTimeout(timer)
     } catch (err) {
       console.error("Failed to copy selected logs", err)
       toast.error("Failed to copy selected logs.")
