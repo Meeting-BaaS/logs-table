@@ -18,6 +18,7 @@ import type { DateValueType } from "react-tailwindcss-datepicker"
 import type { FilterState, FormattedBotData } from "@/components/logs-table/types"
 import { columns } from "@/components/logs-table/columns"
 import { CSVLink } from "react-csv"
+import { useMemo } from "react"
 
 interface ColumnMeta {
   displayName: string
@@ -69,13 +70,18 @@ export function ExportCsvDialog<TData>({
     }
   })
 
-  const isFiltered = Object.values(filters).some((arr) => arr.length > 0)
+  const isFiltered = useMemo(() => Object.values(filters).some((arr) => arr.length > 0), [filters])
 
   const startDate = dateRange?.startDate ? dayjs(dateRange.startDate).format("YYYY-MM-DD") : "start"
   const endDate = dateRange?.endDate ? dayjs(dateRange.endDate).format("YYYY-MM-DD") : "end"
-  const fileName = `bots_export_${startDate}_to_${endDate}_page_${pageIndex + 1}${
-    isFiltered ? "_filtered" : ""
-  }.csv`
+
+  const fileName = useMemo(
+    () =>
+      `bots_export_${startDate}_to_${endDate}_page_${pageIndex + 1}${
+        isFiltered ? "_filtered" : ""
+      }.csv`,
+    [startDate, endDate, pageIndex, isFiltered]
+  )
 
   return (
     <Dialog>

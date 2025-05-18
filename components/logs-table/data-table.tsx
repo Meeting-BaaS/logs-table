@@ -22,7 +22,7 @@ import {
   TableRow
 } from "@/components/ui/table"
 import { Button } from "@/components/ui/button"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { ColumnVisibilityDropdown } from "@/components/logs-table/column-visibility-dropdown"
 import { DataTableFilter } from "@/components/logs-table/data-table-filter"
 import { cn } from "@/lib/utils"
@@ -103,12 +103,6 @@ export function DataTable<TData extends FormattedBotData, TValue>({
     }
   })
 
-  // biome-ignore lint/correctness/useExhaustiveDependencies: We need to clear the selection when the underlying rows change
-  useEffect(() => {
-    // Clear selection when underlying rows change
-    setRowSelection({})
-  }, [data])
-
   return (
     <div className="relative">
       <div className="sticky top-0 right-0 left-0 z-50 bg-background py-5">
@@ -137,10 +131,15 @@ export function DataTable<TData extends FormattedBotData, TValue>({
       <div className="mb-2 flex flex-col justify-between gap-2 md:flex-row">
         <div className="flex items-center gap-2">
           <BackToAllLogs botUuids={botUuids} setBotUuids={setBotUuids} />
-          <AdditionalFilters filters={filters} setFilters={setFilters} />
+          <AdditionalFilters
+            filters={filters}
+            setFilters={setFilters}
+            pageIndex={pageIndex}
+            onPageChange={onPageChange}
+          />
         </div>
         <div className="flex items-center gap-2">
-          <TableSelectionShare table={table} />
+          <TableSelectionShare rowSelection={rowSelection} />
           <PageSizeSelector value={pageSize} onChange={onPageSizeChange} />
         </div>
       </div>

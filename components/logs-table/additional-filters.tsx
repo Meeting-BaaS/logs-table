@@ -22,6 +22,7 @@ import { filtersSchema, type FiltersFormData } from "@/lib/schemas/filters"
 import { Filter, FunnelX } from "lucide-react"
 import type { FilterState } from "@/components/logs-table/types"
 import { useState } from "react"
+import { isEqual } from "lodash"
 
 const filtersFields = [
   {
@@ -50,9 +51,16 @@ const clearFilters: FilterState = {
 interface AdditionalFiltersProps {
   filters: FilterState
   setFilters: (filters: FilterState) => void
+  pageIndex: number
+  onPageChange: (pageIndex: number) => void
 }
 
-export function AdditionalFilters({ filters, setFilters }: AdditionalFiltersProps) {
+export function AdditionalFilters({
+  filters,
+  setFilters,
+  pageIndex,
+  onPageChange
+}: AdditionalFiltersProps) {
   const [open, setOpen] = useState(false)
   const form = useForm<FiltersFormData>({
     resolver: zodResolver(filtersSchema),
@@ -65,6 +73,13 @@ export function AdditionalFilters({ filters, setFilters }: AdditionalFiltersProp
 
   const onSubmit = (data: FiltersFormData) => {
     setOpen(false)
+    if (isEqual(data, filters)) {
+      return
+    }
+    // Reset the page index to 0 when the filters change
+    if (pageIndex !== 0) {
+      onPageChange(0)
+    }
     setFilters({
       platformFilters: data.platformFilters ?? [],
       statusFilters: data.statusFilters ?? [],
