@@ -10,10 +10,8 @@ import { toast } from "sonner"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { useScreenshotViewer } from "@/hooks/use-screenshot-viewer"
-import { ReportErrorDialog } from "@/components/logs-table/report-error-dialog"
 import { useSession } from "@/hooks/use-session"
-import ReportedErrorDialog from "@/components/reported-errors"
-import { ResendWebhookDialog } from "@/components/logs-table/resend-webhook-dialog"
+import { useTableDialogs } from "@/hooks/use-table-dialogs"
 
 const iconClasses = "size-4"
 
@@ -56,9 +54,8 @@ interface TableActionsProps {
 
 export function TableActions({ row, containerClassName }: TableActionsProps) {
   const [screenshotsLoading, setScreenshotsLoading] = useState(false)
-  const [isReportDialogOpen, setIsReportDialogOpen] = useState(false)
-  const [isMessagesDialogOpen, setIsMessagesDialogOpen] = useState(false)
-  const [isResendDialogOpen, setIsResendDialogOpen] = useState(false)
+  const { showResendWebhookDialog, showReportErrorDialog, showReportedErrorDialog } =
+    useTableDialogs()
   const { openViewer } = useScreenshotViewer()
   const session = useSession()
 
@@ -71,7 +68,7 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
 
   const handleResendWebhook = () => {
     if (row.ended_at) {
-      setIsResendDialogOpen(true)
+      showResendWebhookDialog(row)
     } else {
       toast.error("The meeting hasn't ended yet.")
     }
@@ -79,9 +76,9 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
 
   const handleReportError = () => {
     if (row.user_reported_error) {
-      setIsMessagesDialogOpen(true)
+      showReportedErrorDialog(row)
     } else {
-      setIsReportDialogOpen(true)
+      showReportErrorDialog(row)
     }
   }
 
@@ -163,28 +160,6 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
           loading={screenshotsLoading}
         />
       </div>
-
-      <ResendWebhookDialog
-        open={isResendDialogOpen}
-        onOpenChange={setIsResendDialogOpen}
-        bot_uuid={row.uuid}
-      />
-
-      <ReportErrorDialog
-        bot_uuid={row.uuid}
-        open={isReportDialogOpen}
-        onOpenChange={setIsReportDialogOpen}
-      />
-
-      {row.user_reported_error && (
-        <ReportedErrorDialog
-          bot_uuid={row.uuid}
-          error={row.user_reported_error}
-          open={isMessagesDialogOpen}
-          onOpenChange={setIsMessagesDialogOpen}
-          isMeetingBaasUser={isMeetingBaasUser}
-        />
-      )}
     </>
   )
 }

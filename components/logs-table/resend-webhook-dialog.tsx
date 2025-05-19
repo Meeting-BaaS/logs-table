@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -25,14 +26,16 @@ import { Loader2 } from "lucide-react"
 import { useState } from "react"
 import { useForm } from "react-hook-form"
 import { toast } from "sonner"
+import type { FormattedBotData } from "@/components/logs-table/types"
 
 interface ResendWebhookDialogProps {
-  bot_uuid: string
+  row: FormattedBotData | null
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-export function ResendWebhookDialog({ bot_uuid, open, onOpenChange }: ResendWebhookDialogProps) {
+export function ResendWebhookDialog({ row, open, onOpenChange }: ResendWebhookDialogProps) {
+  const { uuid: bot_uuid } = row || {}
   const [resendLoading, setResendLoading] = useState(false)
   const form = useForm<WebhookResendFormData>({
     resolver: zodResolver(webhookResendSchema),
@@ -40,6 +43,15 @@ export function ResendWebhookDialog({ bot_uuid, open, onOpenChange }: ResendWebh
       webhookUrl: ""
     }
   })
+
+  if (!bot_uuid) {
+    return null
+  }
+
+  const handleOpenChange = (open: boolean) => {
+    form.reset()
+    onOpenChange(open)
+  }
 
   const handleSubmit = async (data: WebhookResendFormData) => {
     if (resendLoading) {
@@ -49,8 +61,7 @@ export function ResendWebhookDialog({ bot_uuid, open, onOpenChange }: ResendWebh
       setResendLoading(true)
       await retryWebhook(bot_uuid, data.webhookUrl)
       toast.success("Final webhook resent successfully.")
-      onOpenChange(false)
-      form.reset()
+      handleOpenChange(false)
     } catch (error) {
       console.error("Failed to resend final webhook", error)
       toast.error("Failed to resend final webhook.")
@@ -60,7 +71,7 @@ export function ResendWebhookDialog({ bot_uuid, open, onOpenChange }: ResendWebh
   }
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Resend Final Webhook</DialogTitle>
@@ -82,14 +93,11 @@ export function ResendWebhookDialog({ bot_uuid, open, onOpenChange }: ResendWebh
               )}
             />
             <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-                disabled={resendLoading}
-              >
-                Cancel
-              </Button>
+              <DialogClose asChild>
+                <Button type="button" variant="outline" disabled={resendLoading}>
+                  Cancel
+                </Button>
+              </DialogClose>
               <Button type="submit" disabled={resendLoading}>
                 {resendLoading ? (
                   <>

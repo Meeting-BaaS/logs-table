@@ -8,41 +8,60 @@ import {
   DialogTitle
 } from "@/components/ui/dialog"
 import type { UserReportedError, UserReportedErrorMessage } from "@/components/logs-table/types"
-import { useState } from "react"
+import { useState, useEffect, useCallback } from "react"
 import { Badge } from "@/components/ui/badge"
 import { NewMessage } from "@/components/reported-errors/new-message"
 import { updateError } from "@/lib/api"
 import { ViewMessages } from "@/components/reported-errors/view-messages"
 import { useQueryClient } from "@tanstack/react-query"
-
+import type { FormattedBotData } from "@/components/logs-table/types"
 interface ReportedErrorDialogProps {
-  bot_uuid: string
-  error: UserReportedError
+  row: FormattedBotData | null
   open: boolean
   onOpenChange: (open: boolean) => void
   isMeetingBaasUser: boolean | undefined
 }
 
 export default function ReportedErrorDialog({
-  bot_uuid,
-  error,
+  row,
   open,
   onOpenChange,
   isMeetingBaasUser
 }: ReportedErrorDialogProps) {
+  const { user_reported_error: error, uuid: bot_uuid } = row || {}
+
   const queryClient = useQueryClient()
-  const [messages, setMessages] = useState<UserReportedErrorMessage[]>(() => {
-    return error.messages.map((message) => ({
-      ...message,
-      // Generated a random UUID and set status to success for the message to handle UI changes
-      id:
-        message.id ||
-        (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2)),
-      status: message.status || "success",
-      timezoneCorrection: message.timezoneCorrection || true
-    }))
-  })
-  const [errorStatus, setErrorStatus] = useState<UserReportedError["status"]>(error.status)
+
+  const transformMessages = useCallback((messages: UserReportedErrorMessage[] | undefined) => {
+    if (!messages || messages.length === 0) return []
+    return (
+      messages.map((message) => ({
+        ...message,
+        id:
+          message.id ||
+          (crypto.randomUUID ? crypto.randomUUID() : Math.random().toString(36).substring(2)),
+        status: message.status || "success",
+        timezoneCorrection: message.timezoneCorrection || true
+      })) || []
+    )
+  }, [])
+
+  const [messages, setMessages] = useState<UserReportedErrorMessage[]>(() =>
+    transformMessages(error?.messages)
+  )
+
+  const [errorStatus, setErrorStatus] = useState<UserReportedError["status"]>(
+    error?.status || "open"
+  )
+
+  useEffect(() => {
+    setMessages(transformMessages(error?.messages))
+    setErrorStatus(error?.status || "open")
+  }, [error, transformMessages])
+
+  if (!bot_uuid || !error) {
+    return null
+  }
 
   const getStatusVariant = (status: UserReportedError["status"]) => {
     switch (status) {

@@ -3,6 +3,7 @@
 import { Button } from "@/components/ui/button"
 import {
   Dialog,
+  DialogClose,
   DialogContent,
   DialogDescription,
   DialogFooter,
@@ -27,14 +28,15 @@ import { toast } from "sonner"
 import { useState } from "react"
 import { Loader2 } from "lucide-react"
 import { useQueryClient } from "@tanstack/react-query"
-
+import type { FormattedBotData } from "@/components/logs-table/types"
 interface ReportErrorDialogProps {
-  bot_uuid: string
+  row: FormattedBotData | null
   open: boolean
   onOpenChange: (open: boolean) => void
 }
 
-export function ReportErrorDialog({ bot_uuid, open, onOpenChange }: ReportErrorDialogProps) {
+export function ReportErrorDialog({ row, open, onOpenChange }: ReportErrorDialogProps) {
+  const { uuid: bot_uuid } = row || {}
   const [isSubmitting, setIsSubmitting] = useState(false)
   const queryClient = useQueryClient()
 
@@ -44,6 +46,10 @@ export function ReportErrorDialog({ bot_uuid, open, onOpenChange }: ReportErrorD
       note: ""
     }
   })
+
+  if (!bot_uuid) {
+    return null
+  }
 
   const onSubmit = async (data: ReportErrorFormData) => {
     try {
@@ -105,14 +111,11 @@ export function ReportErrorDialog({ bot_uuid, open, onOpenChange }: ReportErrorD
             />
 
             <DialogFooter>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => handleOpenChange(false)}
-                disabled={isSubmitting}
-              >
-                Cancel
-              </Button>
+              <DialogClose asChild>
+                <Button type="button" variant="outline" disabled={isSubmitting}>
+                  Cancel
+                </Button>
+              </DialogClose>
               <Button type="submit" variant="destructive" disabled={isSubmitting}>
                 {isSubmitting ? (
                   <>
