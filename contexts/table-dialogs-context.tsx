@@ -14,7 +14,7 @@ interface TableDialogsContextType {
   handleResendWebhookDialogChange: (open: boolean) => void
   showReportErrorDialog: (row: FormattedBotData) => void
   handleReportErrorDialogChange: (open: boolean) => void
-  showReportedErrorDialog: (row: FormattedBotData) => void
+  showReportedErrorDialog: (row: FormattedBotData, isMeetingBaasUser?: boolean) => void
   handleReportedErrorDialogChange: (open: boolean) => void
 }
 
@@ -82,12 +82,16 @@ export function TableDialogsProvider({ children }: { children: React.ReactNode }
     [reportErrorDialogState]
   )
 
-  const showReportedErrorDialog = useCallback((row: FormattedBotData) => {
-    setReportedErrorDialogState({
-      open: true,
-      row
-    })
-  }, [])
+  const showReportedErrorDialog = useCallback(
+    (row: FormattedBotData, isMeetingBaasUser?: boolean) => {
+      setReportedErrorDialogState({
+        open: true,
+        row,
+        isMeetingBaasUser
+      })
+    },
+    []
+  )
 
   const handleReportedErrorDialogChange = useCallback(
     (open: boolean) => {

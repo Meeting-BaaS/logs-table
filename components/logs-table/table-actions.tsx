@@ -76,7 +76,7 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
 
   const handleReportError = () => {
     if (row.user_reported_error) {
-      showReportedErrorDialog(row)
+      showReportedErrorDialog(row, isMeetingBaasUser)
     } else {
       showReportErrorDialog(row)
     }
