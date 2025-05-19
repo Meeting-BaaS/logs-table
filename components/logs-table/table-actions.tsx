@@ -2,7 +2,7 @@
 
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
-import { RotateCcw, ExternalLink, Loader2, Image, Bug, Logs } from "lucide-react"
+import { RotateCcw, ExternalLink, Loader2, Image, Logs, Fish } from "lucide-react"
 import type { FormattedBotData } from "@/components/logs-table/types"
 import { RECORDING_VIEWER_URL } from "@/lib/external-urls"
 import { fetchScreenshots } from "@/lib/api"
@@ -132,7 +132,16 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
           onClick={handleViewRecording}
         />
         <IconButton
-          icon={<Bug className={cn(iconClasses, "stroke-amber-500")} />}
+          icon={
+            <Fish
+              className={cn(
+                iconClasses,
+                "stroke-primary",
+                row.user_reported_error?.status === "open" && "stroke-amber-500",
+                row.user_reported_error?.status === "in_progress" && "stroke-baas-warning-500"
+              )}
+            />
+          }
           tooltip={row.user_reported_error ? "Reported error" : "Report error"}
           onClick={handleReportError}
         >

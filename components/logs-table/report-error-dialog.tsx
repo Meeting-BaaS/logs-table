@@ -73,7 +73,7 @@ export function ReportErrorDialog({ bot_uuid, open, onOpenChange }: ReportErrorD
     <Dialog open={open} onOpenChange={handleOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Report Error</DialogTitle>
+          <DialogTitle>Meeting BaaS says:</DialogTitle>
           <DialogDescription>
             Do you want to report an error for the bot{" "}
             <span className="font-semibold">{bot_uuid}</span>?
