@@ -15,8 +15,15 @@ export async function middleware(request: NextRequest) {
   const response = NextResponse.next()
 
   const signInUrl = `${authAppUrl}/sign-in`
-  const appUrl = request.nextUrl.origin
+
+  // Get the origin from X-Forwarded-Host header if available, otherwise use nextUrl.origin
+  const forwardedHost = request.headers.get("x-forwarded-host")
+  const protocol = request.headers.get("x-forwarded-proto") || "https"
+  const appUrl = forwardedHost ? `${protocol}://${forwardedHost}` : request.nextUrl.origin
+
   const redirectTo = `${appUrl}${request.nextUrl.pathname}${request.nextUrl.search}`
+
+  console.log("redirectTo", redirectTo)
 
   if (!cookie) {
     const newUrl = new URL(`${signInUrl}${request.nextUrl.search}`)
