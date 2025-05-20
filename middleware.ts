@@ -15,32 +15,16 @@ export async function middleware(request: NextRequest) {
   const response = NextResponse.next()
 
   const signInUrl = `${authAppUrl}/sign-in`
-
-  // Get the origin from headers in order of precedence
-  const forwardedHost = request.headers.get("x-forwarded-host")
-  const forwardedServer = request.headers.get("x-forwarded-server")
-  const host = request.headers.get("host")
-  const protocol = request.headers.get("x-forwarded-proto") || "https"
-
-  // Use the first available host in order of precedence
-  const finalHost = forwardedHost || forwardedServer || host || request.nextUrl.host
-  const appUrl = `${protocol}://${finalHost}`
-
+  const appUrl = request.nextUrl.origin
   const redirectTo = `${appUrl}${request.nextUrl.pathname}${request.nextUrl.search}`
-
-  console.log("================================================")
-  console.log("forwardedHost", forwardedHost)
-  console.log("forwardedServer", forwardedServer)
-  console.log("host", host)
-  console.log("protocol", protocol)
-  console.log("finalHost", finalHost)
-  console.log("appUrl", appUrl)
-  console.log("redirectTo", redirectTo)
-  console.log("================================================")
 
   if (!cookie) {
     const newUrl = new URL(`${signInUrl}${request.nextUrl.search}`)
     newUrl.searchParams.set("redirectTo", redirectTo)
+    console.warn("No cookie found in middleware, redirecting to sign in", {
+      cookieExists: !!cookie,
+      redirectionUrl: newUrl.toString()
+    })
     return NextResponse.redirect(newUrl)
   }
 
