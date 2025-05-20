@@ -1,3 +1,4 @@
+import type { UserReportedError } from "@/components/logs-table/types"
 import { clsx, type ClassValue } from "clsx"
 import { twMerge } from "tailwind-merge"
 
@@ -15,4 +16,17 @@ export function generateUUID(): string {
     const v = c === "x" ? r : (r & 0x3) | 0x8
     return v.toString(16)
   })
+}
+
+export function getErrorStatusVariant(status: UserReportedError["status"]) {
+  switch (status) {
+    case "open":
+      return "destructive"
+    case "in_progress":
+      return "warning"
+    case "closed":
+      return "default"
+    default:
+      return "outline"
+  }
 }

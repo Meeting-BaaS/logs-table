@@ -101,33 +101,38 @@ export function NewMessage({
 
   return (
     <Form {...form}>
-      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-        {/* Only show the status field if the user is a Meeting BaaS user */}
+      <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-2">
+        {/* Only show the status field and warning message if the user is a Meeting BaaS user */}
         {isMeetingBaasUser && (
-          <FormField
-            control={form.control}
-            name="status"
-            render={({ field }) => (
-              <FormItem className="flex gap-2 pr-12">
-                <FormLabel>Set status</FormLabel>
-                <FormControl>
-                  <Select onValueChange={field.onChange} defaultValue={field.value}>
-                    <FormControl>
-                      <SelectTrigger className="grow">
-                        <SelectValue placeholder="Select a status" />
-                      </SelectTrigger>
-                    </FormControl>
-                    <SelectContent>
-                      <SelectItem value="open">Open</SelectItem>
-                      <SelectItem value="in_progress">In Progress</SelectItem>
-                      <SelectItem value="closed">Closed</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
+          <>
+            <FormDescription className="text-center text-amber-500 text-xs">
+              Meuh 🐇🐮🦙 - No Bullshit Baas User says
+            </FormDescription>
+            <FormField
+              control={form.control}
+              name="status"
+              render={({ field }) => (
+                <FormItem className="flex gap-2 pr-12">
+                  <FormLabel>Set status</FormLabel>
+                  <FormControl>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger className="grow">
+                          <SelectValue placeholder="Select a status" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="open">Open</SelectItem>
+                        <SelectItem value="in_progress">In Progress</SelectItem>
+                        <SelectItem value="closed">Closed</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </FormControl>
+                  <FormMessage className="text-xs" />
+                </FormItem>
+              )}
+            />
+          </>
         )}
         <FormField
           control={form.control}
@@ -171,12 +176,13 @@ export function NewMessage({
                     )}
                   </>
                 )}
+                <FormMessage />
               </div>
               <Button
                 type="submit"
                 size="icon"
                 aria-label="Send Message"
-                disabled={!field.value.trim()}
+                disabled={!isMeetingBaasUser && !field.value.trim()} // Disable the button if the user is not a Meeting BaaS user and the note is empty
               >
                 <SendHorizontal />
               </Button>

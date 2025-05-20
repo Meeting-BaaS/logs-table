@@ -1,6 +1,6 @@
 "use client"
 
-import { createContext, useCallback, useState } from "react"
+import { createContext, useCallback, useMemo, useState } from "react"
 import type { FormattedBotData } from "@/components/logs-table/types"
 import { ResendWebhookDialog } from "@/components/logs-table/resend-webhook-dialog"
 import { ReportErrorDialog } from "@/components/logs-table/report-error-dialog"
@@ -24,15 +24,17 @@ type DialogState = {
   isMeetingBaasUser?: boolean
 }
 
-const initialDialogState: DialogState = {
-  open: false,
-  row: null,
-  isMeetingBaasUser: undefined
-}
-
 export const TableDialogsContext = createContext<TableDialogsContextType | undefined>(undefined)
 
 export function TableDialogsProvider({ children }: { children: React.ReactNode }) {
+  const initialDialogState: DialogState = useMemo(
+    () => ({
+      open: false,
+      row: null,
+      isMeetingBaasUser: undefined
+    }),
+    []
+  )
   const [resendWebhookDialogState, setResendWebhookDialogState] =
     useState<DialogState>(initialDialogState)
   const [reportErrorDialogState, setReportErrorDialogState] =
@@ -51,14 +53,9 @@ export function TableDialogsProvider({ children }: { children: React.ReactNode }
     (open: boolean) => {
       if (!open) {
         setResendWebhookDialogState(initialDialogState)
-      } else {
-        setResendWebhookDialogState({
-          ...resendWebhookDialogState,
-          open
-        })
       }
     },
-    [resendWebhookDialogState]
+    [initialDialogState]
   )
 
   const showReportErrorDialog = useCallback((row: FormattedBotData) => {
@@ -72,14 +69,9 @@ export function TableDialogsProvider({ children }: { children: React.ReactNode }
     (open: boolean) => {
       if (!open) {
         setReportErrorDialogState(initialDialogState)
-      } else {
-        setReportErrorDialogState({
-          ...reportErrorDialogState,
-          open
-        })
       }
     },
-    [reportErrorDialogState]
+    [initialDialogState]
   )
 
   const showReportedErrorDialog = useCallback(
@@ -97,14 +89,9 @@ export function TableDialogsProvider({ children }: { children: React.ReactNode }
     (open: boolean) => {
       if (!open) {
         setReportedErrorDialogState(initialDialogState)
-      } else {
-        setReportedErrorDialogState({
-          ...reportedErrorDialogState,
-          open
-        })
       }
     },
-    [reportedErrorDialogState]
+    [initialDialogState]
   )
 
   return (

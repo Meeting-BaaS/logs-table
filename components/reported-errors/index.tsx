@@ -15,6 +15,8 @@ import { updateError } from "@/lib/api"
 import { ViewMessages } from "@/components/reported-errors/view-messages"
 import { useQueryClient } from "@tanstack/react-query"
 import type { FormattedBotData } from "@/components/logs-table/types"
+import { getErrorStatusVariant } from "@/lib/utils"
+
 interface ReportedErrorDialogProps {
   row: FormattedBotData | null
   open: boolean
@@ -63,19 +65,6 @@ export default function ReportedErrorDialog({
     return null
   }
 
-  const getStatusVariant = (status: UserReportedError["status"]) => {
-    switch (status) {
-      case "open":
-        return "destructive"
-      case "in_progress":
-        return "warning"
-      case "closed":
-        return "default"
-      default:
-        return "outline"
-    }
-  }
-
   const handleMessageSent = (newMessage: UserReportedErrorMessage) => {
     setMessages((prev) => [...prev, newMessage])
   }
@@ -115,11 +104,11 @@ export default function ReportedErrorDialog({
 
   return (
     <Dialog open={open} onOpenChange={handleDialogOpenChange}>
-      <DialogContent className="max-h-[85vh] max-w-2xl sm:max-h-[90vh]">
+      <DialogContent className="max-h-[100svh] max-w-2xl overflow-y-auto sm:max-h-[100svh]">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             Reported Error
-            <Badge variant={getStatusVariant(errorStatus)} className="capitalize">
+            <Badge variant={getErrorStatusVariant(errorStatus)} className="capitalize">
               {errorStatus.replace("_", " ")}
             </Badge>
           </DialogTitle>
