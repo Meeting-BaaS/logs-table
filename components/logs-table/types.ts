@@ -5,10 +5,17 @@ export type UserReportedErrorMessage = {
   created_at: string
   author: string
   note: string
+  chat_id?: string
+  // Not received from the API, added by client to handle UI for sending messages
+  id?: string
+  status?: "pending" | "error" | "success"
+  timezoneCorrection?: boolean
 }
 
+export type UserReportedErrorStatus = "open" | "closed" | "in_progress"
+
 export type UserReportedError = {
-  status: "open" | "closed" | "in progress"
+  status: UserReportedErrorStatus
   messages: UserReportedErrorMessage[]
 }
 
@@ -65,6 +72,7 @@ export type BotSearchParams = {
   bot_uuid: string
   offset: number
   limit: number
+  search: true
 }
 
 export type BotQueryParams = {
@@ -72,4 +80,14 @@ export type BotQueryParams = {
   limit: number
   start_date: string
   end_date: string
+  meeting_url_contains?: string
+  status_type?: string
+  user_reported_error_json?: string
+  bot_uuid?: string
+}
+
+export type FilterState = {
+  platformFilters: string[]
+  statusFilters: string[]
+  userReportedErrorStatusFilters: string[]
 }

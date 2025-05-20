@@ -2,16 +2,16 @@
 
 import { Button } from "@/components/ui/button"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
-import { RotateCcw, ExternalLink, Loader2, Image, Bug, Logs } from "lucide-react"
+import { RotateCcw, ExternalLink, Loader2, Image, Logs, Fish } from "lucide-react"
 import type { FormattedBotData } from "@/components/logs-table/types"
 import { RECORDING_VIEWER_URL } from "@/lib/external-urls"
-import { retryWebhook, fetchScreenshots } from "@/lib/api"
+import { fetchScreenshots } from "@/lib/api"
 import { toast } from "sonner"
 import { useState } from "react"
 import { cn } from "@/lib/utils"
 import { useScreenshotViewer } from "@/hooks/use-screenshot-viewer"
-import { ReportErrorDialog } from "@/components/logs-table/report-error-dialog"
 import { useSession } from "@/hooks/use-session"
+import { useTableDialogs } from "@/hooks/use-table-dialogs"
 
 const iconClasses = "size-4"
 
@@ -53,9 +53,9 @@ interface TableActionsProps {
 }
 
 export function TableActions({ row, containerClassName }: TableActionsProps) {
-  const [resendLoading, setResendLoading] = useState(false)
   const [screenshotsLoading, setScreenshotsLoading] = useState(false)
-  const [isReportDialogOpen, setIsReportDialogOpen] = useState(false)
+  const { showResendWebhookDialog, showReportErrorDialog, showReportedErrorDialog } =
+    useTableDialogs()
   const { openViewer } = useScreenshotViewer()
   const session = useSession()
 
@@ -66,29 +66,20 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
     window.open(url, "_blank")
   }
 
-  const handleRetry = async () => {
-    if (resendLoading) {
-      return
-    }
-
-    if (!row.ended_at) {
-      toast.error("The meeting hasn't ended yet")
-      return
-    }
-
-    try {
-      setResendLoading(true)
-      await retryWebhook(row.uuid)
-      toast.success("Retry successful")
-    } catch {
-      toast.error("Retry webhook failed")
-    } finally {
-      setResendLoading(false)
+  const handleResendWebhook = () => {
+    if (row.ended_at) {
+      showResendWebhookDialog(row)
+    } else {
+      toast.error("The meeting hasn't ended yet.")
     }
   }
 
   const handleReportError = () => {
-    setIsReportDialogOpen(true)
+    if (row.user_reported_error) {
+      showReportedErrorDialog(row, isMeetingBaasUser)
+    } else {
+      showReportErrorDialog(row)
+    }
   }
 
   const handleViewScreenshots = async () => {
@@ -100,13 +91,13 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
     try {
       const fetchedScreenshots = await fetchScreenshots(row.uuid, session?.user.botsApiKey || "")
       if (fetchedScreenshots.length === 0) {
-        toast.warning("No screenshots found")
+        toast.warning("No screenshots found.")
         return
       }
 
       openViewer(fetchedScreenshots)
     } catch {
-      toast.error("Failed to fetch screenshots")
+      toast.error("Failed to fetch screenshots.")
     } finally {
       setScreenshotsLoading(false)
     }
@@ -130,8 +121,7 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
         <IconButton
           icon={<RotateCcw className={iconClasses} />}
           tooltip="Resend Final Webhook"
-          onClick={handleRetry}
-          loading={resendLoading}
+          onClick={handleResendWebhook}
         />
         <IconButton
           icon={<ExternalLink className={iconClasses} />}
@@ -139,10 +129,30 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
           onClick={handleViewRecording}
         />
         <IconButton
-          icon={<Bug className={iconClasses} />}
-          tooltip="Report error"
+          icon={
+            <Fish
+              className={cn(
+                iconClasses,
+                "stroke-primary",
+                row.user_reported_error?.status === "open" && "stroke-amber-500",
+                row.user_reported_error?.status === "in_progress" && "stroke-baas-warning-500"
+              )}
+            />
+          }
+          tooltip={row.user_reported_error ? "Reported error" : "Report error"}
           onClick={handleReportError}
-        />
+        >
+          {row.user_reported_error && (
+            <div
+              className={cn(
+                "absolute top-0.5 right-1.5 size-2 rounded-full",
+                row.user_reported_error.status === "open" && "bg-destructive",
+                row.user_reported_error.status === "closed" && "bg-green-500",
+                row.user_reported_error.status === "in_progress" && "bg-baas-warning-500"
+              )}
+            />
+          )}
+        </IconButton>
         <IconButton
           icon={<Image className={iconClasses} />}
           tooltip="View screenshots"
@@ -150,12 +160,6 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
           loading={screenshotsLoading}
         />
       </div>
-
-      <ReportErrorDialog
-        bot_uuid={row.uuid}
-        open={isReportDialogOpen}
-        onOpenChange={setIsReportDialogOpen}
-      />
     </>
   )
 }

@@ -1,6 +1,8 @@
 import dayjs from "dayjs"
 import relativeTime from "dayjs/plugin/relativeTime"
 import duration from "dayjs/plugin/duration"
+import utc from "dayjs/plugin/utc"
+import timezone from "dayjs/plugin/timezone"
 import type { SortingFn } from "@tanstack/react-table"
 import type { FormattedBotData, PlatformName, StatusType } from "@/components/logs-table/types"
 import { ZoomLogo } from "@/components/icons/zoom"
@@ -12,13 +14,43 @@ import { cn } from "@/lib/utils"
 // Initialize dayjs plugins
 dayjs.extend(relativeTime)
 dayjs.extend(duration)
+dayjs.extend(utc)
+dayjs.extend(timezone)
 
 const iconClasses = "size-5"
-export const allPlatforms: PlatformName[] = ["zoom", "teams", "google meet", "unknown"]
-export const allStatuses: StatusType[] = ["success", "error", "pending", "warning"]
 
-export const formatCreatedAt = (dateStr: string) => {
-  const date = dayjs(dateStr)
+export type Option = {
+  label: string
+  value: string
+  searchParam: string
+}
+
+export const allPlatforms: Option[] = [
+  { label: "Zoom", value: "zoom.us", searchParam: "zoom" },
+  { label: "Google Meet", value: "meet.google.com", searchParam: "meet" },
+  { label: "Teams", value: "teams.microsoft.com,teams.live.com", searchParam: "teams" }
+]
+
+export const allStatuses: Option[] = [
+  { label: "Success", value: "success", searchParam: "success" },
+  { label: "Error", value: "error", searchParam: "error" },
+  { label: "Pending", value: "pending", searchParam: "pending" },
+  { label: "Warning", value: "warning", searchParam: "warning" }
+]
+
+export const allUserReportedErrorStatuses: Option[] = [
+  { label: "Open", value: JSON.stringify({ status: "open" }), searchParam: "open" },
+  { label: "Closed", value: JSON.stringify({ status: "closed" }), searchParam: "closed" },
+  {
+    label: "In Progress",
+    value: JSON.stringify({ status: "in_progress" }),
+    searchParam: "in_progress"
+  }
+]
+
+export const formatCreatedAt = (dateStr: string, timezoneCorrection?: boolean) => {
+  // Parse the date as UTC and convert to local timezone
+  const date = timezoneCorrection ? dayjs.utc(dateStr).local() : dayjs(dateStr)
   const now = dayjs()
 
   // If the date is more than 7 days old, show the full date

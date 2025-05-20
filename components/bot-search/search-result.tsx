@@ -36,7 +36,7 @@ export const SearchResult = ({
   const transformedData = useMemo<TransformedData>(
     () => ({
       created_at: {
-        value: formatCreatedAt(data.created_at),
+        value: formatCreatedAt(data.created_at, true),
         className: "first-letter:capitalize"
       },
       duration: {

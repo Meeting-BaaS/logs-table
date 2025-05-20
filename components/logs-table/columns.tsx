@@ -16,18 +16,30 @@ import { JsonPreview } from "@/components/logs-table/json-preview"
 import { StatusBadge } from "@/components/logs-table/status-badge"
 import { cn } from "@/lib/utils"
 import type { JSX } from "react"
+import { Checkbox } from "@/components/ui/checkbox"
 
 export const columns: ColumnDef<FormattedBotData>[] = [
+  {
+    id: "checkboxes",
+    meta: { displayName: "Checkbox" },
+    cell: ({ row }) => (
+      <Checkbox
+        checked={row.getIsSelected()}
+        onCheckedChange={(value) => row.toggleSelected(!!value)}
+        aria-label="Select row"
+      />
+    )
+  },
   {
     id: "created_at",
     accessorKey: "created_at",
     meta: { displayName: "Created At" },
     header: ({ column }) => <SortableHeader column={column} title="Created At" isNumber />,
-    accessorFn: (row) => formatCreatedAt(row.created_at),
+    accessorFn: (row) => formatCreatedAt(row.created_at, true),
     cell: ({ row, getValue }) => (
       <CopyTooltip
         text={row.original.created_at}
-        copyText="Copy timestamp"
+        copyText="Copy UTC timestamp"
         className="first-letter:capitalize"
       >
         <span>{getValue<string>()}</span>
@@ -65,11 +77,7 @@ export const columns: ColumnDef<FormattedBotData>[] = [
           {formatPlatform(row.original.platform)}
         </CopyTooltip>
       </div>
-    ),
-    filterFn: (row, columnId, filterValue: PlatformName[]) => {
-      if (!filterValue?.length) return false
-      return filterValue.includes(row.getValue(columnId))
-    }
+    )
   },
   {
     id: "bot_name",
@@ -105,16 +113,12 @@ export const columns: ColumnDef<FormattedBotData>[] = [
   {
     id: "status",
     accessorKey: "status.type",
-    accessorFn: (row) => `${row.status.type} ${row.status.details}`,
+    accessorFn: (row) => `${row.status.type} ${row.status.value}`,
     meta: { displayName: "Status" },
     header: ({ column }) => <SortableHeader column={column} title="Status" />,
     cell: ({ row }) => {
       const { type, details, value } = row.original.status
       return <StatusBadge text={value} type={type} details={details} />
-    },
-    filterFn: (row, _columnId, filterValue: StatusType[]) => {
-      if (!filterValue?.length) return false
-      return filterValue.includes(row.original.status.type)
     },
     sortingFn: (rowA, rowB) => {
       const textA = rowA.original.status.value.toLowerCase()

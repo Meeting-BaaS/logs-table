@@ -5,7 +5,7 @@ import { ThemeProvider } from "next-themes"
 import { JwtProvider } from "@/contexts/jwt-context"
 import { TooltipProvider } from "@/components/ui/tooltip"
 import { ScreenshotViewerProvider } from "@/contexts/screenshot-viewer-context"
-
+import { TableDialogsProvider } from "@/contexts/table-dialogs-context"
 const queryClient = new QueryClient()
 
 export default function Providers({
@@ -20,7 +20,9 @@ export default function Providers({
       <JwtProvider jwt={jwt}>
         <QueryClientProvider client={queryClient}>
           <ScreenshotViewerProvider>
-            <TooltipProvider>{children}</TooltipProvider>
+            <TableDialogsProvider>
+              <TooltipProvider>{children}</TooltipProvider>
+            </TableDialogsProvider>
           </ScreenshotViewerProvider>
         </QueryClientProvider>
       </JwtProvider>

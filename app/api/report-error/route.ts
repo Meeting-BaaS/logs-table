@@ -27,7 +27,7 @@ export async function POST(request: NextRequest) {
     const chatId = generateUUID()
     const messageId = generateUUID()
 
-    const errorDetails = note ? ` Additional context: ${note}.` : ""
+    const errorDetails = note ? ` Additional context: ${note}` : ""
 
     const chatResponse = await fetch(`${AI_CHAT_URL}/api/chat`, {
       method: "POST",
@@ -44,7 +44,7 @@ export async function POST(request: NextRequest) {
             parts: [
               {
                 type: "text",
-                text: `I am facing an error with a bot and the bot id is ${bot_uuid}.${errorDetails} Can you please help me with it?`
+                text: `I am facing an error with a bot and the bot id is ${bot_uuid}.Can you please help me with it?${errorDetails}`
               }
             ],
             createdAt: new Date()
@@ -59,6 +59,9 @@ export async function POST(request: NextRequest) {
     }
 
     // 2. Report the error to the server
+    // This is a hardcoded note. The client side will check if the note starts with this string
+    // and if it does, it will replace it with an empty string
+    // If updating this note, make sure to update the hardcoded note check in the client side as well
     const message = `User reported an error.${errorDetails}`
     const response = await fetch(`${apiServerBaseUrl}/bots/${bot_uuid}/user_reported_error`, {
       method: "POST",

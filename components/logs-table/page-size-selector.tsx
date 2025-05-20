@@ -56,7 +56,7 @@ export function PageSizeSelector({ value, onChange }: PageSizeSelectorProps) {
 
   return (
     <Select value={value.toString()} onValueChange={handlePageSizeChange}>
-      <SelectTrigger className="w-full md:w-1/4 lg:w-1/5">
+      <SelectTrigger className="w-full">
         <SelectValue placeholder="Page size" />
       </SelectTrigger>
       <SelectContent>

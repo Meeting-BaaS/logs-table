@@ -21,6 +21,10 @@ export async function middleware(request: NextRequest) {
   if (!cookie) {
     const newUrl = new URL(`${signInUrl}${request.nextUrl.search}`)
     newUrl.searchParams.set("redirectTo", redirectTo)
+    console.warn("No cookie found in middleware, redirecting to sign in", {
+      cookieExists: !!cookie,
+      redirectionUrl: newUrl.toString()
+    })
     return NextResponse.redirect(newUrl)
   }
 

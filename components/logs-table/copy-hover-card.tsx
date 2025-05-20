@@ -24,7 +24,7 @@ export function CopyHoverCard({ trigger, title, content, className }: CopyHoverC
       setTimeout(() => setIsCopied(false), 2000)
     } catch (err) {
       console.error("Hover card copy error", err)
-      toast.error("Failed to copy")
+      toast.error("Failed to copy.")
     }
   }
 

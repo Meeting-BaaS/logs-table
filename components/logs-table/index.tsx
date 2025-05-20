@@ -1,18 +1,28 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { DataTable } from "@/components/logs-table/data-table"
 import { columns } from "@/components/logs-table/columns"
 import { Loader2 } from "lucide-react"
 import { useLogs } from "@/hooks/use-logs"
 import { genericError } from "@/lib/errors"
 import type { DateValueType } from "react-tailwindcss-datepicker/dist/types"
-import dayjs from "dayjs"
 import { PAGE_SIZE_STORAGE_KEY, pageSizeOptions } from "@/components/logs-table/page-size-selector"
+import type { FilterState } from "@/components/logs-table/types"
+import { useSearchParams, useRouter } from "next/navigation"
+import {
+  validateDateRange,
+  validateFilterValues,
+  validateBotUuids,
+  updateSearchParams
+} from "@/lib/search-params"
 
 export const DEFAULT_PAGE_SIZE = pageSizeOptions[0].value
 
 export default function LogsTable() {
+  const router = useRouter()
+  const searchParams = useSearchParams()
+
   // Pagination state
   const [pageIndex, setPageIndex] = useState(0)
   const [pageSize, setPageSize] = useState(() => {
@@ -25,17 +35,41 @@ export default function LogsTable() {
     }
     return DEFAULT_PAGE_SIZE
   })
-  // Date range state - default to last 14 days
-  const [dateRange, setDateRange] = useState<DateValueType>({
-    startDate: dayjs().subtract(14, "day").startOf("day").toDate(),
-    endDate: dayjs().endOf("day").toDate()
-  })
+
+  // Initialize date range from URL params or default to last 14 days
+  const [dateRange, setDateRange] = useState<DateValueType>(() =>
+    validateDateRange(searchParams.get("startDate"), searchParams.get("endDate"))
+  )
+
+  // Initialize filters from URL params or empty arrays
+  const [filters, setFilters] = useState<FilterState>(() =>
+    validateFilterValues(
+      searchParams.get("platformFilters"),
+      searchParams.get("statusFilters"),
+      searchParams.get("userReportedErrorStatusFilters")
+    )
+  )
+
+  // Initialize bot UUIDs from URL params
+  const [botUuids, setBotUuids] = useState<string[]>(() =>
+    validateBotUuids(searchParams.get("bot_uuid"))
+  )
+
+  // Update URL when date range, filters, or bot UUIDs change
+  useEffect(() => {
+    const newParams = updateSearchParams(searchParams, dateRange, filters, botUuids)
+    if (newParams.toString() !== searchParams.toString()) {
+      router.replace(`?${newParams.toString()}`, { scroll: false })
+    }
+  }, [dateRange, filters, botUuids, router, searchParams])
 
   const { data, isLoading, isError, error, isRefetching } = useLogs({
     offset: pageIndex * pageSize,
     pageSize,
     startDate: dateRange?.startDate ?? null,
-    endDate: dateRange?.endDate ?? null
+    endDate: dateRange?.endDate ?? null,
+    filters,
+    botUuids
   })
 
   return (
@@ -61,6 +95,10 @@ export default function LogsTable() {
           isRefetching={isRefetching}
           dateRange={dateRange}
           setDateRange={setDateRange}
+          filters={filters}
+          setFilters={setFilters}
+          botUuids={botUuids}
+          setBotUuids={setBotUuids}
         />
       )}
     </div>

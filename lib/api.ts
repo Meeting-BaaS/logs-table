@@ -2,12 +2,13 @@ import type {
   BotPaginated,
   BotQueryParams,
   Screenshot,
-  BotSearchParams
+  BotSearchParams,
+  UserReportedError
 } from "@/components/logs-table/types"
 
 export async function fetchLogs(params: BotQueryParams | BotSearchParams): Promise<BotPaginated> {
   const queryParams =
-    "bot_uuid" in params
+    "search" in params
       ? new URLSearchParams({
           bot_uuid: params.bot_uuid,
           offset: params.offset.toString(),
@@ -17,7 +18,13 @@ export async function fetchLogs(params: BotQueryParams | BotSearchParams): Promi
           offset: params.offset.toString(),
           limit: params.limit.toString(),
           start_date: params.start_date,
-          end_date: params.end_date
+          end_date: params.end_date,
+          ...(params.meeting_url_contains && { meeting_url_contains: params.meeting_url_contains }),
+          ...(params.status_type && { status_type: params.status_type }),
+          ...(params.user_reported_error_json && {
+            user_reported_error_json: params.user_reported_error_json
+          }),
+          ...(params.bot_uuid && { bot_uuid: params.bot_uuid })
         })
 
   const response = await fetch(`/api/bots/all?${queryParams.toString()}`)
@@ -29,13 +36,36 @@ export async function fetchLogs(params: BotQueryParams | BotSearchParams): Promi
   return response.json()
 }
 
-export async function retryWebhook(bot_uuid: string): Promise<void> {
-  const response = await fetch(`/api/bots/retry_webhook?bot_uuid=${bot_uuid}`, {
-    method: "POST"
+export async function retryWebhook(bot_uuid: string, webhookUrl?: string): Promise<void> {
+  const webhookUrlParam = webhookUrl ? `&webhook_url=${encodeURIComponent(webhookUrl)}` : ""
+  const response = await fetch(`/api/bots/retry_webhook?bot_uuid=${bot_uuid}${webhookUrlParam}`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    }
   })
 
   if (!response.ok) {
     throw new Error(`Failed to resend webhook: ${response.status} ${response.statusText}`)
+  }
+}
+
+export async function updateError(
+  bot_uuid: string,
+  note: string,
+  status?: UserReportedError["status"]
+): Promise<void> {
+  // Api requires the bot_uuid to be in the body and in the url
+  const response = await fetch(`/api/bots/${bot_uuid}/user_reported_error`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({ note, bot_uuid, ...(status && { status }) })
+  })
+
+  if (!response.ok) {
+    throw new Error(`Failed to update error: ${response.status} ${response.statusText}`)
   }
 }
 

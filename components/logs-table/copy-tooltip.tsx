@@ -27,7 +27,7 @@ export const CopyTooltip = ({ text, className, children, copyText }: CopyTooltip
       }, 2000)
     } catch (err) {
       console.error("Tooltip copy error", err)
-      toast.error("Failed to copy")
+      toast.error("Failed to copy.")
     }
   }
 

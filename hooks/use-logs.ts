@@ -1,6 +1,6 @@
 import { useQuery } from "@tanstack/react-query"
 import { fetchLogs } from "@/lib/api"
-import type { FormattedBotData } from "@/components/logs-table/types"
+import type { FilterState, FormattedBotData } from "@/components/logs-table/types"
 import { getPlatformFromUrl } from "@/lib/format-logs"
 import dayjs from "dayjs"
 
@@ -9,18 +9,49 @@ interface UseLogsParams {
   pageSize: number
   startDate: Date | null
   endDate: Date | null
+  filters: FilterState
+  botUuids: string[]
 }
 
-export function useLogs({ offset, pageSize, startDate, endDate }: UseLogsParams) {
+export function useLogs({
+  offset,
+  pageSize,
+  startDate,
+  endDate,
+  filters,
+  botUuids
+}: UseLogsParams) {
   const { data, isLoading, isError, error, isRefetching } = useQuery({
-    queryKey: ["logs", { offset, limit: pageSize, startDate, endDate }],
-    queryFn: () =>
-      fetchLogs({
+    queryKey: [
+      "logs",
+      {
+        offset,
+        limit: pageSize,
+        startDate,
+        endDate,
+        filters,
+        botUuids
+      }
+    ],
+    queryFn: () => {
+      const { platformFilters, statusFilters, userReportedErrorStatusFilters } = filters
+      const queryParams = {
         offset,
         limit: pageSize,
         start_date: startDate ? `${dayjs(startDate).format("YYYY-MM-DD")}T00:00:00` : "",
-        end_date: endDate ? `${dayjs(endDate).format("YYYY-MM-DD")}T23:59:59` : ""
-      }),
+        end_date: endDate ? `${dayjs(endDate).format("YYYY-MM-DD")}T23:59:59` : "",
+        ...(botUuids.length > 0 && { bot_uuid: botUuids.join(",") }),
+        ...(platformFilters.length > 0 && {
+          meeting_url_contains: filters.platformFilters.join(",")
+        }),
+        ...(statusFilters.length > 0 && { status_type: statusFilters.join(",") }),
+        ...(userReportedErrorStatusFilters.length > 0 && {
+          user_reported_error_json: `${userReportedErrorStatusFilters.join(",")}`
+        })
+      }
+
+      return fetchLogs(queryParams)
+    },
     select: (data) => {
       const formattedBots: FormattedBotData[] = data.bots.map((bot) => ({
         ...bot,
