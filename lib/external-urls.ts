@@ -25,4 +25,4 @@ export const BILLING_URL = `${SETTINGS_URL}/billing`
 export const GITHUB_REPO_URL = "https://github.com/Meeting-Baas/logs-table"
 
 // Recording Viewer. Append uuid to the end of the URL to view a specific recording.
-export const RECORDING_VIEWER_URL = `https://${environment}meetingbaas.com/viewer/:uuid`
+export const RECORDING_VIEWER_URL = `https://viewer.${environment}meetingbaas.com/:uuid`
