@@ -33,7 +33,7 @@ export const DOCS_URL = createUrl("docs")
 // Github
 export const GITHUB_REPO_URL = "https://github.com/Meeting-Baas/logs-table"
 
-// Recording Viewer. Append uuid to the end of the URL to view a specific recording.
+//  Recording Viewer: build URL with dynamic recording `uuid` in the path.
 export const RECORDING_VIEWER_URL = `${createUrl("viewer")}/:uuid`
 
 // AI Chat
