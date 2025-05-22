@@ -30,3 +30,8 @@ export function getErrorStatusVariant(status: UserReportedError["status"]) {
       return "outline"
   }
 }
+
+export function isMeetingBaasUser(email?: string) {
+  if (!email) return false
+  return email.endsWith("@meetingbaas.com")
+}
