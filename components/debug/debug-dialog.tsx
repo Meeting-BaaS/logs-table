@@ -12,7 +12,7 @@ import {
 import type { FormattedBotData } from "@/components/logs-table/types"
 import { useDebugLogs } from "@/hooks/use-debug-logs"
 import { Button } from "../ui/button"
-import { Download, Loader2 } from "lucide-react"
+import { Download, ExternalLink, Loader2 } from "lucide-react"
 import { genericError } from "@/lib/errors"
 import { getGrafanaLogsUrl } from "@/lib/external-urls"
 import { DebugViewer } from "@/components/debug/debug-viewer"
@@ -61,7 +61,8 @@ export default function DebugDialog({ row, open, onOpenChange }: DebugDialogProp
         <DialogFooter className="flex flex-col gap-2 md:flex-row md:justify-between">
           <div className="flex w-full gap-2 md:w-auto">
             <Button onClick={handleViewGrafanaLogs} variant="outline" className="grow">
-              View Grafana Logs
+              <ExternalLink />
+              Go to Grafana
             </Button>
             <Button onClick={handleDownloadLogs} variant="outline" className="grow">
               <Download />
