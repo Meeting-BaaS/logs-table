@@ -26,6 +26,7 @@ export function useDebugLogs({ bot_uuid }: UseDebugLogsParams) {
       }
     ],
     queryFn: () => fetchDebugLogs(bot_uuid || ""),
+    enabled: Boolean(bot_uuid),
     select: (data) => {
       const ansiHtml = converter.toHtml(data.text)
       // Split by newlines and wrap each line in a div

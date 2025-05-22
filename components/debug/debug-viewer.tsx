@@ -144,6 +144,7 @@ export function DebugViewer({ html }: DebugViewerProps) {
         )}
       </div>
       <div className="max-h-[60svh] overflow-y-auto md:pr-4">
+        {/* Custom colors for terminal like UI */}
         <div className="log-content relative bg-black/90 p-3 font-mono text-gray-200 text-sm">
           <div ref={contentRef} />
         </div>

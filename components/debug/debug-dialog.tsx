@@ -64,7 +64,12 @@ export default function DebugDialog({ row, open, onOpenChange }: DebugDialogProp
               <ExternalLink />
               Go to Grafana
             </Button>
-            <Button onClick={handleDownloadLogs} variant="outline" className="grow">
+            <Button
+              onClick={handleDownloadLogs}
+              variant="outline"
+              className="grow"
+              disabled={!data?.logsUrl}
+            >
               <Download />
               Download
             </Button>

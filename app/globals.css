@@ -192,5 +192,5 @@
   color: #666;
   user-select: none;
   padding-right: 0.5rem;
-  border-right: 1px solid rgba(255, 255, 255, 0.1);
+  border-right: 1px solid rgba(255, 255, 255, 0.1); // Custom colors for terminal like UI
 }
