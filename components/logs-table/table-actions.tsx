@@ -113,7 +113,7 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
         {meetingBaasUser && (
           <IconButton
             icon={<Logs className={iconClasses} />}
-            tooltip="View debug logs"
+            tooltip="Debug bot logs"
             onClick={() => showDebugDialog(row, meetingBaasUser)}
           />
         )}

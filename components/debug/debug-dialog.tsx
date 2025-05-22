@@ -15,6 +15,7 @@ import { Button } from "../ui/button"
 import { Download, Loader2 } from "lucide-react"
 import { genericError } from "@/lib/errors"
 import { getGrafanaLogsUrl } from "@/lib/external-urls"
+import { DebugViewer } from "@/components/debug/debug-viewer"
 
 interface DebugDialogProps {
   row: FormattedBotData | null
@@ -39,31 +40,30 @@ export default function DebugDialog({ row, open, onOpenChange }: DebugDialogProp
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[85svh] overflow-y-auto sm:max-h-[85svh] sm:max-w-4xl">
+      <DialogContent className="max-h-[100svh] max-w-full overflow-y-auto sm:max-h-[90svh] sm:max-w-6xl">
         <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">Debug Bot Logs</DialogTitle>
+          <DialogTitle>Debug Bot Logs</DialogTitle>
           <DialogDescription>Bot ID: {bot_uuid}</DialogDescription>
         </DialogHeader>
         {loading ? (
           <div className="flex h-96 items-center justify-center">
-            <Loader2 className="h-8 w-8 animate-spin text-primary" />
+            <Loader2 className="size-8 animate-spin text-primary" />
           </div>
         ) : error ? (
           <div className="flex h-96 items-center justify-center text-destructive">
             Error: {error instanceof Error ? error.message : genericError}
           </div>
+        ) : data?.html ? (
+          <DebugViewer html={data.html} />
         ) : (
-          <div className="wrap-normal mb-2 max-h-[60svh] overflow-y-auto pr-4">
-            {/* biome-ignore lint/security/noDangerouslySetInnerHtml: The logs are sanitized */}
-            <div dangerouslySetInnerHTML={{ __html: data?.html || "" }} />
-          </div>
+          <div className="flex h-96 items-center justify-center">No logs found</div>
         )}
         <DialogFooter className="flex flex-col gap-2 md:flex-row md:justify-between">
-          <div className="flex gap-2">
-            <Button onClick={handleViewGrafanaLogs} variant="outline">
+          <div className="flex w-full gap-2 md:w-auto">
+            <Button onClick={handleViewGrafanaLogs} variant="outline" className="grow">
               View Grafana Logs
             </Button>
-            <Button onClick={handleDownloadLogs} variant="outline">
+            <Button onClick={handleDownloadLogs} variant="outline" className="grow">
               <Download />
               Download
             </Button>

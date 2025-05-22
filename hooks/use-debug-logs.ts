@@ -4,7 +4,7 @@ import AnsiToHtml from "ansi-to-html"
 import DOMPurify from "dompurify"
 
 const converter = new AnsiToHtml({
-  newline: true
+  newline: false // Manually wrapping lines in <div> tags
 })
 
 interface UseDebugLogsParams {
@@ -28,7 +28,13 @@ export function useDebugLogs({ bot_uuid }: UseDebugLogsParams) {
     queryFn: () => fetchDebugLogs(bot_uuid || ""),
     select: (data) => {
       const ansiHtml = converter.toHtml(data.text)
-      const cleanHtml = DOMPurify.sanitize(ansiHtml)
+      // Split by newlines and wrap each line in a div
+      const lines = ansiHtml
+        .split("\n")
+        .map((line) => `<div class="log-line">${line}</div>`)
+        .join("")
+
+      const cleanHtml = DOMPurify.sanitize(lines)
       return { ...data, html: cleanHtml }
     },
     retry: false,
