@@ -106,7 +106,7 @@ export function NewMessage({
         {isMeetingBaasUser && (
           <>
             <FormDescription className="text-center text-amber-500 text-xs">
-              Meuh 🐇🐮🦙 - No Bullshit Baas User says
+              Meuh 🐇🐮🦙🐨👽 - No Bullshit Baas User says
             </FormDescription>
             <FormField
               control={form.control}

@@ -5,6 +5,9 @@ import type { FormattedBotData } from "@/components/logs-table/types"
 import { ResendWebhookDialog } from "@/components/logs-table/resend-webhook-dialog"
 import { ReportErrorDialog } from "@/components/logs-table/report-error-dialog"
 import ReportedErrorDialog from "@/components/reported-errors"
+import dynamic from "next/dynamic"
+// Dynamically import the DebugDialog component for Meeting Baas users and reduce the bundle size for non-Meeting Baas users
+const DebugDialog = dynamic(() => import("@/components/debug/debug-dialog"), { ssr: false })
 
 interface TableDialogsContextType {
   resendWebhookDialogState: DialogState
@@ -16,6 +19,8 @@ interface TableDialogsContextType {
   handleReportErrorDialogChange: (open: boolean) => void
   showReportedErrorDialog: (row: FormattedBotData, isMeetingBaasUser?: boolean) => void
   handleReportedErrorDialogChange: (open: boolean) => void
+  showDebugDialog: (row: FormattedBotData, isMeetingBaasUser?: boolean) => void
+  handleDebugDialogChange: (open: boolean) => void
 }
 
 type DialogState = {
@@ -41,6 +46,7 @@ export function TableDialogsProvider({ children }: { children: React.ReactNode }
     useState<DialogState>(initialDialogState)
   const [reportedErrorDialogState, setReportedErrorDialogState] =
     useState<DialogState>(initialDialogState)
+  const [debugDialogState, setDebugDialogState] = useState<DialogState>(initialDialogState)
 
   const showResendWebhookDialog = useCallback((row: FormattedBotData) => {
     setResendWebhookDialogState({
@@ -94,6 +100,23 @@ export function TableDialogsProvider({ children }: { children: React.ReactNode }
     [initialDialogState]
   )
 
+  const showDebugDialog = useCallback((row: FormattedBotData, isMeetingBaasUser?: boolean) => {
+    setDebugDialogState({
+      open: true,
+      row,
+      isMeetingBaasUser
+    })
+  }, [])
+
+  const handleDebugDialogChange = useCallback(
+    (open: boolean) => {
+      if (!open) {
+        setDebugDialogState(initialDialogState)
+      }
+    },
+    [initialDialogState]
+  )
+
   return (
     <TableDialogsContext.Provider
       value={{
@@ -105,7 +128,9 @@ export function TableDialogsProvider({ children }: { children: React.ReactNode }
         showReportErrorDialog,
         handleReportErrorDialogChange,
         showReportedErrorDialog,
-        handleReportedErrorDialogChange
+        handleReportedErrorDialogChange,
+        showDebugDialog,
+        handleDebugDialogChange
       }}
     >
       {children}
@@ -127,6 +152,14 @@ export function TableDialogsProvider({ children }: { children: React.ReactNode }
         onOpenChange={handleReportedErrorDialogChange}
         isMeetingBaasUser={reportedErrorDialogState.isMeetingBaasUser}
       />
+
+      {debugDialogState.isMeetingBaasUser && (
+        <DebugDialog
+          row={debugDialogState.row}
+          open={debugDialogState.open}
+          onOpenChange={handleDebugDialogChange}
+        />
+      )}
     </TableDialogsContext.Provider>
   )
 }

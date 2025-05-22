@@ -96,3 +96,30 @@ export async function fetchScreenshots(
 
   return response.json()
 }
+
+interface LogsUrlResponse {
+  url: string
+}
+
+export async function fetchDebugLogs(bot_uuid: string): Promise<{ text: string; logsUrl: string }> {
+  if (!bot_uuid) return { text: "", logsUrl: "" }
+  // Fetch the debug logs url
+  const logsUrlResponse = await fetch(`/api/bots/${bot_uuid}/logs`)
+  if (!logsUrlResponse.ok) {
+    throw new Error(
+      `Failed to fetch debug logs url: ${logsUrlResponse.status} ${logsUrlResponse.statusText}`
+    )
+  }
+  const logsUrl = (await logsUrlResponse.json()) as LogsUrlResponse
+  if (!logsUrl.url) {
+    throw new Error(`Debug logs url not found for bot ${bot_uuid}`)
+  }
+
+  // Fetch the debug logs
+  const response = await fetch(logsUrl.url)
+  if (!response.ok) {
+    throw new Error(`Failed to fetch debug logs: ${response.status} ${response.statusText}`)
+  }
+  const text = await response.text()
+  return { text, logsUrl: logsUrl.url }
+}
