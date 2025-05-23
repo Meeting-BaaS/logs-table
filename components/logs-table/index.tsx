@@ -1,8 +1,8 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useMemo } from "react"
 import { DataTable } from "@/components/logs-table/data-table"
-import { columns } from "@/components/logs-table/columns"
+import { createColumns } from "@/components/logs-table/columns"
 import { Loader2 } from "lucide-react"
 import { useLogs } from "@/hooks/use-logs"
 import { genericError } from "@/lib/errors"
@@ -16,12 +16,16 @@ import {
   validateBotUuids,
   updateSearchParams
 } from "@/lib/search-params"
+import { useSession } from "@/hooks/use-session"
 
 export const DEFAULT_PAGE_SIZE = pageSizeOptions[0].value
 
 export default function LogsTable() {
   const router = useRouter()
   const searchParams = useSearchParams()
+  const session = useSession()
+  const email = session?.user.email
+  const columns = useMemo(() => createColumns(email), [email])
 
   // Pagination state
   const [pageIndex, setPageIndex] = useState(0)

@@ -16,9 +16,10 @@ import type { Table } from "@tanstack/react-table"
 import dayjs from "dayjs"
 import type { DateValueType } from "react-tailwindcss-datepicker"
 import type { FilterState, FormattedBotData } from "@/components/logs-table/types"
-import { columns } from "@/components/logs-table/columns"
+import { createColumns } from "@/components/logs-table/columns"
 import { CSVLink } from "react-csv"
 import { useMemo } from "react"
+import { useSession } from "@/hooks/use-session"
 
 interface ColumnMeta {
   displayName: string
@@ -43,14 +44,21 @@ function escapeExtraForCsv(extra: object | null): string {
   }
 }
 
+// These columns are not exported to the CSV
+const columnsNotToExport = ["actions", "checkboxes"]
+
 export function ExportCsvDialog<TData extends FormattedBotData>({
   table,
   dateRange,
   pageIndex,
   filters
 }: ExportCsvDialogProps<TData>) {
+  const session = useSession()
+  const email = session?.user.email
+  const columns = useMemo(() => createColumns(email), [email])
+
   const headers = columns
-    .filter((column) => column.id !== "actions")
+    .filter((column) => !columnsNotToExport.includes(column.id ?? ""))
     .map((column) => ({
       label: (column.meta as ColumnMeta)?.displayName ?? column.id,
       key: column.id
@@ -66,6 +74,7 @@ export function ExportCsvDialog<TData extends FormattedBotData>({
       bot_name: rowData.params.bot_name,
       reserved: rowData.reserved,
       extra: escapeExtraForCsv(rowData.params.extra),
+      account_email: rowData.account_email || "-",
       status: rowData.status.details || rowData.status.value
     }
   })
