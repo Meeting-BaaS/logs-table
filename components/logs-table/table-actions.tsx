@@ -157,6 +157,7 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
           tooltip="View screenshots"
           onClick={handleViewScreenshots}
           loading={screenshotsLoading}
+          disabled={row.platform === "zoom"} // We don't support screenshots for Zoom yet
         />
       </div>
     </>

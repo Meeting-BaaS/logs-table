@@ -36,6 +36,7 @@ export type BotParams = {
 export type BotData = {
   id: number
   account_id: number
+  account_email?: string
   meeting_url: string
   created_at: string
   session_id: string | null

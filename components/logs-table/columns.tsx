@@ -17,8 +17,9 @@ import { StatusBadge } from "@/components/logs-table/status-badge"
 import { cn } from "@/lib/utils"
 import type { JSX } from "react"
 import { Checkbox } from "@/components/ui/checkbox"
+import { isMeetingBaasUser } from "@/lib/utils"
 
-export const columns: ColumnDef<FormattedBotData>[] = [
+export const createColumns = (email?: string): ColumnDef<FormattedBotData>[] => [
   {
     id: "checkboxes",
     meta: { displayName: "Checkbox" },
@@ -126,6 +127,26 @@ export const columns: ColumnDef<FormattedBotData>[] = [
       return textA.localeCompare(textB)
     }
   },
+  ...(isMeetingBaasUser(email) // Only show email column if the user is a MeetingBaas user
+    ? ([
+        {
+          id: "account_email",
+          accessorKey: "account_email",
+          meta: { displayName: "Email" },
+          header: ({ column }) => {
+            return <SortableHeader column={column} title="Email" />
+          },
+          cell: ({ row }) => {
+            if (!row.original.account_email) return "-"
+            return (
+              <CopyTooltip text={row.original.account_email} copyText="Copy email">
+                {row.original.account_email}
+              </CopyTooltip>
+            )
+          }
+        }
+      ] as ColumnDef<FormattedBotData>[])
+    : []),
   {
     id: "actions",
     meta: { displayName: "Actions" },
