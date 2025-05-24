@@ -105,6 +105,11 @@ interface LogsUrlResponse {
 export async function fetchSystemMetrics(
   bot_uuid: string
 ): Promise<{ metrics: SystemMetrics[]; logsUrl: string }> {
+  // Input validation
+  if (!bot_uuid || typeof bot_uuid !== 'string' || bot_uuid.trim().length === 0) {
+    throw new Error('bot_uuid is required and must be a non-empty string')
+  }
+
   // Fetch the system metrics logs url
   const response = await fetch(`/api/bots/${bot_uuid}/machine_logs`)
 
@@ -112,11 +117,19 @@ export async function fetchSystemMetrics(
     throw new Error(`Failed to fetch system metrics url: ${response.status} ${response.statusText}`)
   }
 
-  const logsUrlResponse = (await response.json()) as LogsUrlResponse
-  if (!logsUrlResponse.url) {
-    throw new Error(`System metrics logs url not found for bot ${bot_uuid}`)
+  const responseJson = await response.json()
+  
+  // Runtime validation of response structure
+  if (!responseJson || typeof responseJson !== 'object') {
+    throw new Error('Invalid response format: expected an object')
+  }
+  
+  if (!responseJson.url || typeof responseJson.url !== 'string') {
+    throw new Error('Invalid response format: missing or invalid url property')
   }
 
+  const logsUrlResponse = responseJson as LogsUrlResponse
+  
   // Fetch the actual logs file
   const logsResponse = await fetch(logsUrlResponse.url)
   if (!logsResponse.ok) {

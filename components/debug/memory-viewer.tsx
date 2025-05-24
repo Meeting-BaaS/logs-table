@@ -38,15 +38,29 @@ interface ChartDataPoint {
 
 type SubTabType = "memory" | "performance"
 
+interface TooltipPayloadEntry {
+    dataKey: string
+    color: string
+    value: number | string
+    name?: string
+}
+
+interface CustomTooltipProps {
+    active?: boolean
+    payload?: TooltipPayloadEntry[]
+    label?: string
+    config?: ChartConfig
+}
+
 // Custom tooltip component with larger fonts and size
-const CustomTooltip = ({ active, payload, label, config }: any) => {
+const CustomTooltip = ({ active, payload, label, config }: CustomTooltipProps) => {
     if (!active || !payload || payload.length === 0) return null
 
     return (
         <div className="bg-background border rounded-lg shadow-lg p-4 min-w-[200px]">
             <p className="font-semibold text-base mb-3 text-foreground">{label}</p>
             <div className="space-y-2">
-                {payload.map((entry: any, index: number) => {
+                {payload.map((entry: TooltipPayloadEntry, index: number) => {
                     const configItem = config?.[entry.dataKey]
                     const color = configItem?.color || entry.color
                     const label = configItem?.label || entry.dataKey
