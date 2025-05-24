@@ -1,8 +1,9 @@
 import type {
   BotPaginated,
   BotQueryParams,
-  Screenshot,
   BotSearchParams,
+  Screenshot,
+  SystemMetrics,
   UserReportedError
 } from "@/components/logs-table/types"
 
@@ -95,6 +96,47 @@ export async function fetchScreenshots(
   }
 
   return response.json()
+}
+
+export async function fetchSystemMetrics(
+  bot_uuid: string
+): Promise<{ metrics: SystemMetrics[]; logsUrl: string }> {
+  // Fetch the system metrics logs url
+  const response = await fetch(`/api/bots/${bot_uuid}/machine_logs`)
+
+  if (!response.ok) {
+    throw new Error(`Failed to fetch system metrics url: ${response.status} ${response.statusText}`)
+  }
+
+  const logsUrlResponse = (await response.json()) as LogsUrlResponse
+  if (!logsUrlResponse.url) {
+    throw new Error(`System metrics logs url not found for bot ${bot_uuid}`)
+  }
+
+  // Fetch the actual logs file
+  const logsResponse = await fetch(logsUrlResponse.url)
+  if (!logsResponse.ok) {
+    throw new Error(`Failed to fetch system metrics logs: ${logsResponse.status} ${logsResponse.statusText}`)
+  }
+
+  const logsText = await logsResponse.text()
+  
+  // Parse the logs into SystemMetrics array
+  const metrics: SystemMetrics[] = []
+  const lines = logsText.trim().split('\n')
+  
+  for (const line of lines) {
+    if (line.trim()) {
+      try {
+        const parsed = JSON.parse(line) as SystemMetrics
+        metrics.push(parsed)
+      } catch (error) {
+        console.warn('Failed to parse log line:', line, error)
+      }
+    }
+  }
+
+  return { metrics, logsUrl: logsUrlResponse.url }
 }
 
 interface LogsUrlResponse {
