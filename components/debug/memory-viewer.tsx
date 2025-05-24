@@ -8,8 +8,8 @@ import {
     CardHeader,
     CardTitle,
 } from "@/components/ui/card"
+import type { ChartConfig } from "@/components/ui/chart"
 import {
-    ChartConfig,
     ChartContainer,
     ChartLegend,
     ChartLegendContent,
@@ -72,6 +72,7 @@ const CustomTooltip = ({ active, payload, label, config }: any) => {
 }
 
 // Using explicit colors that work well together
+// TODO: Make this dynamic based on the theme
 const colors = {
     systemMemoryPercent: "#3b82f6", // Blue
     chromeMemory: "#10b981", // Green  
@@ -165,6 +166,7 @@ export function MemoryViewer({ metrics, logsUrl }: MemoryViewerProps) {
                 {subTabs.map((tab) => (
                     <button
                         key={tab.id}
+                        type="button"
                         onClick={() => setActiveSubTab(tab.id)}
                         className={cn(
                             "flex flex-col items-start gap-1 px-4 py-3 text-sm border-b-2 transition-colors",

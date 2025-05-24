@@ -98,6 +98,10 @@ export async function fetchScreenshots(
   return response.json()
 }
 
+interface LogsUrlResponse {
+  url: string
+}
+
 export async function fetchSystemMetrics(
   bot_uuid: string
 ): Promise<{ metrics: SystemMetrics[]; logsUrl: string }> {
@@ -137,10 +141,6 @@ export async function fetchSystemMetrics(
   }
 
   return { metrics, logsUrl: logsUrlResponse.url }
-}
-
-interface LogsUrlResponse {
-  url: string
 }
 
 export async function fetchDebugLogs(bot_uuid: string): Promise<{ text: string; logsUrl: string }> {
