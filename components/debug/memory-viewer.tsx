@@ -160,6 +160,54 @@ export function MemoryViewer({ metrics, logsUrl }: MemoryViewerProps) {
         { id: "performance", label: "Performance", description: "CPU usage % and process counts" }
     ] as const
 
+    // Compute summary statistics once for efficiency
+    const memoryStats = useMemo(() => {
+        if (chartData.length === 0) {
+            return {
+                maxChrome: 0,
+                avgChrome: 0,
+                maxSystem: 0,
+                maxFfmpeg: 0,
+                hasFfmpeg: false,
+            }
+        }
+        const chromeMemories = chartData.map(d => d.chromeMemory)
+        const systemMemories = chartData.map(d => d.systemMemoryPercent)
+        const ffmpegMemories = chartData.map(d => d.ffmpegMemory)
+        const maxChrome = Math.max(...chromeMemories)
+        const avgChrome = chromeMemories.reduce((sum, v) => sum + v, 0) / chartData.length
+        const maxSystem = Math.max(...systemMemories)
+        const maxFfmpeg = Math.max(...ffmpegMemories)
+        const hasFfmpeg = ffmpegMemories.some(v => v > 0)
+        return { maxChrome, avgChrome, maxSystem, maxFfmpeg, hasFfmpeg }
+    }, [chartData])
+
+    const cpuStats = useMemo(() => {
+        if (chartData.length === 0) {
+            return {
+                maxChrome: 0,
+                avgChrome: 0,
+            }
+        }
+        const chromeCpus = chartData.map(d => d.chromeCpu)
+        const maxChrome = Math.max(...chromeCpus)
+        const avgChrome = chromeCpus.reduce((sum, v) => sum + v, 0) / chartData.length
+        return { maxChrome, avgChrome }
+    }, [chartData])
+
+    const processStats = useMemo(() => {
+        if (chartData.length === 0) {
+            return {
+                max: 0,
+                avg: 0,
+            }
+        }
+        const processCounts = chartData.map(d => d.chromeProcessCount)
+        const max = Math.max(...processCounts)
+        const avg = processCounts.reduce((sum, v) => sum + v, 0) / chartData.length
+        return { max, avg }
+    }, [chartData])
+
     return (
         <div className="w-full space-y-4">
             {/* Download button */}
@@ -397,11 +445,11 @@ export function MemoryViewer({ metrics, logsUrl }: MemoryViewerProps) {
                         <CardTitle className="text-base">Memory Usage</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-1 text-sm">
-                        <div>Max Chrome: {Math.max(...chartData.map(d => d.chromeMemory)).toFixed(2)} GB</div>
-                        <div>Avg Chrome: {(chartData.reduce((sum, d) => sum + d.chromeMemory, 0) / chartData.length).toFixed(2)} GB</div>
-                        <div>Max System: {Math.max(...chartData.map(d => d.systemMemoryPercent)).toFixed(1)}%</div>
-                        {chartData.some(d => d.ffmpegMemory > 0) && (
-                            <div>Max FFmpeg: {Math.max(...chartData.map(d => d.ffmpegMemory)).toFixed(2)} GB</div>
+                        <div>Max Chrome: {memoryStats.maxChrome.toFixed(2)} GB</div>
+                        <div>Avg Chrome: {memoryStats.avgChrome.toFixed(2)} GB</div>
+                        <div>Max System: {memoryStats.maxSystem.toFixed(1)}%</div>
+                        {memoryStats.hasFfmpeg && (
+                            <div>Max FFmpeg: {memoryStats.maxFfmpeg.toFixed(2)} GB</div>
                         )}
                     </CardContent>
                 </Card>
@@ -410,8 +458,8 @@ export function MemoryViewer({ metrics, logsUrl }: MemoryViewerProps) {
                         <CardTitle className="text-base">CPU Usage</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-1 text-sm">
-                        <div>Max Chrome: {Math.max(...chartData.map(d => d.chromeCpu)).toFixed(1)}%</div>
-                        <div>Avg Chrome: {(chartData.reduce((sum, d) => sum + d.chromeCpu, 0) / chartData.length).toFixed(1)}%</div>
+                        <div>Max Chrome: {cpuStats.maxChrome.toFixed(1)}%</div>
+                        <div>Avg Chrome: {cpuStats.avgChrome.toFixed(1)}%</div>
                     </CardContent>
                 </Card>
                 <Card>
@@ -419,8 +467,8 @@ export function MemoryViewer({ metrics, logsUrl }: MemoryViewerProps) {
                         <CardTitle className="text-base">Process Count</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-1 text-sm">
-                        <div>Max Processes: {Math.max(...chartData.map(d => d.chromeProcessCount))}</div>
-                        <div>Avg Processes: {Math.round(chartData.reduce((sum, d) => sum + d.chromeProcessCount, 0) / chartData.length)}</div>
+                        <div>Max Processes: {processStats.max}</div>
+                        <div>Avg Processes: {Math.round(processStats.avg)}</div>
                     </CardContent>
                 </Card>
             </div>
