@@ -106,7 +106,7 @@ export function AdditionalFilters({
   return (
     <Sheet open={open} onOpenChange={setOpen}>
       <SheetTrigger asChild>
-        <Button variant="outline" className="gap-2" aria-pressed={isFiltered}>
+        <Button variant="outline" className="w-full gap-2 md:w-auto" aria-pressed={isFiltered}>
           {isFiltered ? <FunnelX /> : <Filter />}
           Filters
         </Button>

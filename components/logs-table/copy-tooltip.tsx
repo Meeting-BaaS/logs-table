@@ -16,7 +16,8 @@ export const CopyTooltip = ({ text, className, children, copyText }: CopyTooltip
   const [copied, setCopied] = useState(false)
   const [isOpen, setIsOpen] = useState(false)
 
-  const handleCopy = async () => {
+  const handleCopy = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
     try {
       await navigator.clipboard.writeText(text)
       setCopied(true)
