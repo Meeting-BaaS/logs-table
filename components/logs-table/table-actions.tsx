@@ -18,7 +18,7 @@ const iconClasses = "size-4"
 interface IconButtonProps {
   icon: React.ReactNode
   tooltip: string
-  onClick: () => void
+  onClick: (e: React.MouseEvent<HTMLButtonElement>) => void
   disabled?: boolean
   loading?: boolean
   children?: React.ReactNode
@@ -70,7 +70,8 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
     window.open(url, "_blank")
   }
 
-  const handleResendWebhook = () => {
+  const handleResendWebhook = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
     if (row.ended_at) {
       showResendWebhookDialog(row)
     } else {
@@ -78,7 +79,8 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
     }
   }
 
-  const handleReportError = () => {
+  const handleReportError = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
     if (row.user_reported_error) {
       showReportedErrorDialog(row, meetingBaasUser)
     } else {
@@ -86,7 +88,8 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
     }
   }
 
-  const handleViewScreenshots = async () => {
+  const handleViewScreenshots = async (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
     if (screenshotsLoading) {
       return
     }
@@ -107,6 +110,11 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
     }
   }
 
+  const handleDebugDialog = (e: React.MouseEvent<HTMLButtonElement>) => {
+    e.stopPropagation()
+    showDebugDialog(row, meetingBaasUser)
+  }
+
   return (
     <>
       <div className={cn("flex w-full justify-between gap-2", containerClassName)}>
@@ -114,7 +122,7 @@ export function TableActions({ row, containerClassName }: TableActionsProps) {
           <IconButton
             icon={<Logs className={iconClasses} />}
             tooltip="Debug bot logs"
-            onClick={() => showDebugDialog(row, meetingBaasUser)}
+            onClick={handleDebugDialog}
           />
         )}
         <IconButton

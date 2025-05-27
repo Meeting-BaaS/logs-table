@@ -129,7 +129,7 @@ export function DataTable<TData extends FormattedBotData, TValue>({
         </div>
       </div>
       <div className="mb-2 flex flex-col justify-between gap-2 md:flex-row">
-        <div className="flex items-center gap-2">
+        <div className="flex flex-col items-center gap-2 md:flex-row">
           <BackToAllLogs botUuids={botUuids} setBotUuids={setBotUuids} />
           <AdditionalFilters
             filters={filters}
@@ -180,7 +180,12 @@ export function DataTable<TData extends FormattedBotData, TValue>({
               </TableRow>
             ) : table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
-                <TableRow key={row.id} data-state={row.getIsSelected() && "selected"}>
+                <TableRow
+                  key={row.id}
+                  data-state={row.getIsSelected() && "selected"}
+                  onClick={() => row.toggleSelected(!row.getIsSelected())}
+                  className="cursor-pointer"
+                >
                   {row.getVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>
                       {flexRender(cell.column.columnDef.cell, cell.getContext())}
