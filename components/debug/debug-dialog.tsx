@@ -2,6 +2,7 @@
 
 import { DebugViewer } from "@/components/debug/debug-viewer"
 import { MemoryViewer } from "@/components/debug/memory-viewer"
+import { SoundViewer } from "@/components/debug/sound-viewer"
 import type { FormattedBotData } from "@/components/logs-table/types"
 import {
   Dialog,
@@ -12,6 +13,7 @@ import {
   DialogTitle
 } from "@/components/ui/dialog"
 import { useDebugLogs } from "@/hooks/use-debug-logs"
+import { useSoundLogs } from "@/hooks/use-sound-logs"
 import { useSystemMetrics } from "@/hooks/use-system-metrics"
 import { genericError } from "@/lib/errors"
 import { getGrafanaLogsUrl } from "@/lib/external-urls"
@@ -26,7 +28,7 @@ interface DebugDialogProps {
   onOpenChange: (open: boolean) => void
 }
 
-type TabType = "logs" | "memory"
+type TabType = "logs" | "memory" | "sound"
 
 export default function DebugDialog({ row, open, onOpenChange }: DebugDialogProps) {
   const { uuid: bot_uuid } = row || {}
@@ -34,6 +36,7 @@ export default function DebugDialog({ row, open, onOpenChange }: DebugDialogProp
 
   const { data: debugData, loading: debugLoading, error: debugError } = useDebugLogs({ bot_uuid })
   const { data: metricsData, loading: metricsLoading, error: metricsError } = useSystemMetrics({ bot_uuid })
+  const { data: soundData, loading: soundLoading, error: soundError } = useSoundLogs({ bot_uuid })
 
   const handleViewGrafanaLogs = () => {
     const url = getGrafanaLogsUrl(bot_uuid)
@@ -48,7 +51,8 @@ export default function DebugDialog({ row, open, onOpenChange }: DebugDialogProp
 
   const tabs = [
     { id: "logs", label: "Debug Logs", count: null },
-    { id: "memory", label: "Memory Metrics", count: metricsData?.metrics?.length || null }
+    { id: "memory", label: "Memory Metrics", count: metricsData?.metrics?.length || null },
+    { id: "sound", label: "Sound Levels", count: soundData?.soundData?.length || null }
   ] as const
 
   return (
@@ -140,6 +144,24 @@ export default function DebugDialog({ row, open, onOpenChange }: DebugDialogProp
                 <MemoryViewer metrics={metricsData.metrics} logsUrl={metricsData.logsUrl} />
               ) : (
                 <div className="flex h-96 items-center justify-center">No memory metrics found</div>
+              )}
+            </>
+          )}
+
+          {activeTab === "sound" && (
+            <>
+              {soundLoading ? (
+                <div className="flex h-96 items-center justify-center">
+                  <Loader2 className="size-8 animate-spin text-primary" />
+                </div>
+              ) : soundError ? (
+                <div className="flex h-96 items-center justify-center text-destructive">
+                  Error: {soundError instanceof Error ? soundError.message : genericError}
+                </div>
+              ) : soundData?.soundData ? (
+                <SoundViewer soundData={soundData.soundData} logsUrl={soundData.logsUrl} />
+              ) : (
+                <div className="flex h-96 items-center justify-center">No sound data found</div>
               )}
             </>
           )}
