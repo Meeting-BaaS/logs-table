@@ -32,6 +32,8 @@ export const EmailTooltip = ({ email, botUuid, className, children }: EmailToolt
         <button
           type="button"
           onClick={handleEmailClick}
+          aria-label={`Send email to ${email}`}
+          title="Click to send an email"
           className={cn("cursor-pointer text-sm hover:opacity-80", className)}
         >
           {children}
