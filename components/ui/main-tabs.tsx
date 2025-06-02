@@ -87,7 +87,7 @@ export const MainTabs = ({
           >
             {tab.label}
             {tab.count && tab.count > 0 && (
-              <span className="rounded bg-muted px-1.5 py-0.5 text-muted-foreground text-xs">
+              <span className="rounded bg-muted px-1.5 py-0.5 text-muted-foreground text-xs ml-1">
                 {tab.count}
               </span>
             )}
