@@ -26,17 +26,34 @@ interface DebugDialogProps {
   row: FormattedBotData | null
   open: boolean
   onOpenChange: (open: boolean) => void
+  isMeetingBaasUser?: boolean
 }
 
 type TabType = "logs" | "memory" | "sound"
 
-export default function DebugDialog({ row, open, onOpenChange }: DebugDialogProps) {
-  const { uuid: bot_uuid } = row || {}
-  const [activeTab, setActiveTab] = useState<TabType>("logs")
+interface TabConfig {
+  id: TabType
+  label: string
+  count?: number | null
+}
 
+export default function DebugDialog({ row, open, onOpenChange, isMeetingBaasUser }: DebugDialogProps) {
+  const { uuid: bot_uuid } = row || {}
+
+  // Data hooks
   const { data: debugData, loading: debugLoading, error: debugError } = useDebugLogs({ bot_uuid })
   const { data: metricsData, loading: metricsLoading, error: metricsError } = useSystemMetrics({ bot_uuid })
   const { data: soundData, loading: soundLoading, error: soundError } = useSoundLogs({ bot_uuid })
+
+  // Build tabs array after data is available
+  const tabs: TabConfig[] = [
+    ...(isMeetingBaasUser ? [{ id: "logs" as TabType, label: "Debug Logs", count: null }] : []),
+    { id: "memory", label: "Memory Metrics", count: metricsData?.metrics?.length ?? null },
+    { id: "sound", label: "Sound Levels", count: soundData?.soundData?.length ?? null }
+  ]
+
+  // Set initial tab to the first available tab
+  const [activeTab, setActiveTab] = useState<TabType>(tabs[0].id as TabType)
 
   const handleViewGrafanaLogs = () => {
     const url = getGrafanaLogsUrl(bot_uuid)
@@ -48,12 +65,6 @@ export default function DebugDialog({ row, open, onOpenChange }: DebugDialogProp
       window.open(debugData.logsUrl, "_blank")
     }
   }
-
-  const tabs = [
-    { id: "logs", label: "Debug Logs", count: null },
-    { id: "memory", label: "Memory Metrics", count: metricsData?.metrics?.length || null },
-    { id: "sound", label: "Sound Levels", count: soundData?.soundData?.length || null }
-  ] as const
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
@@ -79,7 +90,7 @@ export default function DebugDialog({ row, open, onOpenChange }: DebugDialogProp
             <button
               key={tab.id}
               type="button"
-              onClick={() => setActiveTab(tab.id)}
+              onClick={() => setActiveTab(tab.id as TabType)}
               className={cn(
                 "flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors",
                 activeTab === tab.id
@@ -88,7 +99,7 @@ export default function DebugDialog({ row, open, onOpenChange }: DebugDialogProp
               )}
             >
               {tab.label}
-              {tab.count !== null && (
+              {typeof tab.count === 'number' && tab.count !== null && (
                 <span className="text-xs bg-muted text-muted-foreground px-1.5 py-0.5 rounded">
                   {tab.count}
                 </span>
@@ -99,7 +110,7 @@ export default function DebugDialog({ row, open, onOpenChange }: DebugDialogProp
 
         {/* Tab Content */}
         <div className="min-h-[60svh]">
-          {activeTab === "logs" && (
+          {isMeetingBaasUser && activeTab === "logs" && (
             <>
               {debugLoading ? (
                 <div className="flex h-96 items-center justify-center">
