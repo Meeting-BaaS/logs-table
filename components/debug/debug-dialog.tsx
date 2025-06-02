@@ -16,11 +16,11 @@ import { useDebugLogs } from "@/hooks/use-debug-logs"
 import { useSoundLogs } from "@/hooks/use-sound-logs"
 import { useSystemMetrics } from "@/hooks/use-system-metrics"
 import { genericError } from "@/lib/errors"
-import { getGrafanaLogsUrl, AI_CHAT_URL } from "@/lib/external-urls"
-import { cn, generateUUID } from "@/lib/utils"
+import { AI_CHAT_URL } from "@/lib/external-urls"
 import { Download, ExternalLink, Loader2 } from "lucide-react"
 import { useState } from "react"
-import { Button } from "../ui/button"
+import { Button } from "@/components/ui/button"
+import { MainTabs } from "@/components/ui/main-tabs"
 
 interface DebugDialogProps {
   row: FormattedBotData | null
@@ -37,12 +37,21 @@ interface TabConfig {
   count?: number | null
 }
 
-export default function DebugDialog({ row, open, onOpenChange, isMeetingBaasUser }: DebugDialogProps) {
+export default function DebugDialog({
+  row,
+  open,
+  onOpenChange,
+  isMeetingBaasUser
+}: DebugDialogProps) {
   const { uuid: bot_uuid } = row || {}
 
   // Data hooks
   const { data: debugData, loading: debugLoading, error: debugError } = useDebugLogs({ bot_uuid })
-  const { data: metricsData, loading: metricsLoading, error: metricsError } = useSystemMetrics({ bot_uuid })
+  const {
+    data: metricsData,
+    loading: metricsLoading,
+    error: metricsError
+  } = useSystemMetrics({ bot_uuid })
   const { data: soundData, loading: soundLoading, error: soundError } = useSoundLogs({ bot_uuid })
 
   // Build tabs array after data is available
@@ -56,11 +65,9 @@ export default function DebugDialog({ row, open, onOpenChange, isMeetingBaasUser
   const [activeTab, setActiveTab] = useState<TabType>(tabs[0].id as TabType)
 
   const handleOpenChat = () => {
-    const message = bot_uuid
-      ? `I want to debug bot ${bot_uuid}`
-      : "I want to debug a bot";
-    const chatUrl = `${AI_CHAT_URL}/chat?new_chat_message=${encodeURIComponent(message)}`;
-    window.open(chatUrl, "_blank");
+    const message = bot_uuid ? `I want to debug bot ${bot_uuid}` : "I want to debug a bot"
+    const chatUrl = `${AI_CHAT_URL}?new_chat_message=${encodeURIComponent(message)}`
+    window.open(chatUrl, "_blank")
   }
 
   const handleDownloadLogs = () => {
@@ -87,99 +94,75 @@ export default function DebugDialog({ row, open, onOpenChange, isMeetingBaasUser
           </DialogDescription>
         </DialogHeader>
 
-        {/* Tab Navigation */}
-        <div className="flex border-b">
-          {tabs.map((tab) => (
-            <button
-              key={tab.id}
-              type="button"
-              onClick={() => setActiveTab(tab.id as TabType)}
-              className={cn(
-                "flex items-center gap-2 px-4 py-2 text-sm font-medium border-b-2 transition-colors",
-                activeTab === tab.id
-                  ? "border-primary text-primary"
-                  : "border-transparent text-muted-foreground hover:text-foreground hover:border-muted-foreground"
-              )}
-            >
-              {tab.label}
-              {typeof tab.count === 'number' && tab.count !== null && (
-                <span className="text-xs bg-muted text-muted-foreground px-1.5 py-0.5 rounded">
-                  {tab.count}
-                </span>
-              )}
-            </button>
-          ))}
-        </div>
+        <MainTabs
+          currentTab={activeTab}
+          setCurrentTab={(tabId: string) => setActiveTab(tabId as TabType)}
+          tabs={tabs}
+        />
 
         {/* Tab Content */}
         <div className="min-h-[60svh]">
-          {isMeetingBaasUser && activeTab === "logs" && (
-            <>
-              {debugLoading ? (
-                <div className="flex h-96 items-center justify-center">
-                  <Loader2 className="size-8 animate-spin text-primary" />
-                </div>
-              ) : debugError ? (
-                <div className="flex h-96 items-center justify-center text-destructive">
-                  Error: {debugError instanceof Error ? debugError.message : genericError}
-                </div>
-              ) : debugData?.html ? (
-                <div className="space-y-2">
-                  {isMeetingBaasUser && debugData?.logsUrl && (
-                    <div className="flex justify-end">
-                      <Button
-                        onClick={handleDownloadLogs}
-                        variant="outline"
-                        size="sm"
-                      >
-                        <Download className="mr-2 h-4 w-4" />
-                        Download Debug Logs
-                      </Button>
-                    </div>
-                  )}
-                  <DebugViewer html={debugData.html} />
-                </div>
-              ) : (
-                <div className="flex h-96 items-center justify-center">No logs found</div>
-              )}
-            </>
-          )}
+          {isMeetingBaasUser &&
+            activeTab === "logs" &&
+            (debugLoading ? (
+              <div className="flex h-96 items-center justify-center">
+                <Loader2 className="size-8 animate-spin text-primary" />
+              </div>
+            ) : debugError ? (
+              <div className="flex h-96 items-center justify-center text-destructive">
+                Error: {debugError instanceof Error ? debugError.message : genericError}
+              </div>
+            ) : debugData?.html ? (
+              <div className="space-y-2">
+                {isMeetingBaasUser && debugData?.logsUrl && (
+                  <div className="flex justify-end">
+                    <Button onClick={handleDownloadLogs} variant="outline" size="sm">
+                      <Download className="mr-2 h-4 w-4" />
+                      Download Debug Logs
+                    </Button>
+                  </div>
+                )}
+                <DebugViewer html={debugData.html} />
+              </div>
+            ) : (
+              <div className="flex h-96 items-center justify-center">No logs found</div>
+            ))}
 
-          {activeTab === "memory" && (
-            <>
-              {metricsLoading ? (
-                <div className="flex h-96 items-center justify-center">
-                  <Loader2 className="size-8 animate-spin text-primary" />
-                </div>
-              ) : metricsError ? (
-                <div className="flex h-96 items-center justify-center text-destructive">
-                  Error: {metricsError instanceof Error ? metricsError.message : genericError}
-                </div>
-              ) : metricsData?.metrics ? (
-                <MemoryViewer metrics={metricsData.metrics} logsUrl={isMeetingBaasUser && metricsData.logsUrl ? metricsData.logsUrl : undefined} />
-              ) : (
-                <div className="flex h-96 items-center justify-center">No memory metrics found</div>
-              )}
-            </>
-          )}
+          {activeTab === "memory" &&
+            (metricsLoading ? (
+              <div className="flex h-96 items-center justify-center">
+                <Loader2 className="size-8 animate-spin text-primary" />
+              </div>
+            ) : metricsError ? (
+              <div className="flex h-96 items-center justify-center text-destructive">
+                Error: {metricsError instanceof Error ? metricsError.message : genericError}
+              </div>
+            ) : metricsData?.metrics ? (
+              <MemoryViewer
+                metrics={metricsData.metrics}
+                logsUrl={isMeetingBaasUser && metricsData.logsUrl ? metricsData.logsUrl : undefined}
+              />
+            ) : (
+              <div className="flex h-96 items-center justify-center">No memory metrics found</div>
+            ))}
 
-          {activeTab === "sound" && (
-            <>
-              {soundLoading ? (
-                <div className="flex h-96 items-center justify-center">
-                  <Loader2 className="size-8 animate-spin text-primary" />
-                </div>
-              ) : soundError ? (
-                <div className="flex h-96 items-center justify-center text-destructive">
-                  Error: {soundError instanceof Error ? soundError.message : genericError}
-                </div>
-              ) : soundData?.soundData ? (
-                <SoundViewer soundData={soundData.soundData} logsUrl={isMeetingBaasUser && soundData.logsUrl ? soundData.logsUrl : undefined} />
-              ) : (
-                <div className="flex h-96 items-center justify-center">No sound data found</div>
-              )}
-            </>
-          )}
+          {activeTab === "sound" &&
+            (soundLoading ? (
+              <div className="flex h-96 items-center justify-center">
+                <Loader2 className="size-8 animate-spin text-primary" />
+              </div>
+            ) : soundError ? (
+              <div className="flex h-96 items-center justify-center text-destructive">
+                Error: {soundError instanceof Error ? soundError.message : genericError}
+              </div>
+            ) : soundData?.soundData ? (
+              <SoundViewer
+                soundData={soundData.soundData}
+                logsUrl={isMeetingBaasUser && soundData.logsUrl ? soundData.logsUrl : undefined}
+              />
+            ) : (
+              <div className="flex h-96 items-center justify-center">No sound data found</div>
+            ))}
         </div>
 
         <div className="flex justify-end pt-2">
