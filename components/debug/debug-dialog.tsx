@@ -16,8 +16,8 @@ import { useDebugLogs } from "@/hooks/use-debug-logs"
 import { useSoundLogs } from "@/hooks/use-sound-logs"
 import { useSystemMetrics } from "@/hooks/use-system-metrics"
 import { genericError } from "@/lib/errors"
-import { getGrafanaLogsUrl } from "@/lib/external-urls"
-import { cn } from "@/lib/utils"
+import { getGrafanaLogsUrl, AI_CHAT_URL } from "@/lib/external-urls"
+import { cn, generateUUID } from "@/lib/utils"
 import { Download, ExternalLink, Loader2 } from "lucide-react"
 import { useState } from "react"
 import { Button } from "../ui/button"
@@ -55,9 +55,12 @@ export default function DebugDialog({ row, open, onOpenChange, isMeetingBaasUser
   // Set initial tab to the first available tab
   const [activeTab, setActiveTab] = useState<TabType>(tabs[0].id as TabType)
 
-  const handleViewGrafanaLogs = () => {
-    const url = getGrafanaLogsUrl(bot_uuid)
-    window.open(url, "_blank")
+  const handleOpenChat = () => {
+    const message = bot_uuid
+      ? `I want to debug bot ${bot_uuid}`
+      : "I want to debug a bot";
+    const chatUrl = `${AI_CHAT_URL}/chat?new_chat_message=${encodeURIComponent(message)}`;
+    window.open(chatUrl, "_blank");
   }
 
   const handleDownloadLogs = () => {
@@ -75,11 +78,11 @@ export default function DebugDialog({ row, open, onOpenChange, isMeetingBaasUser
             Bot ID: {bot_uuid}
             <button
               type="button"
-              onClick={handleViewGrafanaLogs}
+              onClick={handleOpenChat}
               className="text-xs text-primary hover:underline"
             >
               <ExternalLink className="mr-1 h-3 w-3 inline" />
-              View in Grafana
+              Open in Chat to debug
             </button>
           </DialogDescription>
         </DialogHeader>
@@ -122,17 +125,18 @@ export default function DebugDialog({ row, open, onOpenChange, isMeetingBaasUser
                 </div>
               ) : debugData?.html ? (
                 <div className="space-y-2">
-                  <div className="flex justify-end">
-                    <Button
-                      onClick={handleDownloadLogs}
-                      variant="outline"
-                      size="sm"
-                      disabled={!debugData?.logsUrl}
-                    >
-                      <Download className="mr-2 h-4 w-4" />
-                      Download Debug Logs
-                    </Button>
-                  </div>
+                  {isMeetingBaasUser && debugData?.logsUrl && (
+                    <div className="flex justify-end">
+                      <Button
+                        onClick={handleDownloadLogs}
+                        variant="outline"
+                        size="sm"
+                      >
+                        <Download className="mr-2 h-4 w-4" />
+                        Download Debug Logs
+                      </Button>
+                    </div>
+                  )}
                   <DebugViewer html={debugData.html} />
                 </div>
               ) : (
@@ -152,7 +156,7 @@ export default function DebugDialog({ row, open, onOpenChange, isMeetingBaasUser
                   Error: {metricsError instanceof Error ? metricsError.message : genericError}
                 </div>
               ) : metricsData?.metrics ? (
-                <MemoryViewer metrics={metricsData.metrics} logsUrl={metricsData.logsUrl} />
+                <MemoryViewer metrics={metricsData.metrics} logsUrl={isMeetingBaasUser && metricsData.logsUrl ? metricsData.logsUrl : undefined} />
               ) : (
                 <div className="flex h-96 items-center justify-center">No memory metrics found</div>
               )}
@@ -170,7 +174,7 @@ export default function DebugDialog({ row, open, onOpenChange, isMeetingBaasUser
                   Error: {soundError instanceof Error ? soundError.message : genericError}
                 </div>
               ) : soundData?.soundData ? (
-                <SoundViewer soundData={soundData.soundData} logsUrl={soundData.logsUrl} />
+                <SoundViewer soundData={soundData.soundData} logsUrl={isMeetingBaasUser && soundData.logsUrl ? soundData.logsUrl : undefined} />
               ) : (
                 <div className="flex h-96 items-center justify-center">No sound data found</div>
               )}
