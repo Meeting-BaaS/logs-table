@@ -80,7 +80,11 @@ export function BotSearch() {
   return (
     <Dialog open={open} onOpenChange={handleDialogClose}>
       <DialogTrigger asChild>
-        <Button variant="link" className="h-auto p-0 text-muted-foreground text-sm">
+        <Button
+          variant="link"
+          className="h-auto p-0 text-muted-foreground text-sm"
+          aria-label="Search by Bot UUID"
+        >
           Click here to search by Bot UUID
         </Button>
       </DialogTrigger>

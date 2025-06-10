@@ -56,13 +56,13 @@ export default function DebugDialog({
 
   // Build tabs array after data is available
   const tabs: TabConfig[] = [
-    ...(isMeetingBaasUser ? [{ id: "logs" as TabType, label: "Debug Logs", count: null }] : []),
     { id: "memory", label: "Memory Metrics", count: metricsData?.metrics?.length ?? null },
-    { id: "sound", label: "Sound Levels", count: soundData?.soundData?.length ?? null }
+    { id: "sound", label: "Sound Levels", count: soundData?.soundData?.length ?? null },
+    ...(isMeetingBaasUser ? [{ id: "logs" as TabType, label: "Debug Logs", count: null }] : [])
   ]
 
   // Set initial tab to the first available tab
-  const [activeTab, setActiveTab] = useState<TabType>(tabs[0].id as TabType)
+  const [activeTab, setActiveTab] = useState<TabType>((tabs[0]?.id as TabType) || "memory")
 
   const handleOpenChat = () => {
     const message = bot_uuid ? `I want to debug bot ${bot_uuid}` : "I want to debug a bot"

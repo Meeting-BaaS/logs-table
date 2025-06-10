@@ -3,6 +3,7 @@
 import Datepicker, { type DateValueType } from "react-tailwindcss-datepicker"
 import dayjs from "dayjs"
 import { CalendarIcon } from "lucide-react"
+import { useMemo } from "react"
 
 interface DateRangeFilterProps {
   value: DateValueType
@@ -21,6 +22,33 @@ export function DateRangeFilter({ value, onChange }: DateRangeFilterProps) {
     }
   }
 
+  const configs = useMemo(
+    () => ({
+      shortcuts: {
+        today: "Today",
+        yesterday: "Yesterday",
+        past2Days: {
+          text: "Last 2 days",
+          period: {
+            start: dayjs().subtract(2, "day").toDate(),
+            end: dayjs().toDate()
+          }
+        },
+        past3Days: {
+          text: "Last 3 days",
+          period: {
+            start: dayjs().subtract(3, "day").toDate(),
+            end: dayjs().toDate()
+          }
+        },
+        past: (period: number) => `Last ${period} days`,
+        currentMonth: "This month",
+        pastMonth: "Last month"
+      }
+    }),
+    []
+  )
+
   return (
     <div className="relative w-full md:max-w-sm">
       <Datepicker
@@ -28,29 +56,7 @@ export function DateRangeFilter({ value, onChange }: DateRangeFilterProps) {
         displayFormat="DD MMM YYYY"
         separator=" - "
         onChange={handleDateChange}
-        configs={{
-          shortcuts: {
-            today: "Today",
-            yesterday: "Yesterday",
-            past2Days: {
-              text: "Last 2 days",
-              period: {
-                start: dayjs().subtract(2, "day").toDate(),
-                end: dayjs().toDate()
-              }
-            },
-            past3Days: {
-              text: "Last 3 days",
-              period: {
-                start: dayjs().subtract(3, "day").toDate(),
-                end: dayjs().toDate()
-              }
-            },
-            past: (period) => `Last ${period} days`,
-            currentMonth: "This month",
-            pastMonth: "Last month"
-          }
-        }}
+        configs={configs}
         showShortcuts
         useRange
         readOnly

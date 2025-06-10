@@ -27,7 +27,12 @@ export function PostMessageProvider({ children }: { children: ReactNode }) {
         const newSearchParams = new URLSearchParams(searchParams)
         newSearchParams.delete("from_analytics")
         newSearchParams.delete("windowId")
-        router.push(`${window.location.pathname}?${newSearchParams.toString()}`, { scroll: false })
+        // Allow a brief moment for any dependent logic before cleanup
+        setTimeout(() => {
+          router.push(`${window.location.pathname}?${newSearchParams.toString()}`, {
+            scroll: false
+          })
+        }, 100)
 
         // Remove event listener after receiving bot UUIDs
         window.removeEventListener("message", handleMessage)

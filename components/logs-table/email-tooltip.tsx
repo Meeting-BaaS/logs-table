@@ -3,6 +3,7 @@
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
 import { cn } from "@/lib/utils"
 import { useSearchParams } from "next/navigation"
+import { toast } from "sonner"
 
 interface EmailTooltipProps {
   email: string
@@ -23,7 +24,12 @@ export const EmailTooltip = ({ email, botUuid, className, children }: EmailToolt
     const subject = "MeetingBaaS Support"
     const body = `Hi,\n\nI'm contacting you regarding your bot ${botUuid} (${embedLink}).`
     const mailtoLink = `mailto:${email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(body)}`
-    window.location.href = mailtoLink
+    try {
+      window.location.href = mailtoLink
+    } catch (error) {
+      console.error("Failed to open email client:", error)
+      toast.error("Failed to open email client")
+    }
   }
 
   return (
