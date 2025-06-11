@@ -20,7 +20,9 @@ export async function fetchLogs(params: BotQueryParams | BotSearchParams): Promi
           limit: params.limit.toString(),
           start_date: params.start_date,
           end_date: params.end_date,
-          ...(params.meeting_url_contains && { meeting_url_contains: params.meeting_url_contains }),
+          ...(params.meeting_url_contains && {
+            meeting_url_contains: params.meeting_url_contains
+          }),
           ...(params.status_type && { status_type: params.status_type }),
           ...(params.user_reported_error_json && {
             user_reported_error_json: params.user_reported_error_json
@@ -106,8 +108,8 @@ export async function fetchSystemMetrics(
   bot_uuid: string
 ): Promise<{ metrics: SystemMetrics[]; logsUrl: string }> {
   // Input validation
-  if (!bot_uuid || typeof bot_uuid !== 'string' || bot_uuid.trim().length === 0) {
-    throw new Error('bot_uuid is required and must be a non-empty string')
+  if (!bot_uuid || typeof bot_uuid !== "string" || bot_uuid.trim().length === 0) {
+    throw new Error("bot_uuid is required and must be a non-empty string")
   }
 
   // Fetch the system metrics logs url
@@ -118,37 +120,39 @@ export async function fetchSystemMetrics(
   }
 
   const responseJson = await response.json()
-  
+
   // Runtime validation of response structure
-  if (!responseJson || typeof responseJson !== 'object') {
-    throw new Error('Invalid response format: expected an object')
+  if (!responseJson || typeof responseJson !== "object") {
+    throw new Error("Invalid response format: expected an object")
   }
-  
-  if (!responseJson.url || typeof responseJson.url !== 'string') {
-    throw new Error('Invalid response format: missing or invalid url property')
+
+  if (!responseJson.url || typeof responseJson.url !== "string") {
+    throw new Error("Invalid response format: missing or invalid url property")
   }
 
   const logsUrlResponse = responseJson as LogsUrlResponse
-  
+
   // Fetch the actual logs file
   const logsResponse = await fetch(logsUrlResponse.url)
   if (!logsResponse.ok) {
-    throw new Error(`Failed to fetch system metrics logs: ${logsResponse.status} ${logsResponse.statusText}`)
+    throw new Error(
+      `Failed to fetch system metrics logs: ${logsResponse.status} ${logsResponse.statusText}`
+    )
   }
 
   const logsText = await logsResponse.text()
-  
+
   // Parse the logs into SystemMetrics array
   const metrics: SystemMetrics[] = []
-  const lines = logsText.trim().split('\n')
-  
+  const lines = logsText.trim().split("\n")
+
   for (const line of lines) {
     if (line.trim()) {
       try {
         const parsed = JSON.parse(line) as SystemMetrics
         metrics.push(parsed)
       } catch (error) {
-        console.warn('Failed to parse log line:', line, error)
+        console.warn("Failed to parse log line:", line, error)
       }
     }
   }
@@ -177,4 +181,52 @@ export async function fetchDebugLogs(bot_uuid: string): Promise<{ text: string; 
   }
   const text = await response.text()
   return { text, logsUrl: logsUrl.url }
+}
+
+export async function fetchSoundLogs(bot_uuid: string): Promise<{
+  soundData: Array<{ timestamp: string; level: number }>
+  logsUrl: string
+}> {
+  if (!bot_uuid) return { soundData: [], logsUrl: "" }
+
+  // Fetch the sound logs url
+  const logsUrlResponse = await fetch(`/api/bots/${bot_uuid}/sound_logs`)
+  if (!logsUrlResponse.ok) {
+    throw new Error(
+      `Failed to fetch sound logs url: ${logsUrlResponse.status} ${logsUrlResponse.statusText}`
+    )
+  }
+  const logsUrl = (await logsUrlResponse.json()) as LogsUrlResponse
+  if (!logsUrl.url) {
+    throw new Error(`Sound logs url not found for bot ${bot_uuid}`)
+  }
+
+  // Fetch the sound logs
+  const response = await fetch(logsUrl.url)
+  if (!response.ok) {
+    throw new Error(`Failed to fetch sound logs: ${response.status} ${response.statusText}`)
+  }
+
+  const text = await response.text()
+
+  // Parse the CSV-like format into structured data
+  const soundData = []
+  const lines = text.trim().split("\n")
+
+  for (const line of lines) {
+    if (line.trim()) {
+      const [timestampStr, levelStr] = line.split(",")
+      if (timestampStr && levelStr) {
+        const level = Number.parseFloat(levelStr)
+        if (!Number.isNaN(level)) {
+          soundData.push({
+            timestamp: timestampStr,
+            level
+          })
+        }
+      }
+    }
+  }
+
+  return { soundData, logsUrl: logsUrl.url }
 }
