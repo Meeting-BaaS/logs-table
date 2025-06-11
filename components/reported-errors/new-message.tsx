@@ -81,7 +81,7 @@ export function NewMessage({
         : (data.status as UserReportedErrorStatus)
 
     form.reset({
-      status: status,
+      status,
       note: ""
     })
 

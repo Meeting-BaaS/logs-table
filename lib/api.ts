@@ -95,6 +95,9 @@ export async function updateError({
         reply: note,
         accountEmail
       })
+    }).catch((error) => {
+      // We don't want to block the user from updating the error, so we just log the error
+      console.error("Failed to send reply email:", error)
     })
   }
 }
