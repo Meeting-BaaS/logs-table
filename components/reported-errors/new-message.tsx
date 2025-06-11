@@ -35,7 +35,7 @@ interface NewMessageProps {
   ) => void
   errorStatus: UserReportedError["status"]
   isMeetingBaasUser?: boolean | undefined
-  accountEmail: string
+  accountEmail?: string
 }
 
 export function NewMessage({
@@ -86,7 +86,13 @@ export function NewMessage({
     })
 
     try {
-      await updateError(bot_uuid, data.note, accountEmail, isMeetingBaasUser, status)
+      await updateError({
+        bot_uuid,
+        note: data.note,
+        accountEmail,
+        sendReplyEmail: isMeetingBaasUser,
+        status
+      })
       onMessageUpdate(messageId, "success", status)
     } catch (error) {
       console.error("Error sending message", error)
