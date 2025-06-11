@@ -56,6 +56,8 @@ export async function retryWebhook(bot_uuid: string, webhookUrl?: string): Promi
 export async function updateError(
   bot_uuid: string,
   note: string,
+  accountEmail?: string,
+  sendReplyEmail?: boolean,
   status?: UserReportedError["status"]
 ): Promise<void> {
   // Api requires the bot_uuid to be in the body and in the url
@@ -69,6 +71,20 @@ export async function updateError(
 
   if (!response.ok) {
     throw new Error(`Failed to update error: ${response.status} ${response.statusText}`)
+  }
+
+  if (sendReplyEmail && accountEmail) {
+    // Send an email to the user
+    // We don't need to await this, or handle errors, it's not critical to the user's experience
+    fetch("/api/email/error-report/reply", {
+      method: "POST",
+      body: JSON.stringify({
+        botUuid: bot_uuid,
+        resolved: status === "closed",
+        reply: note,
+        accountEmail
+      })
+    })
   }
 }
 
