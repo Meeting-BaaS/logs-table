@@ -1,10 +1,15 @@
 import { useQuery } from "@tanstack/react-query"
 import { fetchLogs } from "@/lib/api"
-import type { FilterState, FormattedBotData } from "@/components/logs-table/types"
+import type {
+  BotPaginated,
+  FilterState,
+  FormattedBotData,
+  FormattedBotPaginated
+} from "@/components/logs-table/types"
 import { getPlatformFromUrl } from "@/lib/format-logs"
 import dayjs from "dayjs"
 import { usePostMessage } from "./use-post-message"
-import { useEffect, useMemo } from "react"
+import { useMemo } from "react"
 
 interface UseLogsParams {
   offset: number
@@ -31,7 +36,7 @@ export function useLogs({
     [postMessageBotUuids, initialBotUuids]
   )
 
-  const { data, isLoading, isError, error, isRefetching } = useQuery({
+  const { data, isLoading, isRefetching } = useQuery<BotPaginated, Error, FormattedBotPaginated>({
     queryKey: [
       "logs",
       {
@@ -75,23 +80,13 @@ export function useLogs({
     },
     refetchOnWindowFocus: true,
     refetchOnMount: true,
-    placeholderData: (previousData) => previousData
+    placeholderData: (previousData) => previousData,
+    throwOnError: true // Caught by the error boundary
   })
-
-  useEffect(() => {
-    if (isError) {
-      console.error("Fetching logs failed", error)
-      // Because this is the main query for the logs page, we want to throw the error
-      // so that the error boundary can catch it and display a nice error message
-      throw error
-    }
-  }, [isError, error])
 
   return {
     data,
     isLoading,
-    isError,
-    error,
     isRefetching
   }
 }
