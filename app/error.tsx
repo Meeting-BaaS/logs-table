@@ -4,10 +4,11 @@ import { spotlightVariant } from "@/lib/animations/background"
 import { Button } from "@/components/ui/button"
 import { motion } from "motion/react"
 import Image from "next/image"
-import { useEffect, useMemo } from "react"
+import { useEffect } from "react"
 
 interface ErrorProps {
   error: Error & { digest?: string }
+  reset: () => void
 }
 
 export default function ErrorBoundary({ error }: ErrorProps) {
@@ -15,10 +16,7 @@ export default function ErrorBoundary({ error }: ErrorProps) {
     console.error("Something went wrong", error)
   }, [error])
 
-  const supportEmail = useMemo(
-    () => process.env.NEXT_PUBLIC_SUPPORT_EMAIL || "support@meetingbaas.com",
-    []
-  )
+  const supportEmail = process.env.NEXT_PUBLIC_SUPPORT_EMAIL ?? "support@meetingbaas.com"
 
   return (
     <div className="relative flex max-h-screen max-w-screen grow flex-col items-center justify-center">
