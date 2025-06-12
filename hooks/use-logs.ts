@@ -4,7 +4,7 @@ import type { FilterState, FormattedBotData } from "@/components/logs-table/type
 import { getPlatformFromUrl } from "@/lib/format-logs"
 import dayjs from "dayjs"
 import { usePostMessage } from "./use-post-message"
-import { useMemo } from "react"
+import { useEffect, useMemo } from "react"
 
 interface UseLogsParams {
   offset: number
@@ -77,6 +77,15 @@ export function useLogs({
     refetchOnMount: true,
     placeholderData: (previousData) => previousData
   })
+
+  useEffect(() => {
+    if (isError) {
+      console.error("Fetching logs failed", error)
+      // Because this is the main query for the logs page, we want to throw the error
+      // so that the error boundary can catch it and display a nice error message
+      throw error
+    }
+  }, [isError, error])
 
   return {
     data,
