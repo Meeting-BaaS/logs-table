@@ -11,6 +11,10 @@ interface ErrorProps {
   reset: () => void
 }
 
+// This is a generic error message that is shown when the error is not known or has a digest string.
+// Most likely, this error occurred due to cookie mismatch or internal server errors.
+const genericErrorMessage = "There was an unknown error. Please clear the cookies and try again."
+
 export default function ErrorBoundary({ error }: ErrorProps) {
   useEffect(() => {
     console.error("Something went wrong", error)
@@ -31,7 +35,9 @@ export default function ErrorBoundary({ error }: ErrorProps) {
         />
         <div className="max-w-4xl text-lg">
           <p className="mb-1">
-            {error.message ? error.message : "There was an unknown error. Please refresh the page."}
+            {/* If there's a digest, it could be a sensitive error that took place in server components (and is already logged)
+                        In such a case we don't want to show the actual error message */}
+            {error.digest ? genericErrorMessage : error.message || genericErrorMessage}
           </p>
           If the error persists, please contact us on{" "}
           <Button variant="link" asChild className="h-auto p-0 text-lg">
