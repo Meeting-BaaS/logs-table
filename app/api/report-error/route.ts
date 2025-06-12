@@ -88,6 +88,25 @@ export async function POST(request: NextRequest) {
       throw new Error(`Failed to report error: ${response.status} ${response.statusText}`)
     }
 
+    // 3. Send an email to the user
+    const emailResponse = await fetch(`${process.env.EMAIL_API_SERVER_BASEURL}/error-report/new`, {
+      method: "POST",
+      body: JSON.stringify({
+        botUuid: bot_uuid,
+        chatId,
+        additionalContext: note
+      }),
+      headers: {
+        "Content-Type": "application/json",
+        Cookie: request.cookies.toString()
+      }
+    })
+
+    if (!emailResponse.ok) {
+      // We don't want to fail the report error request if the email fails to send
+      console.error(`Failed to send email: ${emailResponse.status} ${emailResponse.statusText}`)
+    }
+
     return NextResponse.json({ success: true })
   } catch (error) {
     console.error("Failed to report error", error)

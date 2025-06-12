@@ -5,7 +5,6 @@ import { DataTable } from "@/components/logs-table/data-table"
 import { createColumns } from "@/components/logs-table/columns"
 import { Loader2 } from "lucide-react"
 import { useLogs } from "@/hooks/use-logs"
-import { genericError } from "@/lib/errors"
 import type { DateValueType } from "react-tailwindcss-datepicker/dist/types"
 import { PAGE_SIZE_STORAGE_KEY, pageSizeOptions } from "@/components/logs-table/page-size-selector"
 import type { FilterState } from "@/components/logs-table/types"
@@ -67,7 +66,7 @@ export default function LogsTable() {
     }
   }, [dateRange, filters, botUuids, router, searchParams])
 
-  const { data, isLoading, isError, error, isRefetching } = useLogs({
+  const { data, isLoading, isRefetching } = useLogs({
     offset: pageIndex * pageSize,
     pageSize,
     startDate: dateRange?.startDate ?? null,
@@ -82,10 +81,6 @@ export default function LogsTable() {
       {isLoading && !data ? (
         <div className="flex h-96 items-center justify-center">
           <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        </div>
-      ) : isError ? (
-        <div className="flex h-96 items-center justify-center text-destructive">
-          Error: {error instanceof Error ? error.message : genericError}
         </div>
       ) : (
         <DataTable

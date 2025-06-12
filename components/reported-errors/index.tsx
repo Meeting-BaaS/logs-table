@@ -86,7 +86,12 @@ export default function ReportedErrorDialog({
         prev.map((msg) => (msg.id === message.id ? { ...msg, status: "pending" } : msg))
       )
 
-      await updateError(bot_uuid, message.note)
+      await updateError({
+        bot_uuid,
+        note: message.note,
+        accountEmail: row?.account_email,
+        sendReplyEmail: isMeetingBaasUser
+      })
       handleMessageUpdate(message.id, "success", errorStatus)
     } catch (error) {
       console.error("Failed to retry message", error)
@@ -121,6 +126,7 @@ export default function ReportedErrorDialog({
           onMessageUpdate={handleMessageUpdate}
           errorStatus={errorStatus}
           isMeetingBaasUser={isMeetingBaasUser}
+          accountEmail={row?.account_email}
         />
       </DialogContent>
     </Dialog>

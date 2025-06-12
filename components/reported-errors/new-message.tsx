@@ -35,6 +35,7 @@ interface NewMessageProps {
   ) => void
   errorStatus: UserReportedError["status"]
   isMeetingBaasUser?: boolean | undefined
+  accountEmail?: string
 }
 
 export function NewMessage({
@@ -42,7 +43,8 @@ export function NewMessage({
   onMessageSent,
   onMessageUpdate,
   errorStatus,
-  isMeetingBaasUser = false
+  isMeetingBaasUser = false,
+  accountEmail
 }: NewMessageProps) {
   const session = useSession()
 
@@ -71,7 +73,6 @@ export function NewMessage({
 
     // Add the pending message to the list
     onMessageSent(pendingMessage)
-    form.reset()
 
     // If the user is not a Meeting BaaS user and the error was closed, reopen the error upon submitting a new message
     const status =
@@ -79,8 +80,19 @@ export function NewMessage({
         ? "open"
         : (data.status as UserReportedErrorStatus)
 
+    form.reset({
+      status,
+      note: ""
+    })
+
     try {
-      await updateError(bot_uuid, data.note, status)
+      await updateError({
+        bot_uuid,
+        note: data.note,
+        accountEmail,
+        sendReplyEmail: isMeetingBaasUser,
+        status
+      })
       onMessageUpdate(messageId, "success", status)
     } catch (error) {
       console.error("Error sending message", error)

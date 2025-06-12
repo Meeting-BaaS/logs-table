@@ -53,11 +53,21 @@ export async function retryWebhook(bot_uuid: string, webhookUrl?: string): Promi
   }
 }
 
-export async function updateError(
-  bot_uuid: string,
-  note: string,
+interface UpdateErrorParams {
+  bot_uuid: string
+  note: string
+  accountEmail?: string
+  sendReplyEmail?: boolean
   status?: UserReportedError["status"]
-): Promise<void> {
+}
+
+export async function updateError({
+  bot_uuid,
+  note,
+  accountEmail,
+  sendReplyEmail,
+  status
+}: UpdateErrorParams): Promise<void> {
   // Api requires the bot_uuid to be in the body and in the url
   const response = await fetch(`/api/bots/${bot_uuid}/user_reported_error`, {
     method: "POST",
@@ -69,6 +79,26 @@ export async function updateError(
 
   if (!response.ok) {
     throw new Error(`Failed to update error: ${response.status} ${response.statusText}`)
+  }
+
+  if (sendReplyEmail && accountEmail) {
+    // Send an email to the user
+    // We don't need to await this, or handle errors, it's not critical to the user's experience
+    fetch("/api/email/error-report/reply", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        botUuid: bot_uuid,
+        resolved: status === "closed",
+        reply: note,
+        accountEmail
+      })
+    }).catch((error) => {
+      // We don't want to block the user from updating the error, so we just log the error
+      console.error("Failed to send reply email:", error)
+    })
   }
 }
 

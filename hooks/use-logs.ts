@@ -1,6 +1,11 @@
 import { useQuery } from "@tanstack/react-query"
 import { fetchLogs } from "@/lib/api"
-import type { FilterState, FormattedBotData } from "@/components/logs-table/types"
+import type {
+  BotPaginated,
+  FilterState,
+  FormattedBotData,
+  FormattedBotPaginated
+} from "@/components/logs-table/types"
 import { getPlatformFromUrl } from "@/lib/format-logs"
 import dayjs from "dayjs"
 import { usePostMessage } from "./use-post-message"
@@ -31,7 +36,7 @@ export function useLogs({
     [postMessageBotUuids, initialBotUuids]
   )
 
-  const { data, isLoading, isError, error, isRefetching } = useQuery({
+  const { data, isLoading, isRefetching } = useQuery<BotPaginated, Error, FormattedBotPaginated>({
     queryKey: [
       "logs",
       {
@@ -75,14 +80,13 @@ export function useLogs({
     },
     refetchOnWindowFocus: true,
     refetchOnMount: true,
-    placeholderData: (previousData) => previousData
+    placeholderData: (previousData) => previousData,
+    throwOnError: true // Caught by the error boundary
   })
 
   return {
     data,
     isLoading,
-    isError,
-    error,
     isRefetching
   }
 }
