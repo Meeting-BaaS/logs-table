@@ -1,3 +1,4 @@
+import { SystemMetrics } from "@/components/logs-table/types"
 import { fetchSystemMetrics } from "@/lib/api"
 import { useQuery } from "@tanstack/react-query"
 
@@ -5,10 +6,11 @@ interface UseSystemMetricsParams {
   bot_uuid: string | undefined
 }
 
-type SystemMetricsResponse = Awaited<ReturnType<typeof fetchSystemMetrics>>
-
 export function useSystemMetrics({ bot_uuid }: UseSystemMetricsParams) {
-  const { data, isLoading, isError, error, isRefetching } = useQuery<SystemMetricsResponse>({
+  const { data, isLoading, isError, error, isRefetching } = useQuery<{
+    metrics: SystemMetrics[];
+    logsUrl: string;
+  }>({
     queryKey: [
       "system-metrics",
       {

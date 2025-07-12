@@ -4,6 +4,7 @@ import { DebugViewer } from "@/components/debug/debug-viewer"
 import { MemoryViewer } from "@/components/debug/memory-viewer"
 import { SoundViewer } from "@/components/debug/sound-viewer"
 import type { FormattedBotData } from "@/components/logs-table/types"
+import { Button } from "@/components/ui/button"
 import {
   Dialog,
   DialogClose,
@@ -12,6 +13,7 @@ import {
   DialogHeader,
   DialogTitle
 } from "@/components/ui/dialog"
+import { MainTabs } from "@/components/ui/main-tabs"
 import { useDebugLogs } from "@/hooks/use-debug-logs"
 import { useSoundLogs } from "@/hooks/use-sound-logs"
 import { useSystemMetrics } from "@/hooks/use-system-metrics"
@@ -19,8 +21,6 @@ import { genericError } from "@/lib/errors"
 import { AI_CHAT_URL } from "@/lib/external-urls"
 import { Download, ExternalLink, Loader2 } from "lucide-react"
 import { useState } from "react"
-import { Button } from "@/components/ui/button"
-import { MainTabs } from "@/components/ui/main-tabs"
 
 interface DebugDialogProps {
   row: FormattedBotData | null
@@ -55,8 +55,24 @@ export default function DebugDialog({
   const { data: soundData, loading: soundLoading, error: soundError } = useSoundLogs({ bot_uuid })
 
   // Build tabs array after data is available
+  const hasPoints = metricsData?.metrics && metricsData.metrics.length > 0 && Array.isArray(metricsData.metrics[0].points)
+  if (typeof window !== 'undefined') {
+    console.log('metricsData:', metricsData)
+    if (metricsData?.metrics) {
+      metricsData.metrics.forEach((m, i) => {
+        console.log(`metrics[${i}]`, m)
+      })
+    }
+    console.log('hasPoints:', hasPoints)
+    if (hasPoints) {
+      console.log('memoryPoints:', metricsData.metrics[0].points)
+    }
+  }
+  const memoryPointsCount = hasPoints ? metricsData.metrics[0].points.length : null
+  const memoryPoints = hasPoints ? metricsData.metrics[0].points : []
+  const machine = metricsData?.metrics && metricsData.metrics.length > 0 ? metricsData.metrics[0].machine : undefined
   const tabs: TabConfig[] = [
-    { id: "memory", label: "Memory Metrics", count: metricsData?.metrics?.length ?? null },
+    { id: "memory", label: "Memory Metrics", count: memoryPointsCount },
     { id: "sound", label: "Sound Levels", count: soundData?.soundData?.length ?? null },
     ...(isMeetingBaasUser ? [{ id: "logs" as TabType, label: "Debug Logs", count: null }] : [])
   ]
@@ -137,10 +153,11 @@ export default function DebugDialog({
               <div className="flex h-96 items-center justify-center text-destructive">
                 Error: {metricsError instanceof Error ? metricsError.message : genericError}
               </div>
-            ) : metricsData?.metrics ? (
+            ) : memoryPoints && memoryPoints.length > 0 ? (
               <MemoryViewer
-                metrics={metricsData.metrics}
-                logsUrl={isMeetingBaasUser && metricsData.logsUrl ? metricsData.logsUrl : undefined}
+                metrics={memoryPoints}
+                logsUrl={isMeetingBaasUser && metricsData?.logsUrl ? metricsData.logsUrl : undefined}
+                machine={machine}
               />
             ) : (
               <div className="flex h-96 items-center justify-center">No memory metrics found</div>

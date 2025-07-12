@@ -4,6 +4,8 @@ import type {
   BotSearchParams,
   Screenshot,
   SystemMetrics,
+  SystemMetricsMachine,
+  SystemMetricsPoint,
   UserReportedError
 } from "@/components/logs-table/types"
 
@@ -170,24 +172,32 @@ export async function fetchSystemMetrics(
     )
   }
 
-  const logsText = await logsResponse.text()
+  const logsText = await logsResponse.text();
+  const lines = logsText.trim().split("\n");
 
-  // Parse the logs into SystemMetrics array
-  const metrics: SystemMetrics[] = []
-  const lines = logsText.trim().split("\n")
+  let machine: SystemMetricsMachine | null = null;
+  const points: SystemMetricsPoint[] = [];
 
   for (const line of lines) {
     if (line.trim()) {
       try {
-        const parsed = JSON.parse(line) as SystemMetrics
-        metrics.push(parsed)
+        const parsed = JSON.parse(line);
+        if (parsed.machine) {
+          machine = parsed.machine;
+        } else if (parsed.point) {
+          points.push(parsed.point);
+        }
       } catch (error) {
-        console.warn("Failed to parse log line:", line, error)
+        console.warn("Failed to parse log line:", line, error);
       }
     }
   }
 
-  return { metrics, logsUrl: logsUrlResponse.url }
+  const metrics: SystemMetrics[] = machine
+    ? [{ machine, points }]
+    : [];
+
+  return { metrics, logsUrl: logsUrlResponse.url };
 }
 
 export async function fetchDebugLogs(bot_uuid: string): Promise<{ text: string; logsUrl: string }> {

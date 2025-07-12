@@ -69,27 +69,23 @@ export type Screenshot = {
   date: string
 }
 
+export type SystemMetricsMachine = {
+  total_memory_mo: number
+  cpu_nb_core: number
+  type: string
+  os_version: string
+}
+
+export type SystemMetricsPoint = {
+  timestamp_ms: number
+  mem_mo: number
+  cpu_all: number
+  cpu_ffmpeg: number
+}
+
 export type SystemMetrics = {
-  timestamp: string
-  system: {
-    cpuUsage: number
-    memoryUsed: number
-    memoryTotal: number
-    memoryPercent: number
-  }
-  processes: {
-    ffmpeg: Array<{
-      name: string
-      pid: number
-      cpu: number
-      memory: number
-    }>
-    chrome: {
-      count: number
-      cpu: number
-      memory: number
-    }
-  }
+  machine: SystemMetricsMachine
+  points: SystemMetricsPoint[]
 }
 
 export type BotSearchParams = {
