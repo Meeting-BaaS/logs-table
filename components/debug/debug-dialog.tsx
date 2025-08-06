@@ -131,7 +131,7 @@ export default function DebugDialog({
             ) : debugData?.html ? (
               <div className="space-y-2">
                 {isMeetingBaasUser && debugData?.logsUrl && (
-                  <div className="flex justify-end">
+                  <div className="flex justify-start">
                     <Button onClick={handleDownloadLogs} variant="outline" size="sm">
                       <Download className="mr-2 h-4 w-4" />
                       Download Debug Logs
