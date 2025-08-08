@@ -138,7 +138,7 @@ export function AdditionalFilters({
                       <CheckboxFilter
                         options={filter.options}
                         label={filter.label}
-                        selectedValues={field.value ?? []}
+                        selectedValues={Array.isArray(field.value) ? field.value : []}
                         onFilterChange={(value) => field.onChange(value)}
                       />
                     </FormControl>
@@ -154,7 +154,7 @@ export function AdditionalFilters({
                 <FormItem>
                   <FormControl>
                     <EmailFilter
-                      value={field.value ?? ""}
+                      value={typeof field.value === 'string' ? field.value : ""}
                       onFilterChange={(value) => field.onChange(value)}
                     />
                   </FormControl>
