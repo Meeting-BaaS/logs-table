@@ -36,7 +36,8 @@ export function validateDate(dateStr: string | null): Date | null {
 export function validateFilterValues(
   platformFilters: string | null,
   statusFilters: string | null,
-  userReportedErrorStatusFilters: string | null
+  userReportedErrorStatusFilters: string | null,
+  userEmailFilter: string | null
 ): FilterState {
   const validPlatformFilters =
     platformFilters
@@ -59,7 +60,8 @@ export function validateFilterValues(
   return {
     platformFilters: validPlatformFilters,
     statusFilters: validStatusFilters,
-    userReportedErrorStatusFilters: validUserReportedErrorStatusFilters
+    userReportedErrorStatusFilters: validUserReportedErrorStatusFilters,
+    userEmailFilter: userEmailFilter ?? ""
   }
 }
 
@@ -68,6 +70,7 @@ export function filterStateToSearchValues(filters: FilterState): {
   platformFilters: string[]
   statusFilters: string[]
   userReportedErrorStatusFilters: string[]
+  userEmailFilter: string
 } {
   return {
     platformFilters: filters.platformFilters
@@ -78,7 +81,8 @@ export function filterStateToSearchValues(filters: FilterState): {
       .filter((value): value is string => value !== undefined),
     userReportedErrorStatusFilters: filters.userReportedErrorStatusFilters
       .map((value) => getSearchParamFromValue(allUserReportedErrorStatuses, value))
-      .filter((value): value is string => value !== undefined)
+      .filter((value): value is string => value !== undefined),
+    userEmailFilter: filters.userEmailFilter ?? ""
   }
 }
 
@@ -156,6 +160,12 @@ export function updateSearchParams(
     )
   } else {
     newParams.delete("userReportedErrorStatusFilters")
+  }
+
+  if (searchValues.userEmailFilter) {
+    newParams.set("userEmailFilter", searchValues.userEmailFilter)
+  } else {
+    newParams.delete("userEmailFilter")
   }
 
   // Update bot UUIDs param

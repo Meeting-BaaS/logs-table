@@ -29,7 +29,8 @@ export async function fetchLogs(params: BotQueryParams | BotSearchParams): Promi
           ...(params.user_reported_error_json && {
             user_reported_error_json: params.user_reported_error_json
           }),
-          ...(params.bot_uuid && { bot_uuid: params.bot_uuid })
+          ...(params.bot_uuid && { bot_uuid: params.bot_uuid }),
+          ...(params.userEmail && { user_email: params.userEmail })
         })
 
   const response = await fetch(`/api/bots/all?${queryParams.toString()}`)

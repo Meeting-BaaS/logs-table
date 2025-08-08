@@ -49,7 +49,7 @@ export function useLogs({
       }
     ],
     queryFn: () => {
-      const { platformFilters, statusFilters, userReportedErrorStatusFilters } = filters
+      const { platformFilters, statusFilters, userReportedErrorStatusFilters, userEmailFilter } = filters
       const queryParams = {
         offset,
         limit: pageSize,
@@ -62,7 +62,8 @@ export function useLogs({
         ...(statusFilters.length > 0 && { status_type: statusFilters.join(",") }),
         ...(userReportedErrorStatusFilters.length > 0 && {
           user_reported_error_json: `${userReportedErrorStatusFilters.join(",")}`
-        })
+        }),
+        ...(userEmailFilter && { userEmail: userEmailFilter })
       }
 
       return fetchLogs(queryParams)

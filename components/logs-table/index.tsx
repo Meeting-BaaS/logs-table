@@ -49,7 +49,8 @@ export default function LogsTable() {
     validateFilterValues(
       searchParams.get("platformFilters"),
       searchParams.get("statusFilters"),
-      searchParams.get("userReportedErrorStatusFilters")
+      searchParams.get("userReportedErrorStatusFilters"),
+      searchParams.get("userEmailFilter")
     )
   )
 

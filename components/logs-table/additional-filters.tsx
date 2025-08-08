@@ -10,6 +10,7 @@ import {
   SheetTrigger
 } from "@/components/ui/sheet"
 import { CheckboxFilter } from "@/components/logs-table/checkbox-filter"
+import { EmailFilter } from "@/components/logs-table/email-filter"
 import {
   allPlatforms,
   allStatuses,
@@ -45,7 +46,8 @@ const filtersFields = [
 const clearFilters: FilterState = {
   platformFilters: [],
   statusFilters: [],
-  userReportedErrorStatusFilters: []
+  userReportedErrorStatusFilters: [],
+  userEmailFilter: ""
 }
 
 interface AdditionalFiltersProps {
@@ -67,7 +69,8 @@ export function AdditionalFilters({
     defaultValues: {
       platformFilters: filters.platformFilters,
       statusFilters: filters.statusFilters,
-      userReportedErrorStatusFilters: filters.userReportedErrorStatusFilters
+      userReportedErrorStatusFilters: filters.userReportedErrorStatusFilters,
+      userEmailFilter: filters.userEmailFilter
     }
   })
 
@@ -87,7 +90,8 @@ export function AdditionalFilters({
     setFilters({
       platformFilters: data.platformFilters ?? [],
       statusFilters: data.statusFilters ?? [],
-      userReportedErrorStatusFilters: data.userReportedErrorStatusFilters ?? []
+      userReportedErrorStatusFilters: data.userReportedErrorStatusFilters ?? [],
+      userEmailFilter: data.userEmailFilter ?? ""
     })
   }
 
@@ -101,7 +105,12 @@ export function AdditionalFilters({
     setFilters(clearFilters)
   }
 
-  const isFiltered = Object.values(filters).some((arr) => arr.length > 0)
+  const isFiltered = Object.values(filters).some((value) => {
+    if (Array.isArray(value)) {
+      return value.length > 0
+    }
+    return value && value.length > 0
+  })
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -138,6 +147,21 @@ export function AdditionalFilters({
                 )}
               />
             ))}
+            <FormField
+              control={form.control}
+              name="userEmailFilter"
+              render={({ field }) => (
+                <FormItem>
+                  <FormControl>
+                    <EmailFilter
+                      value={field.value ?? ""}
+                      onFilterChange={(value) => field.onChange(value)}
+                    />
+                  </FormControl>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
             <div className="flex justify-between gap-4">
               <Button
                 type="button"
