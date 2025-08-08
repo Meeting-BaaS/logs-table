@@ -16,6 +16,7 @@ import {
   updateSearchParams
 } from "@/lib/search-params"
 import { useSession } from "@/hooks/use-session"
+import { isMeetingBaasUser } from "@/lib/utils"
 
 export const DEFAULT_PAGE_SIZE = pageSizeOptions[0].value
 
@@ -25,6 +26,7 @@ export default function LogsTable() {
   const session = useSession()
   const email = session?.user.email
   const columns = useMemo(() => createColumns(email), [email])
+  const meetingBaasUser = isMeetingBaasUser(email)
 
   // Pagination state
   const [pageIndex, setPageIndex] = useState(0)
@@ -99,6 +101,7 @@ export default function LogsTable() {
           setFilters={setFilters}
           botUuids={botUuids}
           setBotUuids={setBotUuids}
+          isMeetingBaasUser={meetingBaasUser}
         />
       )}
     </div>

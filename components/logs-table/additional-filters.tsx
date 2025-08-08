@@ -55,13 +55,15 @@ interface AdditionalFiltersProps {
   setFilters: (filters: FilterState) => void
   pageIndex: number
   onPageChange: (pageIndex: number) => void
+  isMeetingBaasUser?: boolean
 }
 
 export function AdditionalFilters({
   filters,
   setFilters,
   pageIndex,
-  onPageChange
+  onPageChange,
+  isMeetingBaasUser = false
 }: AdditionalFiltersProps) {
   const [open, setOpen] = useState(false)
   const form = useForm<FiltersFormData>({
@@ -105,7 +107,11 @@ export function AdditionalFilters({
     setFilters(clearFilters)
   }
 
-  const isFiltered = Object.values(filters).some((value) => {
+  const isFiltered = Object.entries(filters).some(([key, value]) => {
+    // Skip email filter for non-Meeting BaaS users
+    if (key === 'userEmailFilter' && !isMeetingBaasUser) {
+      return false
+    }
     if (Array.isArray(value)) {
       return value.length > 0
     }
@@ -147,21 +153,23 @@ export function AdditionalFilters({
                 )}
               />
             ))}
-            <FormField
-              control={form.control}
-              name="userEmailFilter"
-              render={({ field }) => (
-                <FormItem>
-                  <FormControl>
-                    <EmailFilter
-                      value={typeof field.value === 'string' ? field.value : ""}
-                      onFilterChange={(value) => field.onChange(value)}
-                    />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            {isMeetingBaasUser && (
+              <FormField
+                control={form.control}
+                name="userEmailFilter"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <EmailFilter
+                        value={typeof field.value === 'string' ? field.value : ""}
+                        onFilterChange={(value) => field.onChange(value)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             <div className="flex justify-between gap-4">
               <Button
                 type="button"
