@@ -1,9 +1,12 @@
 "use client"
 
+import { useState } from "react"
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
 import { cn } from "@/lib/utils"
 import { useSearchParams } from "next/navigation"
 import { toast } from "sonner"
+import { Copy, Mail } from "lucide-react"
 
 interface EmailTooltipProps {
   email: string
@@ -14,7 +17,27 @@ interface EmailTooltipProps {
 
 export const EmailTooltip = ({ email, botUuid, className, children }: EmailTooltipProps) => {
   const searchParams = useSearchParams()
-  const handleEmailClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+  const [copied, setCopied] = useState(false)
+  const [isOpen, setIsOpen] = useState(false)
+
+  const handleCopyEmail = async (e: React.MouseEvent<HTMLDivElement>) => {
+    e.stopPropagation()
+    try {
+      await navigator.clipboard.writeText(email)
+      setCopied(true)
+      setIsOpen(true)
+      toast.success("Email copied to clipboard")
+      setTimeout(() => {
+        setCopied(false)
+        setIsOpen(false)
+      }, 2000)
+    } catch (err) {
+      console.error("Failed to copy email:", err)
+      toast.error("Failed to copy email")
+    }
+  }
+
+  const handleSendEmail = (e: React.MouseEvent<HTMLDivElement>) => {
     e.stopPropagation()
 
     const newSearchParams = new URLSearchParams(searchParams.toString())
@@ -33,21 +56,26 @@ export const EmailTooltip = ({ email, botUuid, className, children }: EmailToolt
   }
 
   return (
-    <Tooltip>
-      <TooltipTrigger asChild>
+    <DropdownMenu open={isOpen} onOpenChange={setIsOpen}>
+      <DropdownMenuTrigger asChild>
         <button
           type="button"
-          onClick={handleEmailClick}
-          aria-label={`Send email to ${email}`}
-          title="Click to send an email"
+          aria-label={`Email options for ${email}`}
           className={cn("cursor-pointer text-sm hover:opacity-80", className)}
         >
           {children}
         </button>
-      </TooltipTrigger>
-      <TooltipContent>
-        <p>Click to send an email</p>
-      </TooltipContent>
-    </Tooltip>
+      </DropdownMenuTrigger>
+      <DropdownMenuContent align="start">
+        <DropdownMenuItem onClick={handleCopyEmail}>
+          <Copy className="mr-2 h-4 w-4" />
+          {copied ? "Copied!" : "Copy email"}
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={handleSendEmail}>
+          <Mail className="mr-2 h-4 w-4" />
+          Send email
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
   )
 }
