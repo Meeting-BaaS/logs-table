@@ -104,10 +104,12 @@ export type BotQueryParams = {
   status_type?: string
   user_reported_error_json?: string
   bot_uuid?: string
+  userEmail?: string
 }
 
 export type FilterState = {
   platformFilters: string[]
   statusFilters: string[]
   userReportedErrorStatusFilters: string[]
+  userEmailFilter?: string
 }

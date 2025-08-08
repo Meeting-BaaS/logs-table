@@ -52,6 +52,7 @@ interface DataTableProps<TData extends FormattedBotData, TValue> {
   setFilters: (filters: FilterState) => void
   botUuids: string[]
   setBotUuids: (botUuids: string[]) => void
+  isMeetingBaasUser?: boolean
 }
 
 export function DataTable<TData extends FormattedBotData, TValue>({
@@ -68,7 +69,8 @@ export function DataTable<TData extends FormattedBotData, TValue>({
   filters,
   setFilters,
   botUuids,
-  setBotUuids
+  setBotUuids,
+  isMeetingBaasUser = false
 }: DataTableProps<TData, TValue>) {
   const [sorting, setSorting] = useState<SortingState>([])
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]) // Required for global filter
@@ -136,6 +138,7 @@ export function DataTable<TData extends FormattedBotData, TValue>({
             setFilters={setFilters}
             pageIndex={pageIndex}
             onPageChange={onPageChange}
+            isMeetingBaasUser={isMeetingBaasUser}
           />
         </div>
         <div className="flex items-center gap-2">

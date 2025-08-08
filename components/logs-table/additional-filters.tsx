@@ -10,6 +10,7 @@ import {
   SheetTrigger
 } from "@/components/ui/sheet"
 import { CheckboxFilter } from "@/components/logs-table/checkbox-filter"
+import { EmailFilter } from "@/components/logs-table/email-filter"
 import {
   allPlatforms,
   allStatuses,
@@ -45,7 +46,8 @@ const filtersFields = [
 const clearFilters: FilterState = {
   platformFilters: [],
   statusFilters: [],
-  userReportedErrorStatusFilters: []
+  userReportedErrorStatusFilters: [],
+  userEmailFilter: ""
 }
 
 interface AdditionalFiltersProps {
@@ -53,13 +55,15 @@ interface AdditionalFiltersProps {
   setFilters: (filters: FilterState) => void
   pageIndex: number
   onPageChange: (pageIndex: number) => void
+  isMeetingBaasUser?: boolean
 }
 
 export function AdditionalFilters({
   filters,
   setFilters,
   pageIndex,
-  onPageChange
+  onPageChange,
+  isMeetingBaasUser = false
 }: AdditionalFiltersProps) {
   const [open, setOpen] = useState(false)
   const form = useForm<FiltersFormData>({
@@ -67,7 +71,8 @@ export function AdditionalFilters({
     defaultValues: {
       platformFilters: filters.platformFilters,
       statusFilters: filters.statusFilters,
-      userReportedErrorStatusFilters: filters.userReportedErrorStatusFilters
+      userReportedErrorStatusFilters: filters.userReportedErrorStatusFilters,
+      userEmailFilter: filters.userEmailFilter
     }
   })
 
@@ -87,7 +92,8 @@ export function AdditionalFilters({
     setFilters({
       platformFilters: data.platformFilters ?? [],
       statusFilters: data.statusFilters ?? [],
-      userReportedErrorStatusFilters: data.userReportedErrorStatusFilters ?? []
+      userReportedErrorStatusFilters: data.userReportedErrorStatusFilters ?? [],
+      userEmailFilter: data.userEmailFilter ?? ""
     })
   }
 
@@ -101,7 +107,16 @@ export function AdditionalFilters({
     setFilters(clearFilters)
   }
 
-  const isFiltered = Object.values(filters).some((arr) => arr.length > 0)
+  const isFiltered = Object.entries(filters).some(([key, value]) => {
+    // Skip email filter for non-Meeting BaaS users
+    if (key === 'userEmailFilter' && !isMeetingBaasUser) {
+      return false
+    }
+    if (Array.isArray(value)) {
+      return value.length > 0
+    }
+    return value && value.length > 0
+  })
 
   return (
     <Sheet open={open} onOpenChange={setOpen}>
@@ -129,7 +144,7 @@ export function AdditionalFilters({
                       <CheckboxFilter
                         options={filter.options}
                         label={filter.label}
-                        selectedValues={field.value ?? []}
+                        selectedValues={Array.isArray(field.value) ? field.value : []}
                         onFilterChange={(value) => field.onChange(value)}
                       />
                     </FormControl>
@@ -138,6 +153,23 @@ export function AdditionalFilters({
                 )}
               />
             ))}
+            {isMeetingBaasUser && (
+              <FormField
+                control={form.control}
+                name="userEmailFilter"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormControl>
+                      <EmailFilter
+                        value={typeof field.value === 'string' ? field.value : ""}
+                        onFilterChange={(value) => field.onChange(value)}
+                      />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+            )}
             <div className="flex justify-between gap-4">
               <Button
                 type="button"
